@@ -137,11 +137,6 @@ const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
 const thisWeekStatus = document.querySelector("#this-week-status");
 const thisWeekParsha = document.querySelector("#this-week-parsha");
 const thisWeekUpdated = document.querySelector("#this-week-updated");
-const askAiForm = document.querySelector("#ask-ai-form");
-const askAiInput = document.querySelector("#ask-ai-input");
-const askAiAnswer = document.querySelector("#ask-ai-answer");
-const askAiCostNote = document.querySelector("#ask-ai-cost-note");
-
 const defaultRegularSchedule = [
   { label: "Monday-Friday Shacharit", time: "6:00 AM" },
   { label: "Sunday Shacharit", time: "7:45 AM" },
@@ -420,59 +415,6 @@ async function loadBulletinSchedule() {
     return false;
   }
 }
-
-function setAskAiAnswer(message, state = "") {
-  if (!askAiAnswer) return;
-  askAiAnswer.dataset.state = state;
-  askAiAnswer.innerHTML = `<p>${escapeHtml(message)}</p>`;
-}
-
-askAiForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!askAiInput || !askAiAnswer) return;
-
-  const question = askAiInput.value.trim();
-  if (!question) {
-    setAskAiAnswer("Type a question about the weekly bulletin first.", "error");
-    askAiInput.focus();
-    return;
-  }
-
-  const submitButton = askAiForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  setAskAiAnswer("Checking the weekly bulletin...", "loading");
-
-  if (isFilePreview) {
-    setAskAiAnswer("The Ask AI box needs the hosted site so it can read the live bulletin API.", "error");
-    submitButton.disabled = false;
-    return;
-  }
-
-  try {
-    const response = await fetch("/api/ask-ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ question }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Ask AI request failed");
-
-    setAskAiAnswer(data.answer || "I could not find an answer in the bulletin.", data.mode || "");
-    if (askAiCostNote) {
-      askAiCostNote.textContent =
-        data.mode === "ai"
-          ? "Answered by AI using the weekly bulletin."
-          : "Answered by bulletin search. Add an OpenAI API key for fuller AI responses.";
-    }
-  } catch {
-    setAskAiAnswer("I could not reach the bulletin answer service. Please try again or email the shul.", "error");
-  } finally {
-    submitButton.disabled = false;
-  }
-});
 
 function nextDateForDay(dayNumber) {
   const date = new Date();
