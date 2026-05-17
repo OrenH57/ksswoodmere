@@ -47,6 +47,7 @@ const zmanimStatus = document.querySelector("#zmanim-status");
 const isFilePreview = window.location.protocol === "file:";
 const bulletinStatus = document.querySelector("#bulletin-status");
 const bulletinSource = document.querySelector("#bulletin-source");
+const scheduleSource = document.querySelector("#schedule-source");
 const regularScheduleList = document.querySelector("#regular-schedule-list");
 const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
 
@@ -235,10 +236,12 @@ async function loadBulletinSchedule() {
     const sourceText = describeBulletinSource(data);
     if (bulletinStatus) bulletinStatus.textContent = "Updated from bulletin";
     if (bulletinSource) bulletinSource.textContent = sourceText;
+    if (scheduleSource) scheduleSource.textContent = sourceText;
     return true;
   } catch {
     if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
     if (bulletinSource) bulletinSource.textContent = "Weekly bulletin schedule will load after Vercel setup.";
+    if (scheduleSource) scheduleSource.textContent = "Using regular schedule until Google Drive bulletin setup is connected.";
     return false;
   }
 }

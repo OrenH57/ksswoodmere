@@ -53,8 +53,8 @@ h2 {
 }
 
 h1 {
-  margin-bottom: 18px;
-  font-size: clamp(3.05rem, 14vw, 3.9rem);
+  margin-bottom: 12px;
+  font-size: clamp(2.45rem, 11.5vw, 3.35rem);
 }
 
 h2 {
@@ -178,23 +178,23 @@ h3 {
 .hero {
   position: relative;
   display: grid;
-  gap: 28px;
+  gap: 18px;
   max-width: var(--max);
   margin: 0 auto;
-  padding: 48px 18px 34px;
+  padding: 30px 18px 18px;
   text-align: center;
 }
 
 .hero::after {
   position: absolute;
-  right: -150px;
-  bottom: 120px;
+  right: -170px;
+  bottom: 20px;
   z-index: -1;
-  width: 420px;
-  height: 380px;
+  width: 360px;
+  height: 330px;
   content: "";
   background: url("assets/shaare-shalom-logo.png") center / contain no-repeat;
-  opacity: 0.045;
+  opacity: 0.035;
 }
 
 .scroll-progress {
@@ -210,14 +210,14 @@ h3 {
 
 .hero-logo {
   display: block;
-  width: 120px;
-  margin: 0 auto 16px;
+  width: 88px;
+  margin: 0 auto 10px;
 }
 
 .tagline {
-  margin: -4px 0 18px;
+  margin: -2px 0 12px;
   color: var(--ink-2);
-  font-size: clamp(1.15rem, 6vw, 1.45rem);
+  font-size: clamp(1.05rem, 5vw, 1.28rem);
   font-weight: 600;
 }
 
@@ -226,15 +226,15 @@ h3 {
   margin-right: auto;
   margin-left: auto;
   color: #3f5f70;
-  font-size: 1.12rem;
+  font-size: 1.02rem;
 }
 
 .hero-copy h1::after,
 .section-intro h2::after {
   display: block;
-  width: 118px;
+  width: 92px;
   height: 2px;
-  margin: 22px auto 0;
+  margin: 15px auto 0;
   content: "";
   background: var(--gold);
 }
@@ -253,17 +253,17 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-top: 24px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .hero-details span {
-  padding: 8px 12px;
+  padding: 7px 10px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 750;
 }
 
@@ -271,13 +271,13 @@ h3 {
 .visit-actions {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
-  margin-top: 28px;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .button {
   display: inline-flex;
-  min-height: 46px;
+  min-height: 42px;
   align-items: center;
   justify-content: center;
   padding: 12px 18px;
@@ -343,7 +343,7 @@ h3 {
 }
 
 .quick-card {
-  padding: 22px;
+  padding: 18px;
   border-top: 4px solid var(--blue);
   text-align: left;
 }
@@ -355,33 +355,33 @@ h3 {
 
 .quick-card-top {
   display: grid;
-  grid-template-columns: 88px 1fr;
-  gap: 16px;
+  grid-template-columns: 68px 1fr;
+  gap: 13px;
   align-items: center;
-  padding-bottom: 18px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
 }
 
 .quick-card-top img {
-  width: 88px;
-  height: 78px;
+  width: 68px;
+  height: 62px;
   object-fit: contain;
 }
 
 .quick-card h2 {
   margin-bottom: 0;
-  font-size: 1.55rem;
+  font-size: 1.35rem;
 }
 
 .quick-times {
   display: grid;
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .quick-times div {
   display: grid;
   gap: 3px;
-  padding: 14px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -401,8 +401,8 @@ h3 {
 }
 
 .fine-print {
-  margin: 18px 0 0;
-  font-size: 0.94rem;
+  margin: 12px 0 0;
+  font-size: 0.9rem;
 }
 
 .image-card {
@@ -429,7 +429,7 @@ h3 {
 }
 
 .hero-photo img {
-  height: 320px;
+  height: 240px;
   object-position: center 28%;
 }
 
@@ -453,7 +453,7 @@ h3 {
 .pillars {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 0 18px 48px;
+  padding: 12px 18px 36px;
 }
 
 .pillars article {
@@ -499,9 +499,9 @@ h3 {
 
 .photo-strip {
   display: grid;
-  max-width: var(--max);
+  max-width: min(1240px, calc(100vw - 36px));
   margin: 0 auto;
-  padding: 0 18px 52px;
+  padding: 0 0 42px;
   gap: 16px;
 }
 
@@ -534,7 +534,7 @@ h3 {
 
 .status-strip {
   max-width: var(--max);
-  margin: 0 18px 40px;
+  margin: 0 18px 30px;
   gap: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -567,7 +567,7 @@ h3 {
 .section {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 62px 18px;
+  padding: 52px 18px;
 }
 
 .section-intro {
@@ -595,6 +595,28 @@ h3 {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
+}
+
+.bulletin-note {
+  display: grid;
+  gap: 4px;
+  margin: -8px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(185, 150, 85, 0.42);
+  border-radius: var(--radius);
+  background: #fffdf8;
+}
+
+.bulletin-note span {
+  color: var(--gold-dark);
+  font-size: 0.75rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.bulletin-note strong {
+  color: var(--ink);
+  font-size: 0.98rem;
 }
 
 .tab-button {
@@ -1273,12 +1295,20 @@ h3 {
 
   .hero {
     grid-template-columns: minmax(0, 0.95fr) minmax(360px, 430px);
-    gap: clamp(34px, 7vw, 82px);
+    gap: clamp(28px, 5vw, 64px);
     align-items: center;
-    min-height: calc(78vh - 81px);
-    padding-top: clamp(46px, 6vw, 72px);
-    padding-bottom: 44px;
+    min-height: 0;
+    padding-top: clamp(48px, 5vw, 66px);
+    padding-bottom: 26px;
     text-align: left;
+  }
+
+  .hero::after {
+    right: -80px;
+    bottom: -10px;
+    width: 470px;
+    height: 430px;
+    opacity: 0.04;
   }
 
   .hero-logo {
@@ -1287,6 +1317,7 @@ h3 {
 
   .hero-side {
     align-self: center;
+    grid-template-rows: auto 1fr;
   }
 
   .hero-copy p:not(.tagline) {
@@ -1305,14 +1336,15 @@ h3 {
 
   .pillars {
     grid-template-columns: repeat(3, 1fr);
-    margin-top: -12px;
-    padding-bottom: 58px;
+    margin-top: 0;
+    padding-top: 20px;
+    padding-bottom: 46px;
   }
 
   .status-strip {
     grid-template-columns: repeat(3, 1fr);
     max-width: var(--max);
-    margin: 0 auto 48px;
+    margin: 0 auto 34px;
     gap: 0;
   }
 
@@ -1326,8 +1358,8 @@ h3 {
   }
 
   .section {
-    padding-top: 82px;
-    padding-bottom: 82px;
+    padding-top: 68px;
+    padding-bottom: 72px;
   }
 
   .schedule-list {
@@ -1366,12 +1398,12 @@ h3 {
 
 @media (min-width: 1100px) {
   h1 {
-    font-size: clamp(4rem, 6.4vw, 5.3rem);
+    font-size: clamp(4.1rem, 5.4vw, 4.95rem);
   }
 
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(390px, 460px);
-    min-height: calc(72vh - 81px);
+    grid-template-columns: minmax(0, 0.92fr) minmax(430px, 500px);
+    min-height: 0;
   }
 
   .hero-side {
@@ -1379,17 +1411,35 @@ h3 {
     top: 96px;
   }
 
+  .hero-photo img {
+    height: 300px;
+  }
+
+  .quick-card {
+    padding: 24px 26px;
+  }
+
+  .quick-card-top {
+    grid-template-columns: 76px 1fr;
+  }
+
+  .quick-card-top img {
+    width: 76px;
+    height: 70px;
+  }
+
   .photo-strip {
-    padding-bottom: 72px;
+    max-width: min(1320px, calc(100vw - 64px));
+    padding-bottom: 56px;
   }
 
   .community-photo img {
-    height: 430px;
+    height: 460px;
   }
 
   .schedule-section {
-    padding-top: 88px;
-    padding-bottom: 92px;
+    padding-top: 76px;
+    padding-bottom: 82px;
   }
 
   .bulletin-grid {
