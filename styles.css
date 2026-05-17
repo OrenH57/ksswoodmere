@@ -91,6 +91,11 @@ h3 {
   text-decoration: none;
 }
 
+.brand-text {
+  display: block;
+  min-width: 168px;
+}
+
 .brand-mark {
   width: 46px;
   height: 46px;
@@ -105,6 +110,13 @@ h3 {
 .brand-name,
 .brand-subtitle {
   display: block;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.brand-text.is-changing .brand-name,
+.brand-text.is-changing .brand-subtitle {
+  opacity: 0;
+  transform: translateY(3px);
 }
 
 .brand-name {
@@ -118,6 +130,10 @@ h3 {
 .brand-subtitle {
   color: var(--gold-dark);
   font-size: 0.72rem;
+}
+
+.brand-text[dir="rtl"] {
+  text-align: right;
 }
 
 .nav-toggle {
@@ -310,13 +326,17 @@ h3 {
 .tab-button:focus-visible,
 .faq-question:focus-visible,
 .resource-toggle:focus-visible,
-.site-nav a:focus-visible {
+.site-nav a:focus-visible,
+.ask-ai-box input:focus-visible,
+.ask-ai-box button:focus-visible {
   outline: 3px solid rgba(185, 150, 85, 0.45);
   outline-offset: 3px;
 }
 
 .quick-card,
 .pillars article,
+.this-week,
+.ask-ai-box,
 .schedule-list article,
 .zmanim-panel,
 .resource-grid article,
@@ -331,6 +351,8 @@ h3 {
 
 .quick-card:hover,
 .pillars article:hover,
+.this-week:hover,
+.ask-ai-box:hover,
 .schedule-list article:hover,
 .time-table:hover,
 .resource-grid article:hover,
@@ -409,6 +431,95 @@ h3 {
   display: none;
 }
 
+.ask-ai-section {
+  display: grid;
+  max-width: var(--max);
+  margin: 0 auto 32px;
+  padding: 10px 18px 20px;
+  gap: 18px;
+}
+
+.ask-ai-copy {
+  max-width: 620px;
+}
+
+.ask-ai-copy p:not(.eyebrow) {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.ask-ai-box {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border-top: 4px solid var(--gold);
+}
+
+.ask-ai-box label {
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.ask-ai-row {
+  display: grid;
+  gap: 10px;
+}
+
+.ask-ai-box input,
+.ask-ai-box button {
+  min-height: 44px;
+  border-radius: var(--radius);
+  font: inherit;
+}
+
+.ask-ai-box input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.ask-ai-box button {
+  padding: 10px 18px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 850;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.ask-ai-box button:hover {
+  transform: translateY(-1px);
+}
+
+.ask-ai-box button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+  transform: none;
+}
+
+.ask-ai-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.ask-ai-answer {
+  min-height: 92px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--sky);
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.ask-ai-answer p {
+  margin-bottom: 0;
+}
+
 .image-card {
   margin: 0;
   overflow: hidden;
@@ -442,6 +553,7 @@ h3 {
 }
 
 .pillars,
+.this-week-grid,
 .status-strip,
 .schedule-list,
 .community-grid,
@@ -452,6 +564,61 @@ h3 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
+}
+
+.this-week {
+  display: grid;
+  max-width: var(--max);
+  margin: 0 18px 18px;
+  gap: 22px;
+  padding: 22px;
+  border-top: 4px solid var(--gold);
+}
+
+.this-week-copy h2 {
+  margin-bottom: 12px;
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
+}
+
+.this-week-copy p:not(.eyebrow) {
+  color: var(--muted);
+}
+
+.this-week-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.this-week-grid {
+  margin: 0;
+}
+
+.this-week-grid div {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fffdf8;
+}
+
+.this-week-grid dt,
+.this-week-grid dd {
+  margin: 0;
+}
+
+.this-week-grid dt {
+  color: var(--gold-dark);
+  font-size: 0.75rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.this-week-grid dd {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 850;
 }
 
 .pillars {
@@ -785,6 +952,16 @@ h3 {
   gap: 30px;
 }
 
+.section-media-copy {
+  display: grid;
+  gap: 20px;
+}
+
+.learning-photo img {
+  height: 230px;
+  object-position: center;
+}
+
 .program-list {
   display: grid;
   gap: 16px;
@@ -817,11 +994,30 @@ h3 {
   color: #fff;
 }
 
+.community-section .section-intro p:not(.eyebrow) {
+  color: #d9e8ee;
+}
+
 .community-grid article {
   padding: 22px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.08);
+}
+
+.community-layout {
+  display: grid;
+  gap: 18px;
+}
+
+.community-side-photo {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.community-side-photo img {
+  height: 300px;
+  object-position: center 42%;
 }
 
 .community-grid p {
@@ -916,6 +1112,14 @@ h3 {
   display: grid;
   gap: 10px;
   padding: 24px;
+}
+
+.payment-list {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
 }
 
 .zelle-box strong {
@@ -1154,7 +1358,8 @@ h3 {
 
 @media (min-width: 560px) {
   .hero-actions,
-  .visit-actions {
+  .visit-actions,
+  .this-week-actions {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -1174,6 +1379,14 @@ h3 {
 
   .zmanim-list,
   .resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ask-ai-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .this-week-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1208,7 +1421,8 @@ h3 {
   }
 
   .hero-actions,
-  .visit-actions {
+  .visit-actions,
+  .this-week-actions {
     justify-content: flex-start;
   }
 
@@ -1218,6 +1432,11 @@ h3 {
   }
 
   .status-strip {
+    margin-right: 24px;
+    margin-left: 24px;
+  }
+
+  .this-week {
     margin-right: 24px;
     margin-left: 24px;
   }
@@ -1233,6 +1452,13 @@ h3 {
   .split-section,
   .give-section {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .ask-ai-section {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    align-items: start;
+    padding-right: 24px;
+    padding-left: 24px;
   }
 
   .visit-panel {
@@ -1347,6 +1573,13 @@ h3 {
     gap: 0;
   }
 
+  .this-week {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    margin: 0 auto 24px;
+    padding: 26px;
+  }
+
   .status-strip div {
     border-right: 1px solid var(--line);
     border-bottom: 0;
@@ -1367,6 +1600,20 @@ h3 {
 
   .community-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .community-layout {
+    grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+    align-items: stretch;
+  }
+
+  .community-layout .community-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .community-side-photo img {
+    height: 100%;
+    min-height: 420px;
   }
 
   .bulletin-grid {

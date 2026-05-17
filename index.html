@@ -15,6 +15,7 @@
       content="Kehilat Shaare Shalom, Shaare Shalom, Woodmere shul, Sephardic shul Woodmere, Sephardic synagogue Woodmere, Woodmere minyan, daily minyan Woodmere, Shabbat Woodmere"
     >
     <meta name="theme-color" content="#0a3147">
+    <link rel="canonical" href="https://ksswoodmere.org/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Kehilat Shaare Shalom">
     <meta property="og:title" content="Kehilat Shaare Shalom | Woodmere, New York">
@@ -22,14 +23,14 @@
       property="og:description"
       content="Sephardic shul in Woodmere with daily minyanim, Torah learning, Shabbat programs, Kiddush, Seuda Shlishit, and local visitor information."
     >
-    <meta property="og:image" content="assets/shaare-shalom-logo-blue.png">
+    <meta property="og:image" content="https://ksswoodmere.org/assets/shaare-shalom-logo-blue.png">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Kehilat Shaare Shalom | Woodmere, New York">
     <meta
       name="twitter:description"
       content="Daily minyanim, Torah learning, Shabbat schedule, and local information for Kehilat Shaare Shalom in Woodmere."
     >
-    <meta name="twitter:image" content="assets/shaare-shalom-logo-blue.png">
+    <meta name="twitter:image" content="https://ksswoodmere.org/assets/shaare-shalom-logo-blue.png">
     <link rel="icon" href="assets/shaare-shalom-logo-blue.png">
     <link rel="stylesheet" href="styles.css">
     <script type="application/ld+json">
@@ -44,18 +45,24 @@
           "streetAddress": "22 Andover Lane",
           "addressLocality": "Woodmere",
           "addressRegion": "NY",
+          "postalCode": "11598",
           "addressCountry": "US"
         },
         "email": "ksswoodmere@gmail.com",
-        "image": "assets/shaare-shalom-logo-blue.png"
+        "url": "https://ksswoodmere.org/",
+        "image": "https://ksswoodmere.org/assets/shaare-shalom-logo-blue.png",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "address": "22 Andover Lane, Woodmere, NY 11598"
+        }
       }
     </script>
   </head>
   <body>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="Kehilat Shaare Shalom home">
-        <img src="assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark">
-        <span>
+        <img src="assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark" width="510" height="470">
+        <span class="brand-text" aria-live="polite">
           <span class="brand-name">Shaare Shalom</span>
           <span class="brand-subtitle">Kehilat Shaare Shalom</span>
         </span>
@@ -71,6 +78,7 @@
         <a href="#schedule">Minyanim</a>
         <a href="#learning">Learning</a>
         <a href="#community">Community</a>
+        <a href="#ask-ai">Ask AI</a>
         <a href="#resources">Local</a>
         <a href="#visit">Address</a>
         <a class="nav-support" href="#give">Zelle</a>
@@ -80,7 +88,7 @@
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
-          <img class="hero-logo" src="assets/shaare-shalom-logo-blue.png" alt="Shaare Shalom tree and Star of David emblem">
+          <img class="hero-logo" src="assets/shaare-shalom-logo-blue.png" alt="Shaare Shalom tree and Star of David emblem" width="510" height="470">
           <h1>Kehilat Shaare Shalom</h1>
           <p class="tagline">Woodmere, New York</p>
           <p>
@@ -101,7 +109,7 @@
         <div class="hero-side">
           <aside class="quick-card" aria-label="Minyan times">
             <div class="quick-card-top">
-              <img src="assets/shaare-shalom-logo-blue.png" alt="Shaare Shalom tree and Star of David emblem">
+              <img src="assets/shaare-shalom-logo-blue.png" alt="Shaare Shalom tree and Star of David emblem" width="510" height="470">
               <div>
                 <p class="eyebrow">Fast Info</p>
                 <h2>Schedule</h2>
@@ -110,24 +118,82 @@
             <div class="quick-times">
               <div>
                 <span>Monday-Friday Shacharit</span>
-                <strong>6:00 AM</strong>
+                <strong data-schedule-key="weekday-shacharit">6:00 AM</strong>
               </div>
               <div>
                 <span>Sunday Shacharit</span>
-                <strong>7:45 AM</strong>
+                <strong data-schedule-key="sunday-shacharit">7:45 AM</strong>
               </div>
               <div>
                 <span>Daily Mincha & Arvit</span>
-                <strong>7:15 PM</strong>
+                <strong data-schedule-key="daily-mincha-arvit">7:15 PM</strong>
               </div>
             </div>
             <p class="fine-print" id="bulletin-source"></p>
           </aside>
 
           <figure class="image-card hero-photo">
-            <img src="assets/shul-torah.png" alt="Torah reading at Shaare Shalom">
+            <img src="assets/shul-torah.png" alt="Torah reading at Shaare Shalom" width="828" height="972">
           </figure>
         </div>
+      </section>
+
+      <section class="this-week" aria-labelledby="this-week-heading">
+        <div class="this-week-copy">
+          <p class="eyebrow">This Week</p>
+          <h2 id="this-week-heading">Weekly Shabbat Info</h2>
+          <p id="this-week-status">Loading the weekly schedule. If live updates are unavailable, use the regular schedule below.</p>
+          <div class="this-week-actions">
+            <a class="button primary" href="assets/weekly-bulletin-bamidbar-2026-05-15.pdf">Download Weekly Bulletin</a>
+            <a class="button secondary" href="#schedule">View Full Schedule</a>
+          </div>
+        </div>
+        <dl class="this-week-grid" aria-label="Current weekly highlights">
+          <div>
+            <dt>Parasha</dt>
+            <dd id="this-week-parsha">Bamidbar</dd>
+          </div>
+          <div>
+            <dt>Candle Lighting</dt>
+            <dd id="this-week-candles" data-shabbat-time="candles">Live weekly</dd>
+          </div>
+          <div>
+            <dt>Shabbat Ends</dt>
+            <dd id="this-week-havdalah" data-shabbat-time="havdalah">Live weekly</dd>
+          </div>
+          <div>
+            <dt>Last Updated</dt>
+            <dd id="this-week-updated">Using regular schedule</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="ask-ai" class="ask-ai-section" aria-labelledby="ask-ai-heading">
+        <div class="ask-ai-copy">
+          <p class="eyebrow">Ask AI</p>
+          <h2 id="ask-ai-heading">Ask the Weekly Bulletin</h2>
+          <p>
+            Ask about times, sponsorships, learning, kids programming, or anything else in this week's bulletin.
+          </p>
+        </div>
+        <form class="ask-ai-box" id="ask-ai-form">
+          <label for="ask-ai-input">Your question</label>
+          <div class="ask-ai-row">
+            <input
+              id="ask-ai-input"
+              name="question"
+              type="text"
+              maxlength="500"
+              autocomplete="off"
+              placeholder="What time is Mincha on Shabbat?"
+            >
+            <button type="submit">Ask</button>
+          </div>
+          <p class="ask-ai-hint" id="ask-ai-cost-note">Uses the weekly bulletin. Full AI answers require an API key.</p>
+          <div class="ask-ai-answer" id="ask-ai-answer" aria-live="polite">
+            <p>Ask a question and the answer will appear here.</p>
+          </div>
+        </form>
       </section>
 
       <section class="status-strip" aria-label="Quick synagogue information">
@@ -149,9 +215,9 @@
         <article>
           <span>Daily</span>
           <dl>
-            <div><dt>Mon-Fri Shacharit</dt><dd>6:00 AM</dd></div>
-            <div><dt>Sunday Shacharit</dt><dd>7:45 AM</dd></div>
-            <div><dt>Daily Mincha & Arvit</dt><dd>7:15 PM</dd></div>
+            <div><dt>Mon-Fri Shacharit</dt><dd data-schedule-key="weekday-shacharit">6:00 AM</dd></div>
+            <div><dt>Sunday Shacharit</dt><dd data-schedule-key="sunday-shacharit">7:45 AM</dd></div>
+            <div><dt>Daily Mincha & Arvit</dt><dd data-schedule-key="daily-mincha-arvit">7:15 PM</dd></div>
           </dl>
         </article>
         <article>
@@ -174,19 +240,21 @@
 
       <section class="photo-strip" aria-label="Shaare Shalom photos">
         <figure class="image-card community-photo">
-          <img src="assets/shul-community.jpg" alt="Community celebration with Torah scrolls at Shaare Shalom">
+          <img src="assets/shul-community.jpg" alt="Community celebration with Torah scrolls at Shaare Shalom" width="1200" height="1600" loading="lazy">
         </figure>
       </section>
 
       <section class="section rabbi-section" aria-label="Rabbi information">
         <div class="rabbi-card">
-          <img src="assets/rabbi-david-rubinoff.jpg" alt="Rabbi David Rubinoff">
+          <img src="assets/rabbi-david-rubinoff.jpg" alt="Rabbi David Rubinoff" width="499" height="578" loading="lazy">
           <div>
             <p class="eyebrow">Rabbi</p>
             <h2>Rabbi David Rubinoff, Shlita</h2>
             <p>
               Rabbi of Kehilat Shaare Shalom. Shabbat announcements, shiurim,
-              and schedule changes are shared by the shul.
+              and schedule changes are shared by the shul. The kehillah gathers around
+              daily tefillah, Sephardic minhag, Torah learning, and a warm Shabbat table
+              for families, guests, and neighbors.
             </p>
           </div>
         </div>
@@ -205,12 +273,12 @@
         </div>
 
         <div class="schedule-tabs" role="tablist" aria-label="Schedule views">
-          <button type="button" class="tab-button is-active" data-tab="regular" role="tab" aria-selected="true">Schedule</button>
-          <button type="button" class="tab-button" data-tab="shabbat" role="tab" aria-selected="false">Shabbat Schedule</button>
-          <button type="button" class="tab-button" data-tab="zmanim" role="tab" aria-selected="false">Zmanim</button>
+          <button type="button" id="tab-regular" class="tab-button is-active" data-tab="regular" role="tab" aria-selected="true" aria-controls="panel-regular">Schedule</button>
+          <button type="button" id="tab-shabbat" class="tab-button" data-tab="shabbat" role="tab" aria-selected="false" aria-controls="panel-shabbat" tabindex="-1">Shabbat Schedule</button>
+          <button type="button" id="tab-zmanim" class="tab-button" data-tab="zmanim" role="tab" aria-selected="false" aria-controls="panel-zmanim" tabindex="-1">Zmanim</button>
         </div>
 
-        <div class="tab-panel is-active" data-panel="regular">
+        <div id="panel-regular" class="tab-panel is-active" data-panel="regular" role="tabpanel" aria-labelledby="tab-regular">
         <div class="schedule-list" id="regular-schedule-list">
           <article>
             <p>Monday-Friday</p>
@@ -230,7 +298,7 @@
         </div>
         </div>
 
-        <div class="tab-panel" data-panel="shabbat">
+        <div id="panel-shabbat" class="tab-panel" data-panel="shabbat" role="tabpanel" aria-labelledby="tab-shabbat" hidden>
           <div class="bulletin-grid" id="shabbat-schedule-grid">
             <article class="time-table">
               <h3>Friday Night</h3>
@@ -271,7 +339,7 @@
           </div>
         </div>
 
-        <div class="tab-panel" data-panel="zmanim">
+        <div id="panel-zmanim" class="tab-panel" data-panel="zmanim" role="tabpanel" aria-labelledby="tab-zmanim" hidden>
         <div class="zmanim-panel" aria-live="polite">
           <div>
             <p class="eyebrow">Woodmere Zmanim</p>
@@ -284,12 +352,17 @@
       </section>
 
       <section id="learning" class="section split-section">
-        <div class="section-intro">
-          <p class="eyebrow">Torah Learning</p>
-          <h2>Learning Schedule</h2>
-          <p>
-            Learning opportunities are listed here. Weekly changes and special shiurim are announced by the shul.
-          </p>
+        <div class="section-media-copy">
+          <div class="section-intro">
+            <p class="eyebrow">Torah Learning</p>
+            <h2>Learning Schedule</h2>
+            <p>
+              Learning opportunities are listed here. Weekly changes and special shiurim are announced by the shul.
+            </p>
+          </div>
+          <figure class="image-card learning-photo">
+            <img src="assets/shul-learning.png" alt="Torah learning at Shaare Shalom" width="828" height="443" loading="lazy">
+          </figure>
         </div>
 
         <div class="program-list">
@@ -320,25 +393,31 @@
         <div class="section-intro">
           <p class="eyebrow">Shabbat and Events</p>
           <h2>Community Information</h2>
+          <p>Kiddush, Seuda Shlishit, youth programming, and dedications are coordinated through the shul each week.</p>
         </div>
 
-        <div class="community-grid">
-          <article>
-            <h3>Kiddush</h3>
-            <p>Held after Shabbat morning tefillah. Sponsorship and dedication information is announced by the shul.</p>
-          </article>
-          <article>
-            <h3>Seuda Shlishit</h3>
-            <p>Held Shabbat afternoon after Mincha, with food and Torah before Arvit.</p>
-          </article>
-          <article>
-            <h3>Families Welcome</h3>
-            <p>Kids program with Avi is held Shabbat afternoon at 5:15 PM.</p>
-          </article>
-          <article>
-            <h3>Ladies Tehillim & Brachot</h3>
-            <p>Held Shabbat afternoon at 6:00 PM.</p>
-          </article>
+        <div class="community-layout">
+          <figure class="image-card community-side-photo">
+            <img src="assets/shul-dancing.png" alt="Community dancing at Shaare Shalom" width="828" height="1213" loading="lazy">
+          </figure>
+          <div class="community-grid">
+            <article>
+              <h3>Kiddush</h3>
+              <p>Held after Shabbat morning tefillah. Email the shul to sponsor, dedicate, or confirm details for the week.</p>
+            </article>
+            <article>
+              <h3>Seuda Shlishit</h3>
+              <p>Held Shabbat afternoon after Mincha, with food and Torah before Arvit. Sponsorships can be paid by Zelle.</p>
+            </article>
+            <article>
+              <h3>Families Welcome</h3>
+              <p>Kids program with Avi is usually held Shabbat afternoon at 5:15 PM. Confirm special programming in the weekly bulletin.</p>
+            </article>
+            <article>
+              <h3>Ladies Tehillim & Brachot</h3>
+              <p>Held Shabbat afternoon at 6:00 PM, with schedule changes announced by the shul.</p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -351,21 +430,33 @@
 
         <div class="faq-list">
           <article>
-            <button type="button" class="faq-question">Where should I enter?</button>
-            <div class="faq-answer">
-              <p>Use the rear entrance at 22 Andover Lane in Woodmere.</p>
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-entrance">Where should I enter?</button>
+            <div class="faq-answer" id="faq-entrance" hidden>
+              <p>Use the rear entrance at 22 Andover Lane in Woodmere. Give yourself a few extra minutes the first time so you can find the entrance comfortably.</p>
             </div>
           </article>
           <article>
-            <button type="button" class="faq-question">How are Shabbat times announced?</button>
-            <div class="faq-answer">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-shabbat-times">How are Shabbat times announced?</button>
+            <div class="faq-answer" id="faq-shabbat-times" hidden>
               <p>Shabbat times and special announcements are shared weekly by the shul.</p>
             </div>
           </article>
           <article>
-            <button type="button" class="faq-question">Is there programming for children?</button>
-            <div class="faq-answer">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-children">Is there programming for children?</button>
+            <div class="faq-answer" id="faq-children" hidden>
               <p>Kids program with Avi is usually held Shabbat afternoon at 5:15 PM, with family-friendly programming when available.</p>
+            </div>
+          </article>
+          <article>
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-parking">What should visitors know about parking?</button>
+            <div class="faq-answer" id="faq-parking" hidden>
+              <p>Street parking is generally used in the neighborhood. Please be considerate of driveways, signs, and neighbors when arriving for minyan or Shabbat.</p>
+            </div>
+          </article>
+          <article>
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-accessibility">Who should I contact about accessibility needs?</button>
+            <div class="faq-answer" id="faq-accessibility" hidden>
+              <p>Email the shul before visiting so someone can help with entrance details, seating, or other practical needs.</p>
             </div>
           </article>
         </div>
@@ -388,13 +479,13 @@
 
         <div class="resource-accordion">
           <article>
-            <button type="button" class="resource-toggle" aria-expanded="false">
+            <button type="button" class="resource-toggle" aria-expanded="false" aria-controls="mikvah-drawer">
               <span>
                 <strong>Mikvah Information</strong>
                 <small>Local mikvah directory for the Five Towns and nearby area</small>
               </span>
             </button>
-            <div class="resource-drawer">
+            <div class="resource-drawer" id="mikvah-drawer" hidden>
               <div class="resource-grid mikvah-grid">
                 <article>
                   <h3>Cong. Mikvah South Shore</h3>
@@ -432,11 +523,16 @@
             Use Zelle for donations, balances, Kiddush, Seuda Shlishit, and other shul payments.
             Please include a short memo so the payment can be recorded correctly.
           </p>
+          <ul class="payment-list">
+            <li>Kiddush or Seuda Shlishit sponsorship</li>
+            <li>Membership balances and pledges</li>
+            <li>Dedications, donations, and general support</li>
+          </ul>
         </div>
         <div class="zelle-box">
           <span>Zelle</span>
           <strong>ksswoodmere@gmail.com</strong>
-          <p class="memo-examples">Memo examples: Kiddush, Seuda Shlishit, Balance, Donation</p>
+          <p class="memo-examples">Memo examples: Kiddush sponsor, Seuda Shlishit, Balance, Donation, Dedication name</p>
           <button class="copy-button" type="button" data-copy="ksswoodmere@gmail.com">Copy Email</button>
           <small id="copy-status" aria-live="polite"></small>
         </div>
@@ -447,7 +543,7 @@
           <div>
           <p class="eyebrow">Address</p>
           <h2>22 Andover Lane, Woodmere</h2>
-            <p>Use the rear entrance. For questions about times or events, email the shul.</p>
+            <p>Use the rear entrance. For questions about times, sponsorships, accessibility, or visiting for Shabbat, email the shul.</p>
           </div>
           <div class="visit-actions">
             <a class="button primary" href="mailto:ksswoodmere@gmail.com">Email the Shul</a>
@@ -458,7 +554,7 @@
           <div>
             <p class="eyebrow">Directions</p>
             <h3>22 Andover Lane</h3>
-            <p>Open directions in your preferred maps app. Use the rear entrance when arriving.</p>
+            <p>Open directions in your preferred maps app. Use the rear entrance when arriving, and allow extra time if this is your first visit.</p>
           </div>
           <a class="button primary" href="https://www.google.com/maps/dir/?api=1&destination=22%20Andover%20Lane%2C%20Woodmere%2C%20NY">
             Get Directions
@@ -471,14 +567,14 @@
       <div class="footer-grid">
         <div>
           <div class="footer-brand">
-            <img src="assets/shaare-shalom-logo-blue.png" alt="">
+            <img src="assets/shaare-shalom-logo-blue.png" alt="" width="510" height="470" loading="lazy">
             <strong>Kehilat Shaare Shalom</strong>
           </div>
           <p>A Sephardic Torah community in Woodmere, New York.</p>
         </div>
         <div>
           <h3>Visit Us</h3>
-          <p>22 Andover Lane<br>Woodmere, NY<br>Rear entrance</p>
+          <p>22 Andover Lane<br>Woodmere, NY 11598<br>Rear entrance</p>
         </div>
         <div>
           <h3>Connect</h3>

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test:parser": "node tests/bulletin-parser.test.js"
+    "test": "node tests/bulletin-parser.test.js && node tests/ui-static.test.js",
+    "test:parser": "node tests/bulletin-parser.test.js",
+    "test:ui": "node tests/ui-static.test.js"
   },
   "dependencies": {
     "pdf-parse": "^1.1.1"

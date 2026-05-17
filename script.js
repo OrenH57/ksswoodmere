@@ -1,5 +1,89 @@
 const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector(".site-nav");
+const brand = document.querySelector(".brand");
+const brandText = document.querySelector(".brand-text");
+const brandName = document.querySelector(".brand-name");
+const brandSubtitle = document.querySelector(".brand-subtitle");
+
+const brandTranslations = [
+  {
+    lang: "en",
+    dir: "ltr",
+    name: "Shaare Shalom",
+    subtitle: "Kehilat Shaare Shalom",
+    label: "Kehilat Shaare Shalom home",
+  },
+  {
+    lang: "he",
+    dir: "rtl",
+    name: "שערי שלום",
+    subtitle: "קהילת שערי שלום",
+    label: "דף הבית של קהילת שערי שלום",
+  },
+  {
+    lang: "ru",
+    dir: "ltr",
+    name: "Шааре Шалом",
+    subtitle: "Кеилат Шааре Шалом",
+    label: "Главная страница Кеилат Шааре Шалом",
+  },
+];
+
+brandTranslations[1] = {
+  lang: "he",
+  dir: "rtl",
+  name: "\u05e9\u05e2\u05e8\u05d9 \u05e9\u05dc\u05d5\u05dd",
+  subtitle: "\u05e7\u05d4\u05d9\u05dc\u05ea \u05e9\u05e2\u05e8\u05d9 \u05e9\u05dc\u05d5\u05dd",
+  label: "\u05d3\u05e3 \u05d4\u05d1\u05d9\u05ea \u05e9\u05dc \u05e7\u05d4\u05d9\u05dc\u05ea \u05e9\u05e2\u05e8\u05d9 \u05e9\u05dc\u05d5\u05dd",
+};
+
+brandTranslations[2] = {
+  lang: "ru",
+  dir: "ltr",
+  name: "\u0428\u0430\u0430\u0440\u0435 \u0428\u0430\u043b\u043e\u043c",
+  subtitle: "\u041a\u0435\u0438\u043b\u0430\u0442 \u0428\u0430\u0430\u0440\u0435 \u0428\u0430\u043b\u043e\u043c",
+  label: "\u0413\u043b\u0430\u0432\u043d\u0430\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u041a\u0435\u0438\u043b\u0430\u0442 \u0428\u0430\u0430\u0440\u0435 \u0428\u0430\u043b\u043e\u043c",
+};
+
+function rotateBrandLanguage() {
+  if (!brand || !brandText || !brandName || !brandSubtitle) return;
+
+  if (window.brandLanguageTimer) {
+    window.clearInterval(window.brandLanguageTimer);
+  }
+
+  function applyBrandTranslation(translation) {
+    brandName.textContent = translation.name;
+    brandSubtitle.textContent = translation.subtitle;
+    brandText.setAttribute("lang", translation.lang);
+    brandText.setAttribute("dir", translation.dir);
+    brand.setAttribute("aria-label", translation.label);
+  }
+
+  window.brandLanguageStartedAt = Date.now();
+  let activeIndex = -1;
+
+  function syncBrandLanguage() {
+    const nextIndex = Math.floor((Date.now() - window.brandLanguageStartedAt) / 3000) % brandTranslations.length;
+    if (nextIndex === activeIndex) return;
+
+    activeIndex = nextIndex;
+    const next = brandTranslations[activeIndex];
+    brandText.classList.add("is-changing");
+    window.setTimeout(() => {
+      applyBrandTranslation(next);
+      brandText.classList.remove("is-changing");
+    }, 180);
+  }
+
+  applyBrandTranslation(brandTranslations[0]);
+
+  window.brandLanguageTimer = window.setInterval(() => {
+    syncBrandLanguage();
+  }, 3000);
+}
+
+rotateBrandLanguage();
 
 const scrollProgress = document.createElement("div");
 scrollProgress.className = "scroll-progress";
@@ -50,6 +134,19 @@ const bulletinSource = document.querySelector("#bulletin-source");
 const scheduleSource = document.querySelector("#schedule-source");
 const regularScheduleList = document.querySelector("#regular-schedule-list");
 const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
+const thisWeekStatus = document.querySelector("#this-week-status");
+const thisWeekParsha = document.querySelector("#this-week-parsha");
+const thisWeekUpdated = document.querySelector("#this-week-updated");
+const askAiForm = document.querySelector("#ask-ai-form");
+const askAiInput = document.querySelector("#ask-ai-input");
+const askAiAnswer = document.querySelector("#ask-ai-answer");
+const askAiCostNote = document.querySelector("#ask-ai-cost-note");
+
+const defaultRegularSchedule = [
+  { label: "Monday-Friday Shacharit", time: "6:00 AM" },
+  { label: "Sunday Shacharit", time: "7:45 AM" },
+  { label: "Daily Mincha & Arvit", time: "7:15 PM" },
+];
 
 const zmanimLabels = [
   ["alotHaShachar", "Alot"],
@@ -137,21 +234,91 @@ function splitScheduleLabel(label) {
   };
 }
 
+function scheduleKeyForLabel(label) {
+  const normalized = String(label || "").toLowerCase();
+  if (normalized.includes("monday") || normalized.includes("mon-fri")) return "weekday-shacharit";
+  if (normalized.includes("sunday")) return "sunday-shacharit";
+  if (normalized.includes("mincha")) return "daily-mincha-arvit";
+  return "";
+}
+
+function parseScheduleTime(timeText) {
+  const match = String(timeText || "").match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return null;
+
+  let hour = Number(match[1]);
+  const minute = Number(match[2]);
+  const period = match[3].toUpperCase();
+  if (period === "PM" && hour !== 12) hour += 12;
+  if (period === "AM" && hour === 12) hour = 0;
+  return { hour, minute };
+}
+
+function buildMinyanSchedule(items) {
+  const schedule = [];
+
+  items.forEach((item) => {
+    const time = parseScheduleTime(item.time);
+    if (!time) return;
+    const key = scheduleKeyForLabel(item.label);
+    if (key === "weekday-shacharit") {
+      schedule.push({ label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], ...time });
+    }
+    if (key === "sunday-shacharit") {
+      schedule.push({ label: "Shacharit", detail: "Sunday", day: [0], ...time });
+    }
+    if (key === "daily-mincha-arvit") {
+      schedule.push({ label: "Mincha & Arvit", detail: "Daily", day: [0, 1, 2, 3, 4, 5, 6], ...time });
+    }
+  });
+
+  return schedule.length ? schedule : [
+    { label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], hour: 6, minute: 0 },
+    { label: "Shacharit", detail: "Sunday", day: [0], hour: 7, minute: 45 },
+    { label: "Mincha & Arvit", detail: "Daily", day: [0, 1, 2, 3, 4, 5, 6], hour: 19, minute: 15 },
+  ];
+}
+
+let minyanSchedule = buildMinyanSchedule(defaultRegularSchedule);
+
+function refreshNextMinyan() {
+  const nextMinyan = document.querySelector("#next-minyan");
+  if (nextMinyan) nextMinyan.textContent = nextMinyanText();
+}
+
+function updateScheduleValues(items) {
+  if (!Array.isArray(items) || !items.length) return;
+
+  items.forEach((item) => {
+    const key = scheduleKeyForLabel(item.label);
+    if (!key) return;
+    document.querySelectorAll(`[data-schedule-key="${key}"]`).forEach((value) => {
+      value.textContent = item.time;
+    });
+  });
+
+  minyanSchedule = buildMinyanSchedule(items);
+  refreshNextMinyan();
+}
+
 function renderRegularSchedule(items) {
   if (!regularScheduleList || !Array.isArray(items) || !items.length) return;
 
   regularScheduleList.innerHTML = items
     .map((item) => {
       const split = splitScheduleLabel(item.label);
+      const key = scheduleKeyForLabel(item.label);
       return `
         <article>
           <p>${escapeHtml(split.context)}</p>
           <h3>${escapeHtml(split.name)}</h3>
-          <strong>${escapeHtml(item.time)}</strong>
+          <strong${key ? ` data-schedule-key="${escapeHtml(key)}"` : ""}>${escapeHtml(item.time)}</strong>
         </article>
       `;
     })
     .join("");
+
+  updateScheduleValues(items);
 }
 
 function renderTimeTable(title, items) {
@@ -191,18 +358,7 @@ function renderShabbatSchedule(shabbat) {
 }
 
 function updateFastInfoFromBulletin(items) {
-  if (!Array.isArray(items) || !items.length) return;
-
-  const lookup = new Map(items.map((item) => [item.label.toLowerCase(), item.time]));
-  document.querySelectorAll(".quick-times div, .fast-info-grid article:first-child dl div").forEach((row) => {
-    const label = row.querySelector("span, dt")?.textContent?.toLowerCase() || "";
-    const value = row.querySelector("strong, dd");
-    if (!value) return;
-
-    if (label.includes("monday") || label.includes("mon-fri")) value.textContent = lookup.get("monday-friday shacharit") || value.textContent;
-    if (label.includes("sunday")) value.textContent = lookup.get("sunday shacharit") || value.textContent;
-    if (label.includes("mincha")) value.textContent = lookup.get("daily mincha & arvit") || value.textContent;
-  });
+  updateScheduleValues(items);
 }
 
 function describeBulletinSource(data) {
@@ -218,9 +374,22 @@ function describeBulletinSource(data) {
   return date ? `${source} - updated ${date}` : source;
 }
 
+function setWeeklyStatus(message) {
+  if (thisWeekStatus) thisWeekStatus.textContent = message;
+}
+
+function setWeeklyUpdated(message) {
+  if (thisWeekUpdated) thisWeekUpdated.textContent = message;
+}
+
 async function loadBulletinSchedule() {
   if (isFilePreview) {
-    if (bulletinStatus) bulletinStatus.textContent = "Available when hosted";
+    renderRegularSchedule(defaultRegularSchedule);
+    if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
+    if (bulletinSource) bulletinSource.textContent = "Preview mode";
+    if (scheduleSource) scheduleSource.textContent = "Preview mode - live bulletin loads when hosted";
+    setWeeklyStatus("Preview mode: live bulletin and weekly zmanim load when the site is hosted.");
+    setWeeklyUpdated("Preview mode");
     return false;
   }
 
@@ -237,14 +406,73 @@ async function loadBulletinSchedule() {
     if (bulletinStatus) bulletinStatus.textContent = "Updated from bulletin";
     if (bulletinSource) bulletinSource.textContent = sourceText;
     if (scheduleSource) scheduleSource.textContent = sourceText;
+    if (thisWeekParsha && data.notes?.parsha) thisWeekParsha.textContent = data.notes.parsha;
+    setWeeklyStatus("Weekly schedule loaded from the latest bulletin.");
+    setWeeklyUpdated(sourceText);
     return true;
   } catch {
-    if (bulletinStatus) bulletinStatus.textContent = "Using schedule";
-    if (bulletinSource) bulletinSource.textContent = "";
-    if (scheduleSource) scheduleSource.textContent = "";
+    renderRegularSchedule(defaultRegularSchedule);
+    if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
+    if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
+    if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
+    setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below, and weekly zmanim will be filled from Hebcal when available.");
+    setWeeklyUpdated("Using regular schedule");
     return false;
   }
 }
+
+function setAskAiAnswer(message, state = "") {
+  if (!askAiAnswer) return;
+  askAiAnswer.dataset.state = state;
+  askAiAnswer.innerHTML = `<p>${escapeHtml(message)}</p>`;
+}
+
+askAiForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!askAiInput || !askAiAnswer) return;
+
+  const question = askAiInput.value.trim();
+  if (!question) {
+    setAskAiAnswer("Type a question about the weekly bulletin first.", "error");
+    askAiInput.focus();
+    return;
+  }
+
+  const submitButton = askAiForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  setAskAiAnswer("Checking the weekly bulletin...", "loading");
+
+  if (isFilePreview) {
+    setAskAiAnswer("The Ask AI box needs the hosted site so it can read the live bulletin API.", "error");
+    submitButton.disabled = false;
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/ask-ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ question }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Ask AI request failed");
+
+    setAskAiAnswer(data.answer || "I could not find an answer in the bulletin.", data.mode || "");
+    if (askAiCostNote) {
+      askAiCostNote.textContent =
+        data.mode === "ai"
+          ? "Answered by AI using the weekly bulletin."
+          : "Answered by bulletin search. Add an OpenAI API key for fuller AI responses.";
+    }
+  } catch {
+    setAskAiAnswer("I could not reach the bulletin answer service. Please try again or email the shul.", "error");
+  } finally {
+    submitButton.disabled = false;
+  }
+});
 
 function nextDateForDay(dayNumber) {
   const date = new Date();
@@ -324,12 +552,6 @@ async function initializeSchedule() {
 
 initializeSchedule();
 
-const minyanSchedule = [
-  { label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], hour: 6, minute: 0 },
-  { label: "Shacharit", detail: "Sunday", day: [0], hour: 7, minute: 45 },
-  { label: "Mincha & Arvit", detail: "Daily", day: [0, 1, 2, 3, 4, 5, 6], hour: 19, minute: 15 },
-];
-
 function nextMinyanText() {
   const now = new Date();
   const candidates = [];
@@ -368,36 +590,62 @@ function nextMinyanText() {
 const nextMinyan = document.querySelector("#next-minyan");
 if (nextMinyan) nextMinyan.textContent = nextMinyanText();
 
-document.querySelectorAll(".tab-button").forEach((button) => {
-  button.addEventListener("click", () => {
-    const tab = button.getAttribute("data-tab");
-    document.querySelectorAll(".tab-button").forEach((item) => {
-      const isActive = item === button;
-      item.classList.toggle("is-active", isActive);
-      item.setAttribute("aria-selected", String(isActive));
-    });
+const tabButtons = [...document.querySelectorAll(".tab-button")];
 
-    document.querySelectorAll(".tab-panel").forEach((panel) => {
-      panel.classList.toggle("is-active", panel.getAttribute("data-panel") === tab);
-    });
+function activateTab(button, shouldFocus = false) {
+  const tab = button.getAttribute("data-tab");
+  tabButtons.forEach((item) => {
+    const isActive = item === button;
+    item.classList.toggle("is-active", isActive);
+    item.setAttribute("aria-selected", String(isActive));
+    item.tabIndex = isActive ? 0 : -1;
+  });
+
+  document.querySelectorAll(".tab-panel").forEach((panel) => {
+    const isActive = panel.getAttribute("data-panel") === tab;
+    panel.classList.toggle("is-active", isActive);
+    panel.hidden = !isActive;
+  });
+
+  if (shouldFocus) button.focus();
+}
+
+tabButtons.forEach((button, index) => {
+  button.addEventListener("click", () => activateTab(button));
+  button.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+
+    let nextIndex = index;
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % tabButtons.length;
+    if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = tabButtons.length - 1;
+    activateTab(tabButtons[nextIndex], true);
   });
 });
 
 document.querySelectorAll(".faq-question").forEach((button) => {
   button.addEventListener("click", () => {
-    button.closest("article")?.classList.toggle("is-open");
+    const item = button.closest("article");
+    const answer = item?.querySelector(".faq-answer");
+    const isOpen = item?.classList.toggle("is-open") || false;
+    button.setAttribute("aria-expanded", String(isOpen));
+    if (answer) answer.hidden = !isOpen;
   });
 });
 
 document.querySelectorAll(".resource-toggle").forEach((button) => {
   button.addEventListener("click", () => {
     const item = button.closest("article");
+    const drawer = item?.querySelector(".resource-drawer");
     const isOpen = item?.classList.toggle("is-open") || false;
     button.setAttribute("aria-expanded", String(isOpen));
+    if (drawer) drawer.hidden = !isOpen;
   });
 });
 
-const revealItems = document.querySelectorAll(".section, .pillars, .photo-strip, .rabbi-section, .visit-section");
+const revealItems = document.querySelectorAll(".section, .this-week, .ask-ai-section, .pillars, .photo-strip, .rabbi-section, .visit-section");
 revealItems.forEach((item) => item.classList.add("reveal"));
 
 if ("IntersectionObserver" in window) {
