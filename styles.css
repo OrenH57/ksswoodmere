@@ -405,6 +405,10 @@ h3 {
   font-size: 0.9rem;
 }
 
+.fine-print:empty {
+  display: none;
+}
+
 .image-card {
   margin: 0;
   overflow: hidden;
@@ -429,8 +433,8 @@ h3 {
 }
 
 .hero-photo img {
-  height: 240px;
-  object-position: center 28%;
+  height: 300px;
+  object-position: center 58%;
 }
 
 .community-photo img {
@@ -617,6 +621,10 @@ h3 {
 .bulletin-note strong {
   color: var(--ink);
   font-size: 0.98rem;
+}
+
+.bulletin-note:has(strong:empty) {
+  display: none;
 }
 
 .tab-button {
@@ -1401,7 +1409,7 @@ h3 {
   }
 
   .hero-photo img {
-    height: 300px;
+    height: 360px;
   }
 
   .quick-card {

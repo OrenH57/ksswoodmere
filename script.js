@@ -240,8 +240,8 @@ async function loadBulletinSchedule() {
     return true;
   } catch {
     if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
-    if (bulletinSource) bulletinSource.textContent = "Weekly bulletin schedule will load after Vercel setup.";
-    if (scheduleSource) scheduleSource.textContent = "Using regular schedule until Google Drive bulletin setup is connected.";
+    if (bulletinSource) bulletinSource.textContent = "";
+    if (scheduleSource) scheduleSource.textContent = "";
     return false;
   }
 }
