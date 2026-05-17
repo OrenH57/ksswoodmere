@@ -193,7 +193,7 @@ h3 {
   width: 360px;
   height: 330px;
   content: "";
-  background: url("assets/shaare-shalom-logo.png") center / contain no-repeat;
+  background: url("assets/shaare-shalom-logo-blue.png") center / contain no-repeat;
   opacity: 0.035;
 }
 
@@ -1167,7 +1167,9 @@ h3 {
   }
 
   .schedule-tabs {
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
   }
 
   .zmanim-list,
