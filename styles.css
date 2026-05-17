@@ -93,7 +93,10 @@ h3 {
 
 .brand-text {
   display: block;
-  min-width: 168px;
+  width: 168px;
+  min-width: 0;
+  max-width: 168px;
+  overflow: hidden;
 }
 
 .brand-mark {
@@ -110,6 +113,9 @@ h3 {
 .brand-name,
 .brand-subtitle {
   display: block;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
@@ -132,8 +138,18 @@ h3 {
   font-size: 0.72rem;
 }
 
-.brand-text[dir="rtl"] {
-  text-align: right;
+.brand-text[dir="rtl"],
+.brand-text[lang="he"] {
+  text-align: left;
+}
+
+.brand-text[lang="he"] .brand-name {
+  font-size: 0.98rem;
+}
+
+.brand-text[lang="he"] .brand-subtitle,
+.brand-text[lang="ru"] .brand-subtitle {
+  font-size: 0.68rem;
 }
 
 .nav-toggle {
@@ -227,6 +243,9 @@ h3 {
 .hero-logo {
   display: block;
   width: 88px;
+  height: 81px;
+  aspect-ratio: 510 / 470;
+  object-fit: contain;
   margin: 0 auto 10px;
 }
 
