@@ -128,7 +128,7 @@ function splitScheduleLabel(label) {
   const match = normalized.match(/^(Sunday|Monday-Friday|Mon-Fri|Daily)\s+(.+)$/i);
 
   if (!match) {
-    return { context: "Regular", name: normalized };
+    return { context: "Schedule", name: normalized };
   }
 
   return {
@@ -239,7 +239,7 @@ async function loadBulletinSchedule() {
     if (scheduleSource) scheduleSource.textContent = sourceText;
     return true;
   } catch {
-    if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
+    if (bulletinStatus) bulletinStatus.textContent = "Using schedule";
     if (bulletinSource) bulletinSource.textContent = "";
     if (scheduleSource) scheduleSource.textContent = "";
     return false;
