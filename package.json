@@ -1,0 +1,11 @@
+{
+  "name": "kehilat-shaare-shalom-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:parser": "node tests/bulletin-parser.test.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1"
+  }
+}
