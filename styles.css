@@ -1005,36 +1005,24 @@ h3 {
   padding: 26px;
 }
 
-.map-panel {
-  height: 260px;
+.directions-panel {
+  display: grid;
+  gap: 18px;
   max-width: var(--max);
   margin: 18px auto 0;
-  overflow: hidden;
+  padding: 24px 26px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--sky);
+  background: #fffdf8;
 }
 
-.map-panel iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
+.directions-panel h3,
+.directions-panel p {
+  margin-bottom: 0;
 }
 
-.map-fallback {
-  display: grid;
-  height: 100%;
-  place-items: center;
-  padding: 28px;
-  color: var(--ink);
-  text-align: center;
-}
-
-.map-fallback a {
-  color: var(--blue);
-  font-weight: 850;
-  text-underline-offset: 4px;
+.directions-panel p:not(.eyebrow) {
+  color: var(--muted);
 }
 
 .site-footer {
@@ -1243,8 +1231,9 @@ h3 {
     justify-content: space-between;
   }
 
-  .map-panel {
-    height: 320px;
+  .directions-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
   }
 }
 

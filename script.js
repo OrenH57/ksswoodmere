@@ -324,25 +324,6 @@ async function initializeSchedule() {
 
 initializeSchedule();
 
-const mapFrame = document.querySelector(".map-panel iframe");
-if (mapFrame) {
-  const mapSrc = mapFrame.getAttribute("data-map-src");
-
-  if (isFilePreview) {
-    mapFrame.parentElement.innerHTML = `
-      <div class="map-fallback">
-        <div>
-          <strong>Map preview loads when the site is hosted.</strong>
-          <p>For now, use the map link above for directions to 22 Andover Lane.</p>
-          <a href="https://www.google.com/maps/search/?api=1&query=22%20Andover%20Lane%20Woodmere%20NY">Open Map</a>
-        </div>
-      </div>
-    `;
-  } else if (mapSrc) {
-    mapFrame.setAttribute("src", mapSrc);
-  }
-}
-
 const minyanSchedule = [
   { label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], hour: 6, minute: 0 },
   { label: "Shacharit", detail: "Sunday", day: [0], hour: 7, minute: 45 },
