@@ -407,12 +407,12 @@ async function loadBulletinSchedule() {
     return true;
   } catch {
     renderRegularSchedule(defaultRegularSchedule);
-    if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
-    if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
-    if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
-    setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below, and weekly zmanim will be filled from Hebcal when available.");
-    setWeeklyUpdated("Using regular schedule");
-    return false;
+    if (bulletinStatus) bulletinStatus.textContent = "Schedule";
+   // if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
+   // if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
+   // setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below, and weekly zmanim will be filled from Hebcal when available.");
+   // setWeeklyUpdated("Using regular schedule");
+   // return false;
   }
 }
 
