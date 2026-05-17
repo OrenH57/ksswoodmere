@@ -587,7 +587,7 @@ document.querySelectorAll(".resource-toggle").forEach((button) => {
   });
 });
 
-const revealItems = document.querySelectorAll(".section, .this-week, .ask-ai-section, .pillars, .photo-strip, .rabbi-section, .visit-section");
+const revealItems = document.querySelectorAll(".section, .this-week, .pillars, .photo-strip, .rabbi-section, .visit-section");
 revealItems.forEach((item) => item.classList.add("reveal"));
 
 if ("IntersectionObserver" in window) {

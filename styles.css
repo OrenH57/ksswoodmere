@@ -345,9 +345,7 @@ h3 {
 .tab-button:focus-visible,
 .faq-question:focus-visible,
 .resource-toggle:focus-visible,
-.site-nav a:focus-visible,
-.ask-ai-box input:focus-visible,
-.ask-ai-box button:focus-visible {
+.site-nav a:focus-visible {
   outline: 3px solid rgba(185, 150, 85, 0.45);
   outline-offset: 3px;
 }
@@ -355,7 +353,6 @@ h3 {
 .quick-card,
 .pillars article,
 .this-week,
-.ask-ai-box,
 .schedule-list article,
 .zmanim-panel,
 .resource-grid article,
@@ -371,7 +368,6 @@ h3 {
 .quick-card:hover,
 .pillars article:hover,
 .this-week:hover,
-.ask-ai-box:hover,
 .schedule-list article:hover,
 .time-table:hover,
 .resource-grid article:hover,
@@ -450,94 +446,6 @@ h3 {
   display: none;
 }
 
-.ask-ai-section {
-  display: grid;
-  max-width: var(--max);
-  margin: 0 auto 32px;
-  padding: 10px 18px 20px;
-  gap: 18px;
-}
-
-.ask-ai-copy {
-  max-width: 620px;
-}
-
-.ask-ai-copy p:not(.eyebrow) {
-  margin-bottom: 0;
-  color: var(--muted);
-}
-
-.ask-ai-box {
-  display: grid;
-  gap: 12px;
-  padding: 20px;
-  border-top: 4px solid var(--gold);
-}
-
-.ask-ai-box label {
-  color: var(--ink);
-  font-size: 0.9rem;
-  font-weight: 850;
-}
-
-.ask-ai-row {
-  display: grid;
-  gap: 10px;
-}
-
-.ask-ai-box input,
-.ask-ai-box button {
-  min-height: 44px;
-  border-radius: var(--radius);
-  font: inherit;
-}
-
-.ask-ai-box input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  color: var(--ink);
-}
-
-.ask-ai-box button {
-  padding: 10px 18px;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 850;
-  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
-}
-
-.ask-ai-box button:hover {
-  transform: translateY(-1px);
-}
-
-.ask-ai-box button:disabled {
-  cursor: wait;
-  opacity: 0.68;
-  transform: none;
-}
-
-.ask-ai-hint {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.ask-ai-answer {
-  min-height: 92px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--sky);
-  color: var(--ink);
-  white-space: pre-wrap;
-}
-
-.ask-ai-answer p {
-  margin-bottom: 0;
-}
 
 .image-card {
   margin: 0;
