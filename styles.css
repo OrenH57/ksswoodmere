@@ -13,9 +13,28 @@
   --shadow-hover: 0 14px 34px rgba(10, 49, 71, 0.12);
   --radius: 8px;
   --max: 1120px;
-  --font-main: "Liberation Serif", "DejaVu Serif", Georgia, "Times New Roman", serif;
+  --font-main: "DM Sans", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
   color-scheme: light;
 }
+
+
+
+/* Hero entrance */
+.hero-copy > * {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: hero-enter 600ms ease forwards;
+}
+.hero-copy > *:nth-child(1) { animation-delay: 80ms; }
+.hero-copy > *:nth-child(2) { animation-delay: 200ms; }
+.hero-copy > *:nth-child(3) { animation-delay: 320ms; }
+.hero-copy > *:nth-child(4) { animation-delay: 440ms; }
+.hero-copy > *:nth-child(5) { animation-delay: 560ms; }
+@keyframes hero-enter {
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 * {
   box-sizing: border-box;
@@ -32,6 +51,7 @@ body {
   background: #fff;
   color: var(--ink);
   font-family: var(--font-main);
+  font-weight: 300;
   line-height: 1.6;
 }
 
@@ -47,19 +67,24 @@ p {
 }
 
 h1,
-h2 {
-  font-weight: 700;
-  line-height: 1.08;
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0;
 }
 
 h1 {
   margin-bottom: 12px;
-  font-size: clamp(2.45rem, 11.5vw, 3.35rem);
+  font-size: clamp(2.8rem, 12vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 h2 {
   margin-bottom: 14px;
-  font-size: clamp(1.85rem, 9vw, 2.35rem);
+  font-size: clamp(1.7rem, 7vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.08;
 }
 
 h3 {
@@ -67,6 +92,27 @@ h3 {
   color: var(--ink);
   font-size: 1.15rem;
   line-height: 1.25;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1.5rem 0;
+}
+
+.section-divider span:not(.diamond) {
+  flex: 1;
+  height: 1px;
+  background: #e8d9b8;
+}
+
+.section-divider .diamond {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
 }
 
 .site-header {
@@ -193,8 +239,12 @@ h3 {
 }
 
 .site-nav a {
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
   padding: 12px;
   text-decoration: none;
+  text-transform: uppercase;
 }
 
 .site-nav a:hover {
@@ -278,10 +328,19 @@ h3 {
 .pillars span,
 .program-list span,
 .zelle-box span {
+  font-family: var(--font-main);
   color: var(--gold-dark);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 850;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.section-intro > .eyebrow,
+.zmanim-panel .eyebrow,
+.give-section .eyebrow,
+.visit-panel .eyebrow {
+  display: none;
 }
 
 .hero-details {
@@ -434,6 +493,9 @@ h3 {
 }
 
 .quick-times strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -663,19 +725,50 @@ h3 {
 }
 
 .section {
+  position: relative;
   max-width: var(--max);
   margin: 0 auto;
-  padding: 52px 18px;
+  padding: 64px 18px;
+}
+
+.section + .section {
+  border-top: 1px solid rgba(216, 222, 227, 0.88);
+}
+
+.split-section,
+.sponsors-section,
+.give-section {
+  background: #fff;
+}
+
+.visit-preview,
+.resources-section,
+.visit-section {
+  max-width: none;
+  background: var(--sage);
+}
+
+.visit-preview > *,
+.resources-section > *,
+.visit-section > * {
+  max-width: var(--max);
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .section-intro {
   max-width: 730px;
-  margin-bottom: 28px;
+  margin-right: auto;
+  margin-bottom: 34px;
+  margin-left: auto;
+  text-align: center;
 }
 
 .schedule-section {
   max-width: none;
   background: var(--sky);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .schedule-section > * {
@@ -684,15 +777,22 @@ h3 {
   margin-left: auto;
 }
 
+.schedule-section .section-intro {
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
 .schedule-tabs {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 6px;
+  gap: 0;
   margin-bottom: 22px;
   padding: 5px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
+  overflow: hidden;
 }
 
 .bulletin-note {
@@ -732,6 +832,10 @@ h3 {
   font: inherit;
   font-size: 0.98rem;
   font-weight: 800;
+}
+
+.tab-button + .tab-button {
+  border-top: 1px solid var(--line);
 }
 
 .tab-button.is-active {
@@ -809,7 +913,9 @@ h3 {
 
 .time-table dd {
   color: var(--ink);
-  font-weight: 850;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -832,8 +938,18 @@ h3 {
   display: block;
   margin-top: 18px;
   color: var(--blue);
-  font-size: 1.75rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
   line-height: 1;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 360ms ease, transform 360ms ease;
+}
+
+.schedule-list strong.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .schedule-source {
@@ -908,6 +1024,8 @@ h3 {
   max-width: none;
   background: var(--ink);
   color: #fff;
+  border-top: 1px solid rgba(10, 49, 71, 0.18);
+  border-bottom: 1px solid rgba(10, 49, 71, 0.18);
 }
 
 .community-section > * {
@@ -949,10 +1067,6 @@ h3 {
 
 .community-grid p {
   color: #d9e8ee;
-}
-
-.resources-section {
-  background: var(--paper);
 }
 
 .resource-grid-main {
@@ -1080,10 +1194,6 @@ h3 {
   font-size: 0.95rem;
 }
 
-.visit-preview {
-  background: #fff;
-}
-
 .faq-list {
   display: grid;
   max-width: 860px;
@@ -1132,15 +1242,15 @@ h3 {
 }
 
 .visit-section {
-  padding: 38px 18px 56px;
-  background: var(--paper);
+  padding: 64px 18px 72px;
+  border-top: 1px solid var(--line);
 }
 
 .visit-panel {
   display: grid;
   gap: 24px;
-  max-width: var(--max);
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 26px;
 }
 
@@ -1246,6 +1356,12 @@ h3 {
     transition: none;
   }
 
+  .schedule-list strong {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .tab-panel.is-active {
     animation: none;
   }
@@ -1304,6 +1420,11 @@ h3 {
     max-width: 100%;
   }
 
+  .tab-button + .tab-button {
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+
   .zmanim-list,
   .resource-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1334,11 +1455,11 @@ h3 {
 
 @media (min-width: 720px) {
   h1 {
-    font-size: clamp(4rem, 9vw, 5.1rem);
+    font-size: clamp(2.8rem, 12vw, 4.2rem);
   }
 
   h2 {
-    font-size: clamp(2rem, 5vw, 2.85rem);
+    font-size: clamp(1.7rem, 7vw, 2.4rem);
   }
 
   .hero,
@@ -1434,7 +1555,7 @@ h3 {
     border: 0;
     background: transparent;
     box-shadow: none;
-    font-size: 0.94rem;
+    font-size: 0.78rem;
   }
 
   .site-nav a {
@@ -1517,8 +1638,8 @@ h3 {
   }
 
   .section {
-    padding-top: 68px;
-    padding-bottom: 72px;
+    padding-top: 84px;
+    padding-bottom: 88px;
   }
 
   .schedule-list {
@@ -1571,7 +1692,7 @@ h3 {
 
 @media (min-width: 1100px) {
   h1 {
-    font-size: clamp(4.1rem, 5.4vw, 4.95rem);
+    font-size: clamp(2.8rem, 12vw, 4.2rem);
   }
 
   .hero {
@@ -1629,6 +1750,6 @@ h3 {
   }
 
   .time-table dd {
-    font-size: 1.12rem;
+    font-size: 1.3rem;
   }
 }

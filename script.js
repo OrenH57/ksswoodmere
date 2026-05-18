@@ -607,3 +607,21 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
+/* Staggered time reveal when schedule scrolls into view */
+if ('IntersectionObserver' in window) {
+  const timeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.querySelectorAll('.schedule-list article strong').forEach((el, i) => {
+        setTimeout(() => el.classList.add('is-visible'), i * 160);
+      });
+      timeObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.tab-panel').forEach(p => timeObserver.observe(p));
+} else {
+  document.querySelectorAll('.schedule-list article strong').forEach((el) => {
+    el.classList.add('is-visible');
+  });
+}
