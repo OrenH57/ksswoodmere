@@ -416,6 +416,50 @@ h3 {
   font-weight: 700;
 }
 
+.this-week {
+  display: grid;
+  gap: 1rem;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1.15rem clamp(1.35rem, 4vw, 2.4rem);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+
+.this-week h2 {
+  margin: 0.35rem 0;
+  font-size: clamp(1.85rem, 8vw, 2.65rem);
+  line-height: 1;
+}
+
+.this-week-copy p:not(.eyebrow) {
+  margin: 0 auto;
+  color: var(--muted);
+}
+
+.this-week-details {
+  display: grid;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.this-week-details span {
+  display: block;
+  color: var(--gold-dark);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.this-week-details strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
 .section,
 .visit-section {
   max-width: none;

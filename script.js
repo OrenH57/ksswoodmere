@@ -452,6 +452,17 @@ function setWeeklyUpdated(message) {
   if (thisWeekUpdated) thisWeekUpdated.textContent = message;
 }
 
+function setParshaText(parsha) {
+  const normalized = String(parsha || "")
+    .replace(/^Parashat\b/i, "")
+    .replace(/^Parshat\b/i, "")
+    .trim();
+  if (!normalized) return;
+
+  if (weeklyParsha) weeklyParsha.textContent = `Parshat ${normalized}`;
+  if (thisWeekParsha) thisWeekParsha.textContent = normalized;
+}
+
 async function loadBulletinSchedule() {
   if (isFilePreview) {
     renderRegularSchedule(defaultRegularSchedule);
@@ -476,18 +487,18 @@ async function loadBulletinSchedule() {
     if (bulletinStatus) bulletinStatus.textContent = "Updated from bulletin";
     if (bulletinSource) bulletinSource.textContent = sourceText;
     if (scheduleSource) scheduleSource.textContent = sourceText;
-    if (thisWeekParsha && data.notes?.parsha) thisWeekParsha.textContent = data.notes.parsha;
+    setParshaText(data.notes?.parsha);
     setWeeklyStatus("Weekly schedule loaded from the latest bulletin.");
     setWeeklyUpdated(sourceText);
     return true;
   } catch {
     renderRegularSchedule(defaultRegularSchedule);
     if (bulletinStatus) bulletinStatus.textContent = "Schedule";
-   // if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
-   // if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
-   // setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below, and weekly zmanim will be filled from Hebcal when available.");
-   // setWeeklyUpdated("Using regular schedule");
-   // return false;
+    if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
+    if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
+    setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below.");
+    setWeeklyUpdated("Using regular schedule");
+    return false;
   }
 }
 

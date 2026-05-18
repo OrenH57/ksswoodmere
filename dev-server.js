@@ -1,6 +1,7 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
+const { loadBundledBulletin } = require("./lib/bundled-bulletin");
 
 const root = __dirname;
 const host = "127.0.0.1";
@@ -29,6 +30,23 @@ function safePath(urlPath) {
 }
 
 const server = http.createServer((request, response) => {
+  const urlPath = (request.url || "/").split("?")[0];
+
+  if (urlPath === "/api/bulletin") {
+    if (request.method !== "GET") {
+      send(response, 405, { "Content-Type": "application/json; charset=utf-8", Allow: "GET" }, JSON.stringify({ error: "Method not allowed" }));
+      return;
+    }
+
+    send(
+      response,
+      200,
+      { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+      JSON.stringify(loadBundledBulletin())
+    );
+    return;
+  }
+
   const filePath = safePath(request.url || "/");
   if (!filePath) {
     send(response, 403, { "Content-Type": "text/plain; charset=utf-8" }, "Forbidden");
