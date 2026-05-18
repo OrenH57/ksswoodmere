@@ -137,6 +137,9 @@ const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
 const thisWeekStatus = document.querySelector("#this-week-status");
 const thisWeekParsha = document.querySelector("#this-week-parsha");
 const thisWeekUpdated = document.querySelector("#this-week-updated");
+const weeklyParsha = document.querySelector("#weekly-parsha");
+const bsdText = document.querySelector("#bsd-text");
+const englishDate = document.querySelector("#english-date");
 const defaultRegularSchedule = [
   { label: "Monday-Friday Shacharit", time: "6:00 AM" },
   { label: "Sunday Shacharit", time: "7:45 AM" },
@@ -165,6 +168,78 @@ function formatZman(value) {
     timeZone: "America/New_York",
   }).format(date);
 }
+
+function nextWeekdayDate(dayNumber) {
+  const date = new Date();
+  const daysUntil = (dayNumber - date.getDay() + 7) % 7;
+  date.setDate(date.getDate() + daysUntil);
+  return date;
+}
+
+function formatEnglishShortDate(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York",
+  }).format(date);
+}
+
+function formatEnglishDateRange(startDate, endDate) {
+  const start = formatEnglishShortDate(startDate);
+  const end = formatEnglishShortDate(endDate);
+  const startMonth = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    timeZone: "America/New_York",
+  }).format(startDate);
+  const endMonth = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    timeZone: "America/New_York",
+  }).format(endDate);
+  const endDay = new Intl.DateTimeFormat("en-US", {
+    day: "numeric",
+    timeZone: "America/New_York",
+  }).format(endDate);
+
+  return startMonth === endMonth ? `${start}-${endDay}` : `${start}-${end}`;
+}
+
+function setLiveDatesFallback() {
+  const now = new Date();
+  const friday = nextWeekdayDate(5);
+  const shabbat = new Date(friday);
+  shabbat.setDate(friday.getDate() + 1);
+
+  if (bsdText) bsdText.textContent = "\u05d1\u05e1\u05f4\u05d3";
+
+  if (englishDate) {
+    englishDate.textContent = formatEnglishDateRange(friday, shabbat);
+  }
+}
+
+async function loadWeeklyHeader() {
+  setLiveDatesFallback();
+
+  try {
+    const response = await fetch("https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on");
+    if (!response.ok) throw new Error("Weekly header request failed");
+    const data = await response.json();
+    const parsha = data.items?.find((item) => item.category === "parashat");
+    const candles = data.items?.find((item) => item.category === "candles");
+    const havdalah = data.items?.find((item) => item.category === "havdalah");
+
+    if (weeklyParsha && parsha?.title) {
+      weeklyParsha.textContent = parsha.title.replace(/^Parashat\b/, "Parshat");
+    }
+
+    if (englishDate && candles?.date && havdalah?.date) {
+      englishDate.textContent = formatEnglishDateRange(new Date(candles.date), new Date(havdalah.date));
+    }
+  } catch {
+    if (weeklyParsha) weeklyParsha.textContent = "Parsha updates weekly";
+  }
+}
+
+loadWeeklyHeader();
 
 async function loadZmanim() {
   if (!zmanimList || !zmanimStatus) return;

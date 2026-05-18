@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=final-polish-2">
+    <link rel="stylesheet" href="styles.css?v=editorial-4">
   </head>
   <body>
     <header class="site-header">
@@ -39,21 +39,35 @@
       </nav>
     </header>
 
-    <main id="top">
+    <main id="top" class="editorial-page">
+      <section class="masthead" aria-labelledby="masthead-title">
+        <div class="masthead-name" id="masthead-title">Kehilat Shaare Shalom</div>
+        <div class="masthead-sub">
+          <span></span>
+          <em>HaRav David Rubinoff, Shlita &middot; 22 Andover Lane, Woodmere</em>
+          <span></span>
+        </div>
+        <div class="masthead-live" aria-label="Weekly bulletin">
+          <span id="bsd-text">&#x05D1;&#x05E1;&#x05F4;&#x05D3;</span>
+          <strong id="weekly-parsha">Parsha loading</strong>
+          <span id="english-date">English date</span>
+        </div>
+      </section>
+
       <section class="hero">
         <div class="hero-copy">
           <img class="hero-logo" src="assets/shaare-shalom-logo-blue.png" alt="Shaare Shalom tree and Star of David emblem">
           <p class="bs">בס״ד</p>
-          <h1>Kehilat Shaare Shalom</h1>
+          <p class="hero-kicker">Sephardic Synagogue &middot; Daily Minyanim</p>
+          <h1>Torah &amp;<br><em>Tefillah</em><br>in Woodmere</h1>
           <div class="section-divider" aria-hidden="true">
             <span></span><span class="diamond"></span><span></span>
           </div>
           <p>
-            Daily prayer, Torah learning, Shabbat meals, and a welcoming place for families, guests,
-            and anyone looking for a steady community.
+            Daily minyanim, Shabbat learning, and a warm community for families and guests in the Five Towns.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#schedule">View Minyan Times</a>
+            <a class="button primary" href="#schedule">Minyan Times</a>
             <a class="button secondary" href="#visit">Plan a Visit</a>
           </div>
         </div>
@@ -86,16 +100,12 @@
 
       <section class="status-strip" aria-label="Quick synagogue information">
         <div>
-          <span>Location</span>
+          <span>Address</span>
           <strong>22 Andover Lane · Rear entrance</strong>
         </div>
         <div>
-          <span>Next Regular Minyan</span>
+          <span>Next Minyan</span>
           <strong id="next-minyan">Calculating...</strong>
-        </div>
-        <div>
-          <span>Contact</span>
-          <strong>ksswoodmere@gmail.com</strong>
         </div>
       </section>
 
@@ -113,7 +123,7 @@
         </div>
 
         <div class="tab-panel is-active" data-panel="regular">
-        <div class="schedule-list">
+        <div class="schedule-list" id="regular-schedule-list">
           <article>
             <p>Monday-Friday</p>
             <h3>Shacharit</h3>
@@ -133,7 +143,7 @@
         </div>
 
         <div class="tab-panel" data-panel="shabbat">
-          <div class="schedule-list">
+          <div class="schedule-list" id="shabbat-schedule-grid">
             <article>
               <p>Shabbat Morning</p>
               <h3>Ben Ish Hai Class</h3>
@@ -172,7 +182,7 @@
       <section id="learning" class="section split-section">
         <div class="section-intro">
           <p class="eyebrow">Torah Learning</p>
-          <h2>Learning That Brings the Community Together</h2>
+          <h2>Learning</h2>
           <p>
             Weekly learning is part of the rhythm of Shaare Shalom: Torah, conversation,
             and food around the table.
@@ -201,7 +211,7 @@
       <section id="community" class="section community-section">
         <div class="section-intro">
           <p class="eyebrow">Community</p>
-          <h2>Shabbat at Shaare Shalom</h2>
+          <h2>Shabbat at the Shul</h2>
         </div>
 
         <div class="community-grid">
@@ -252,7 +262,7 @@
       <section class="section sponsors-section">
         <div class="section-intro">
           <p class="eyebrow">Sponsor & Dedicate</p>
-          <h2>Sponsor a Community Program</h2>
+          <h2>Sponsor &amp; Dedicate</h2>
           <p>Sponsor a Kiddush, dedicate Seuda Shlishit, or support ongoing Torah and tefillah in honor or memory of a loved one.</p>
         </div>
 
@@ -375,10 +385,11 @@
       </div>
       <div class="footer-bottom">
         <p>Shabbat Shalom</p>
+        <strong>ksswoodmere@gmail.com</strong>
         <small>© 2026 Kehilat Shaare Shalom. All rights reserved.</small>
       </div>
     </footer>
 
-    <script src="script.js?v=brand-rotation-1"></script>
+    <script src="script.js?v=editorial-2"></script>
   </body>
 </html>
