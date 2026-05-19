@@ -37,5 +37,8 @@ assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save conte
 
 assert.match(server, /adminApiHandler/, "Dev server should route admin API requests");
 assert.match(server, /\/api\/updates/, "Dev server should expose public updates");
+assert.match(server, /publicFiles/, "Dev server should restrict static serving to public files");
+assert.match(server, /startsWith\("\/assets\/"\)/, "Dev server should only expose the assets directory publicly");
+assert.match(server, /redirectHome\(response\)/, "Dev server should redirect private source and data paths");
 
 console.log("UI static test passed.");

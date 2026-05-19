@@ -38,14 +38,25 @@ const mimeTypes = {
   ".png": "image/png",
 };
 
+const publicFiles = new Set(["/admin.html", "/admin.js", "/index.html", "/script.js", "/styles.css"]);
+
 function send(response, statusCode, headers, body) {
   response.writeHead(statusCode, headers);
   response.end(body);
 }
 
+function redirectHome(response) {
+  send(response, 302, { Location: "/", "Content-Type": "text/plain; charset=utf-8" }, "Redirecting");
+}
+
 function safePath(urlPath) {
   const decodedPath = decodeURIComponent(urlPath.split("?")[0]);
   const requestedPath = decodedPath === "/" ? "/index.html" : decodedPath;
+  const normalizedPath = requestedPath.replace(/\\/g, "/");
+
+  if (normalizedPath.split("/").some((part) => part.startsWith("."))) return null;
+  if (!publicFiles.has(normalizedPath) && !normalizedPath.startsWith("/assets/")) return null;
+
   const resolved = path.resolve(root, `.${requestedPath}`);
   return resolved.startsWith(root) ? resolved : null;
 }
@@ -89,7 +100,7 @@ const server = http.createServer(async (request, response) => {
 
   const filePath = safePath(request.url || "/");
   if (!filePath) {
-    send(response, 403, { "Content-Type": "text/plain; charset=utf-8" }, "Forbidden");
+    redirectHome(response);
     return;
   }
 
