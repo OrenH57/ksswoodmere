@@ -134,6 +134,8 @@ const bulletinSource = document.querySelector("#bulletin-source");
 const scheduleSource = document.querySelector("#schedule-source");
 const regularScheduleList = document.querySelector("#regular-schedule-list");
 const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
+const announcementsSection = document.querySelector("#announcements");
+const announcementList = document.querySelector("#announcement-list");
 const weeklyParsha = document.querySelector("#weekly-parsha");
 const bsdText = document.querySelector("#bsd-text");
 const englishDate = document.querySelector("#english-date");
@@ -529,6 +531,29 @@ function renderShabbatSchedule(shabbat) {
   }
 }
 
+function renderAnnouncements(items) {
+  if (!announcementsSection || !announcementList) return;
+  const announcements = Array.isArray(items) ? items.filter((item) => item.title || item.body) : [];
+
+  announcementsSection.hidden = announcements.length === 0;
+  if (!announcements.length) {
+    announcementList.innerHTML = "";
+    return;
+  }
+
+  announcementList.innerHTML = announcements
+    .map(
+      (item) => `
+        <article>
+          ${item.date ? `<span>${escapeHtml(item.date)}</span>` : ""}
+          ${item.title ? `<h3>${escapeHtml(item.title)}</h3>` : ""}
+          ${item.body ? `<p>${escapeHtml(item.body)}</p>` : ""}
+        </article>
+      `
+    )
+    .join("");
+}
+
 function updateFastInfoFromBulletin(items) {
   updateScheduleValues(items);
 }
@@ -559,6 +584,7 @@ function setParshaText(parsha) {
 function renderBulletinData(data, statusText) {
   renderRegularSchedule(data.weekday);
   renderShabbatSchedule(data.shabbat);
+  renderAnnouncements(data.announcements);
   updateFastInfoFromBulletin(data.weekday);
 
   const sourceText = describeBulletinSource(data);
@@ -566,6 +592,34 @@ function renderBulletinData(data, statusText) {
   if (bulletinSource) setTextWithSwipe(bulletinSource, sourceText);
   if (scheduleSource) setTextWithSwipe(scheduleSource, sourceText);
   setParshaText(data.notes?.parsha);
+}
+
+async function applyBoardUpdates() {
+  if (isFilePreview) return;
+
+  try {
+    const updates = await fetchJsonWithCache("/api/updates", apiCacheTtl.bulletin);
+    const hasScheduleUpdates = Boolean(updates.updatedAt);
+    const hasAnnouncements = Array.isArray(updates.announcements) && updates.announcements.length > 0;
+
+    if (hasScheduleUpdates) {
+      renderRegularSchedule(updates.weekday);
+      renderShabbatSchedule(updates.shabbat);
+      updateFastInfoFromBulletin(updates.weekday);
+      const updatedDate = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "America/New_York",
+      }).format(new Date(updates.updatedAt));
+      if (scheduleSource) setTextWithSwipe(scheduleSource, `Board update - ${updatedDate}`);
+      if (bulletinStatus) setTextWithSwipe(bulletinStatus, "Schedule includes the latest board update.");
+    }
+
+    if (hasAnnouncements) renderAnnouncements(updates.announcements);
+  } catch {
+    // Board updates are optional; the bulletin remains the source of truth if unavailable.
+  }
 }
 
 async function loadBulletinSchedule() {
@@ -577,9 +631,11 @@ async function loadBulletinSchedule() {
   try {
     const data = await fetchJsonWithCache("/api/bulletin", apiCacheTtl.bulletin);
     renderBulletinData(data, "Weekly schedule loaded from the latest bulletin.");
+    await applyBoardUpdates();
     return true;
   } catch {
     renderBulletinData(fallbackBulletin, "Live bulletin unavailable. Backup Bamidbar bulletin shown.");
+    await applyBoardUpdates();
     return true;
   }
 }

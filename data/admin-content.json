@@ -1,0 +1,72 @@
+{
+  "updatedAt": "2026-05-19T03:02:08.504Z",
+  "updatedBy": "board",
+  "weekday": [
+    {
+      "label": "Monday-Friday Shacharit",
+      "time": "6:00 AM"
+    },
+    {
+      "label": "Sunday Shacharit",
+      "time": "7:45 AM"
+    },
+    {
+      "label": "Daily Mincha & Arvit",
+      "time": "7:15 PM"
+    }
+  ],
+  "shabbat": {
+    "fridayNight": [
+      {
+        "label": "Candle Lighting",
+        "time": "7:45 PM"
+      },
+      {
+        "label": "Shir Hashirim",
+        "time": "7:00 PM"
+      },
+      {
+        "label": "Mincha & Kabbalat Shabbat",
+        "time": "7:15 PM"
+      }
+    ],
+    "morning": [
+      {
+        "label": "Ben Ish Hai Class",
+        "time": "8:00 AM"
+      },
+      {
+        "label": "Shacharit - Korbanot",
+        "time": "8:30 AM"
+      },
+      {
+        "label": "Shacharit - Hodu",
+        "time": "8:45 AM"
+      }
+    ],
+    "latestShema": [],
+    "afternoon": [
+      {
+        "label": "Kids program with Avi",
+        "time": "5:15 PM"
+      },
+      {
+        "label": "Ladies Tehillim & Brachot",
+        "time": "6:00 PM"
+      },
+      {
+        "label": "Parsha Shiur",
+        "time": "6:45 PM"
+      },
+      {
+        "label": "Mincha",
+        "time": "7:15 PM"
+      },
+      {
+        "label": "Arvit",
+        "time": "8:30 PM"
+      }
+    ]
+  },
+  "announcements": []
+}

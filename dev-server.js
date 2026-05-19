@@ -1,12 +1,32 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-const { loadBundledBulletin } = require("./lib/bundled-bulletin");
-const { loadLatestBulletinFromDrive } = require("./lib/bulletin-loader");
+const { loadPreferredBulletin } = require("./lib/bulletin-loader");
+const { adminApiHandler } = require("./lib/admin-api");
 
 const root = __dirname;
 const host = "127.0.0.1";
 const port = Number(process.env.PORT || 5173);
+
+function loadLocalEnv() {
+  const envPath = path.join(root, ".env.local");
+  if (!fs.existsSync(envPath)) return;
+
+  fs.readFileSync(envPath, "utf8")
+    .split(/\r?\n/)
+    .forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) return;
+      const separatorIndex = trimmed.indexOf("=");
+      if (separatorIndex === -1) return;
+
+      const key = trimmed.slice(0, separatorIndex).trim();
+      const value = trimmed.slice(separatorIndex + 1).trim().replace(/^["']|["']$/g, "");
+      if (key && process.env[key] == null) process.env[key] = value;
+    });
+}
+
+loadLocalEnv();
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -39,35 +59,31 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
-    if (process.env.GOOGLE_DRIVE_FOLDER_ID && process.env.GOOGLE_DRIVE_API_KEY) {
-      try {
-        const { bulletin } = await loadLatestBulletinFromDrive();
-        send(
-          response,
-          200,
-          { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
-          JSON.stringify(bulletin)
-        );
-      } catch (error) {
-        send(
-          response,
-          error.statusCode || 500,
-          { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
-          JSON.stringify({
-            error: "Could not load the live weekly bulletin.",
-            detail: error instanceof Error ? error.message : String(error),
-          })
-        );
-      }
+    try {
+      const { bulletin } = await loadPreferredBulletin();
+      send(
+        response,
+        200,
+        { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+        JSON.stringify(bulletin)
+      );
+      return;
+    } catch (error) {
+      send(
+        response,
+        error.statusCode || 500,
+        { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+        JSON.stringify({
+          error: "Could not load the uploaded weekly bulletin.",
+          detail: error instanceof Error ? error.message : String(error),
+        })
+      );
       return;
     }
+  }
 
-    send(
-      response,
-      200,
-      { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
-      JSON.stringify(loadBundledBulletin())
-    );
+  if (urlPath === "/api/updates" || urlPath.startsWith("/api/admin/")) {
+    await adminApiHandler(request, response, urlPath);
     return;
   }
 

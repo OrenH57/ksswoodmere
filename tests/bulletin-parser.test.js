@@ -3,12 +3,12 @@ const { parseBulletinText } = require("../lib/bulletin-parser");
 
 const sampleText = `
 Kehilat Shaare Shalom
-Parashat Bamidbar
+Parshat Bamidbar
 Shabbat Schedule
 FRIDAY NIGHT
-Candle Lighting 7:45
-Shir Hashirim 7:00
-Mincha & Kabbalat Shabbat 7:15
+Candle Lighting7:45
+Shir Hashirim7:00
+Mincha & Kabbalat Shabbat7:15
 Shkia (Sunset) 8:05
 Tzeit HaKochavim 8:23
 SHABBAT MORNING
@@ -16,7 +16,7 @@ Ben Ish Hai Class 8:00
 Shacharit · Korbanot 8:30
 Shacharit · Hodu 8:45
 LATEST SHEMA
-M"A 8:26 Gr"A 9:14
+M"A 8:26Gr"A 9:14
 Rabbi's Morning Speech 10:50
 SHABBAT AFTERNOON
 Chazot (Midday) 12:51

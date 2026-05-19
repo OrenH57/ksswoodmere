@@ -88,15 +88,15 @@
           <div class="quick-times">
             <div>
               <span>Monday-Friday Shacharit</span>
-              <strong>6:00 AM</strong>
+              <strong data-schedule-key="weekday-shacharit">6:00 AM</strong>
             </div>
             <div>
               <span>Sunday Shacharit</span>
-              <strong>7:45 AM</strong>
+              <strong data-schedule-key="sunday-shacharit">7:45 AM</strong>
             </div>
             <div>
               <span>Daily Mincha & Arvit</span>
-              <strong>7:15 PM</strong>
+              <strong data-schedule-key="daily-mincha-arvit">7:15 PM</strong>
             </div>
           </div>
           <p class="fine-print">Shabbat times and special announcements are shared weekly by the shul.</p>
@@ -132,17 +132,17 @@
           <article>
             <p>Monday-Friday</p>
             <h3>Shacharit</h3>
-            <strong>6:00 AM</strong>
+            <strong data-schedule-key="weekday-shacharit">6:00 AM</strong>
           </article>
           <article>
             <p>Sunday</p>
             <h3>Shacharit</h3>
-            <strong>7:45 AM</strong>
+            <strong data-schedule-key="sunday-shacharit">7:45 AM</strong>
           </article>
           <article>
             <p>Daily</p>
             <h3>Mincha & Arvit</h3>
-            <strong>7:15 PM</strong>
+            <strong data-schedule-key="daily-mincha-arvit">7:15 PM</strong>
           </article>
         </div>
         </div>
@@ -182,6 +182,14 @@
           <div id="zmanim-list" class="zmanim-list"></div>
         </div>
         </div>
+      </section>
+
+      <section class="section announcements-section" id="announcements" hidden>
+        <div class="section-intro">
+          <p class="eyebrow">Announcements</p>
+          <h2>From the Board</h2>
+        </div>
+        <div class="announcement-list" id="announcement-list" aria-live="polite"></div>
       </section>
 
       <section id="learning" class="section split-section">

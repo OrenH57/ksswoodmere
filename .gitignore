@@ -1,0 +1,6 @@
+.env.local
+node_modules/
+server.err.log
+server.out.log
+data/uploaded-bulletin.pdf
+data/uploaded-bulletin.json
