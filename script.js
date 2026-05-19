@@ -457,6 +457,18 @@ function updateScheduleValues(items) {
   refreshNextMinyan();
 }
 
+function revealScheduleTimes(scope = document) {
+  const times = [...scope.querySelectorAll(".schedule-list article strong")];
+  if (!times.length) return;
+
+  times.forEach((time) => time.classList.remove("is-visible"));
+  window.requestAnimationFrame(() => {
+    times.forEach((time, index) => {
+      window.setTimeout(() => time.classList.add("is-visible"), index * 160);
+    });
+  });
+}
+
 function renderRegularSchedule(items) {
   if (!regularScheduleList || !Array.isArray(items) || !items.length) return;
 
@@ -475,6 +487,7 @@ function renderRegularSchedule(items) {
     .join("");
 
   updateScheduleValues(items);
+  revealScheduleTimes(regularScheduleList);
 }
 
 function renderTimeTable(title, items) {
@@ -510,7 +523,10 @@ function renderShabbatSchedule(shabbat) {
     .filter(Boolean)
     .join("");
 
-  if (html) shabbatScheduleGrid.innerHTML = html;
+  if (html) {
+    shabbatScheduleGrid.innerHTML = html;
+    revealScheduleTimes(shabbatScheduleGrid);
+  }
 }
 
 function updateFastInfoFromBulletin(items) {
@@ -698,6 +714,7 @@ function activateTab(button, shouldFocus = false) {
     const isActive = panel.getAttribute("data-panel") === tab;
     panel.classList.toggle("is-active", isActive);
     panel.hidden = !isActive;
+    if (isActive) revealScheduleTimes(panel);
   });
 
   if (shouldFocus) button.focus();
@@ -741,31 +758,78 @@ document.querySelectorAll(".resource-toggle").forEach((button) => {
 const revealItems = document.querySelectorAll(".section, .pillars, .photo-strip, .rabbi-section, .visit-section");
 revealItems.forEach((item) => item.classList.add("reveal"));
 
+const motionItems = [
+  ...document.querySelectorAll(
+    [
+      ".masthead-name",
+      ".masthead-sub",
+      ".masthead-live",
+      ".hero-kicker",
+      ".hero h1",
+      ".hero-copy > p:not(.hero-kicker)",
+      ".hero-actions",
+      ".status-strip > div",
+      ".section-intro",
+      ".schedule-tabs",
+      ".program-list article",
+      ".community-grid article",
+      ".sponsor-grid article",
+      ".resource-grid article",
+      ".resource-accordion",
+      ".faq-list article",
+      ".zelle-box",
+      ".visit-panel > div",
+      ".site-footer",
+    ].join(", ")
+  ),
+];
+
+motionItems.forEach((item, index) => {
+  item.classList.add("motion-item");
+  item.style.setProperty("--reveal-delay", `${Math.min(index % 4, 3) * 70}ms`);
+});
+
+function showMotionItems(scope = document) {
+  scope.querySelectorAll(".motion-item").forEach((item) => item.classList.add("is-visible"));
+}
+
 if ("IntersectionObserver" in window) {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        showMotionItems(entry.target);
+        observer.unobserve(entry.target);
       });
     },
     { threshold: 0.12 }
   );
 
   revealItems.forEach((item) => observer.observe(item));
+
+  const motionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        motionObserver.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
+  );
+
+  motionItems.forEach((item) => motionObserver.observe(item));
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
+  motionItems.forEach((item) => item.classList.add("is-visible"));
 }
 /* Staggered time reveal when schedule scrolls into view */
 if ('IntersectionObserver' in window) {
   const timeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      entry.target.querySelectorAll('.schedule-list article strong').forEach((el, i) => {
-        setTimeout(() => el.classList.add('is-visible'), i * 160);
-      });
+      revealScheduleTimes(entry.target);
       timeObserver.unobserve(entry.target);
     });
   }, { threshold: 0.2 });

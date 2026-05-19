@@ -20,10 +20,14 @@ module.exports = async function bulletinHandler(request, response) {
     response.setHeader("Cache-Control", CACHE_HEADER);
     sendJson(response, 200, bulletin);
   } catch (error) {
+    response.setHeader("Cache-Control", "no-store");
     sendJson(response, error.statusCode || 500, {
       error: "Could not load the weekly bulletin.",
       detail: error instanceof Error ? error.message : String(error),
       requiredEnv: error.requiredEnv,
+      missingEnv: error.missingEnv,
+      envPresence: error.envPresence,
+      vercelEnv: process.env.VERCEL_ENV || null,
     });
   }
 };
