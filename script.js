@@ -134,9 +134,6 @@ const bulletinSource = document.querySelector("#bulletin-source");
 const scheduleSource = document.querySelector("#schedule-source");
 const regularScheduleList = document.querySelector("#regular-schedule-list");
 const shabbatScheduleGrid = document.querySelector("#shabbat-schedule-grid");
-const thisWeekStatus = document.querySelector("#this-week-status");
-const thisWeekParsha = document.querySelector("#this-week-parsha");
-const thisWeekUpdated = document.querySelector("#this-week-updated");
 const weeklyParsha = document.querySelector("#weekly-parsha");
 const bsdText = document.querySelector("#bsd-text");
 const englishDate = document.querySelector("#english-date");
@@ -145,6 +142,52 @@ const defaultRegularSchedule = [
   { label: "Sunday Shacharit", time: "7:45 AM" },
   { label: "Daily Mincha & Arvit", time: "7:15 PM" },
 ];
+
+const fallbackBulletin = {
+  source: {
+    fileName: "weekly-bulletin-bamidbar-2026-05-15.pdf",
+  },
+  shabbat: {
+    fridayNight: [
+      { label: "Candle Lighting", time: "7:45 PM" },
+      { label: "Shir Hashirim", time: "7:00 PM" },
+      { label: "Mincha & Kabbalat Shabbat", time: "7:15 PM" },
+      { label: "Shkia (Sunset)", time: "8:05 PM" },
+      { label: "Tzeit HaKochavim", time: "8:23 PM" },
+    ],
+    morning: [
+      { label: "Ben Ish Hai Class", time: "8:00 AM" },
+      { label: "Shacharit - Korbanot", time: "8:30 AM" },
+      { label: "Shacharit - Hodu", time: "8:45 AM" },
+      { label: "Rabbi's Morning Speech", time: "10:50 AM" },
+    ],
+    latestShema: [
+      { label: "M\"A", time: "8:26 AM" },
+      { label: "Gr\"A", time: "9:14 AM" },
+    ],
+    afternoon: [
+      { label: "Chazot (Midday)", time: "12:51 PM" },
+      { label: "Kids program with Avi", time: "5:15 PM" },
+      { label: "Ladies Tehillim & Brachot", time: "6:00 PM" },
+      { label: "Parsha Shiur", time: "6:45 PM" },
+      { label: "Mincha", time: "7:15 PM" },
+      { label: "Arvit", time: "8:30 PM" },
+      { label: "Shabbat Ends", time: "8:45 PM" },
+      { label: "Rabbenu Tam", time: "9:18 PM" },
+    ],
+  },
+  weekday: defaultRegularSchedule,
+  notes: {
+    parsha: "Bamidbar",
+    dateText: "May 15-16",
+  },
+};
+
+const apiCacheTtl = {
+  bulletin: 15 * 60 * 1000,
+  shabbat: 6 * 60 * 60 * 1000,
+  zmanim: 12 * 60 * 60 * 1000,
+};
 
 const zmanimLabels = [
   ["alotHaShachar", "Alot"],
@@ -167,6 +210,46 @@ function formatZman(value) {
     minute: "2-digit",
     timeZone: "America/New_York",
   }).format(date);
+}
+
+function setTextWithSwipe(element, value) {
+  if (!element || value == null || element.textContent === String(value)) return;
+  element.textContent = value;
+  element.classList.remove("text-swipe");
+  void element.offsetWidth;
+  element.classList.add("text-swipe");
+}
+
+async function fetchJsonWithCache(url, ttl = 15 * 60 * 1000) {
+  const key = `kss-cache:${url}`;
+  const now = Date.now();
+
+  try {
+    const cached = JSON.parse(localStorage.getItem(key) || "null");
+    if (cached?.time && now - cached.time < ttl) return cached.data;
+  } catch {
+    // Ignore storage errors and continue with the network request.
+  }
+
+  try {
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+    const data = await response.json();
+    try {
+      localStorage.setItem(key, JSON.stringify({ time: now, data }));
+    } catch {
+      // Some browsers block localStorage in restrictive modes.
+    }
+    return data;
+  } catch (error) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(key) || "null");
+      if (cached?.data) return cached.data;
+    } catch {
+      // No usable stale cache.
+    }
+    throw error;
+  }
 }
 
 function nextWeekdayDate(dayNumber) {
@@ -204,15 +287,17 @@ function formatEnglishDateRange(startDate, endDate) {
 }
 
 function setLiveDatesFallback() {
-  const now = new Date();
   const friday = nextWeekdayDate(5);
   const shabbat = new Date(friday);
   shabbat.setDate(friday.getDate() + 1);
 
-  if (bsdText) bsdText.textContent = "\u05d1\u05e1\u05f4\u05d3";
+  if (bsdText) {
+    bsdText.removeAttribute("dir");
+    setTextWithSwipe(bsdText, "\u05d1\u05e1\u05f4\u05d3");
+  }
 
   if (englishDate) {
-    englishDate.textContent = formatEnglishDateRange(friday, shabbat);
+    setTextWithSwipe(englishDate, formatEnglishDateRange(friday, shabbat));
   }
 }
 
@@ -220,22 +305,25 @@ async function loadWeeklyHeader() {
   setLiveDatesFallback();
 
   try {
-    const response = await fetch("https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on");
-    if (!response.ok) throw new Error("Weekly header request failed");
-    const data = await response.json();
+    const data = await fetchJsonWithCache(
+      "https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on",
+      apiCacheTtl.shabbat
+    );
     const parsha = data.items?.find((item) => item.category === "parashat");
     const candles = data.items?.find((item) => item.category === "candles");
     const havdalah = data.items?.find((item) => item.category === "havdalah");
 
     if (weeklyParsha && parsha?.title) {
-      weeklyParsha.textContent = parsha.title.replace(/^Parashat\b/, "Parshat");
+      setTextWithSwipe(weeklyParsha, parsha.title.replace(/^Parashat\b/, "Parshat"));
     }
 
     if (englishDate && candles?.date && havdalah?.date) {
-      englishDate.textContent = formatEnglishDateRange(new Date(candles.date), new Date(havdalah.date));
+      const candleDate = new Date(candles.date);
+      const havdalahDate = new Date(havdalah.date);
+      setTextWithSwipe(englishDate, formatEnglishDateRange(candleDate, havdalahDate));
     }
   } catch {
-    if (weeklyParsha) weeklyParsha.textContent = "Parsha updates weekly";
+    if (weeklyParsha) setTextWithSwipe(weeklyParsha, "Parsha updates weekly");
   }
 }
 
@@ -257,9 +345,7 @@ async function loadZmanim() {
   const url = `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${today}`;
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Zmanim request failed");
-    const data = await response.json();
+    const data = await fetchJsonWithCache(url, apiCacheTtl.zmanim);
     const items = zmanimLabels
       .map(([key, label]) => [label, formatZman(data.times?.[key])])
       .filter(([, time]) => time);
@@ -268,14 +354,14 @@ async function loadZmanim() {
       .map(([label, time]) => `<div class="zmanim-item"><span>${label}</span><strong>${time}</strong></div>`)
       .join("");
 
-    zmanimStatus.textContent = `Woodmere, NY - ${new Intl.DateTimeFormat("en-US", {
+    setTextWithSwipe(zmanimStatus, `Woodmere, NY - ${new Intl.DateTimeFormat("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
       timeZone: "America/New_York",
-    }).format(new Date())}`;
+    }).format(new Date())}`);
   } catch {
-    zmanimStatus.textContent = "Live zmanim could not be loaded. Please check Hebcal or your local luach.";
+    setTextWithSwipe(zmanimStatus, "Live zmanim could not be loaded. Please check Hebcal or your local luach.");
   }
 }
 
@@ -444,14 +530,6 @@ function describeBulletinSource(data) {
   return date ? `${source} - updated ${date}` : source;
 }
 
-function setWeeklyStatus(message) {
-  if (thisWeekStatus) thisWeekStatus.textContent = message;
-}
-
-function setWeeklyUpdated(message) {
-  if (thisWeekUpdated) thisWeekUpdated.textContent = message;
-}
-
 function setParshaText(parsha) {
   const normalized = String(parsha || "")
     .replace(/^Parashat\b/i, "")
@@ -459,46 +537,34 @@ function setParshaText(parsha) {
     .trim();
   if (!normalized) return;
 
-  if (weeklyParsha) weeklyParsha.textContent = `Parshat ${normalized}`;
-  if (thisWeekParsha) thisWeekParsha.textContent = normalized;
+  setTextWithSwipe(weeklyParsha, `Parshat ${normalized}`);
+}
+
+function renderBulletinData(data, statusText) {
+  renderRegularSchedule(data.weekday);
+  renderShabbatSchedule(data.shabbat);
+  updateFastInfoFromBulletin(data.weekday);
+
+  const sourceText = describeBulletinSource(data);
+  if (bulletinStatus) setTextWithSwipe(bulletinStatus, statusText);
+  if (bulletinSource) setTextWithSwipe(bulletinSource, sourceText);
+  if (scheduleSource) setTextWithSwipe(scheduleSource, sourceText);
+  setParshaText(data.notes?.parsha);
 }
 
 async function loadBulletinSchedule() {
   if (isFilePreview) {
-    renderRegularSchedule(defaultRegularSchedule);
-    if (bulletinStatus) bulletinStatus.textContent = "Using regular schedule";
-    if (bulletinSource) bulletinSource.textContent = "Preview mode";
-    if (scheduleSource) scheduleSource.textContent = "Preview mode - live bulletin loads when hosted";
-    setWeeklyStatus("Preview mode: live bulletin and weekly zmanim load when the site is hosted.");
-    setWeeklyUpdated("Preview mode");
-    return false;
+    renderBulletinData(fallbackBulletin, "Backup bulletin shown from Bamidbar.");
+    return true;
   }
 
   try {
-    const response = await fetch("/api/bulletin", { headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error("Bulletin API unavailable");
-    const data = await response.json();
-
-    renderRegularSchedule(data.weekday);
-    renderShabbatSchedule(data.shabbat);
-    updateFastInfoFromBulletin(data.weekday);
-
-    const sourceText = describeBulletinSource(data);
-    if (bulletinStatus) bulletinStatus.textContent = "Updated from bulletin";
-    if (bulletinSource) bulletinSource.textContent = sourceText;
-    if (scheduleSource) scheduleSource.textContent = sourceText;
-    setParshaText(data.notes?.parsha);
-    setWeeklyStatus("Weekly schedule loaded from the latest bulletin.");
-    setWeeklyUpdated(sourceText);
+    const data = await fetchJsonWithCache("/api/bulletin", apiCacheTtl.bulletin);
+    renderBulletinData(data, "Weekly schedule loaded from the latest bulletin.");
     return true;
   } catch {
-    renderRegularSchedule(defaultRegularSchedule);
-    if (bulletinStatus) bulletinStatus.textContent = "Schedule";
-    if (bulletinSource) bulletinSource.textContent = "Live bulletin unavailable";
-    if (scheduleSource) scheduleSource.textContent = "Using regular schedule - live bulletin unavailable";
-    setWeeklyStatus("Live bulletin could not be loaded. The regular schedule is shown below.");
-    setWeeklyUpdated("Using regular schedule");
-    return false;
+    renderBulletinData(fallbackBulletin, "Live bulletin unavailable. Backup Bamidbar bulletin shown.");
+    return true;
   }
 }
 
@@ -536,22 +602,21 @@ async function loadWeeklyShabbatTimes() {
   shabbat.setDate(friday.getDate() + 1);
 
   try {
-    const shabbatResponse = await fetch("https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on");
-    if (!shabbatResponse.ok) throw new Error("Shabbat times request failed");
-    const shabbatData = await shabbatResponse.json();
+    const shabbatData = await fetchJsonWithCache(
+      "https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on",
+      apiCacheTtl.shabbat
+    );
     const candles = shabbatData.items?.find((item) => item.category === "candles");
     const havdalah = shabbatData.items?.find((item) => item.category === "havdalah");
 
-    const fridayZmanimResponse = await fetch(
-      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(friday)}`
+    const fridayZmanim = await fetchJsonWithCache(
+      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(friday)}`,
+      apiCacheTtl.zmanim
     );
-    const shabbatZmanimResponse = await fetch(
-      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(shabbat)}`
+    const shabbatZmanim = await fetchJsonWithCache(
+      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(shabbat)}`,
+      apiCacheTtl.zmanim
     );
-    if (!fridayZmanimResponse.ok || !shabbatZmanimResponse.ok) throw new Error("Zmanim request failed");
-
-    const fridayZmanim = await fridayZmanimResponse.json();
-    const shabbatZmanim = await shabbatZmanimResponse.json();
 
     setShabbatTime("candles", formatZman(candles?.date));
     setShabbatTime("havdalah", formatZman(havdalah?.date));
@@ -673,7 +738,7 @@ document.querySelectorAll(".resource-toggle").forEach((button) => {
   });
 });
 
-const revealItems = document.querySelectorAll(".section, .this-week, .pillars, .photo-strip, .rabbi-section, .visit-section");
+const revealItems = document.querySelectorAll(".section, .pillars, .photo-strip, .rabbi-section, .visit-section");
 revealItems.forEach((item) => item.classList.add("reveal"));
 
 if ("IntersectionObserver" in window) {

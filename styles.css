@@ -27,9 +27,11 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
+  padding-bottom: 88px;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-main);
+  font-size: 1rem;
   font-weight: 300;
   line-height: 1.55;
 }
@@ -72,7 +74,7 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 9px 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 254, 249, 0.96);
   backdrop-filter: blur(12px);
@@ -87,8 +89,8 @@ h3 {
 }
 
 .brand-mark {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   flex: 0 0 auto;
   padding: 3px;
   border: 1px solid var(--gold-light);
@@ -99,10 +101,10 @@ h3 {
 
 .brand-text {
   display: block;
-  width: 168px;
-  height: 36px;
+  width: 186px;
+  height: 42px;
   min-width: 0;
-  max-width: 168px;
+  max-width: 186px;
   overflow: hidden;
 }
 
@@ -123,7 +125,7 @@ h3 {
 
 .brand-name {
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.1;
@@ -132,7 +134,7 @@ h3 {
 
 .brand-subtitle {
   color: var(--gold-dark);
-  font-size: 0.68rem;
+  font-size: 1rem;
 }
 
 .brand-text[dir="rtl"],
@@ -142,24 +144,24 @@ h3 {
 }
 
 .brand-text[lang="he"] .brand-name {
-  font-size: 0.88rem;
+  font-size: 1rem;
 }
 
 .brand-text[lang="he"] .brand-subtitle {
-  font-size: 0.6rem;
+  font-size: 1rem;
 }
 
 .brand-text[lang="ru"] .brand-subtitle {
-  font-size: 0.64rem;
+  font-size: 1rem;
 }
 
 .nav-toggle {
   display: inline-grid;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   flex: 0 0 auto;
   gap: 4px;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid var(--line);
   border-radius: 4px;
   background: transparent;
@@ -172,7 +174,7 @@ h3 {
 
 .site-nav {
   position: absolute;
-  top: 61px;
+  top: 72px;
   right: 16px;
   left: 16px;
   display: none;
@@ -187,9 +189,10 @@ h3 {
 }
 
 .site-nav a {
-  padding: 11px 14px;
+  min-height: 56px;
+  padding: 16px 18px;
   color: var(--ink);
-  font-size: 0.72rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-decoration: none;
@@ -198,6 +201,44 @@ h3 {
 
 .site-nav a:hover {
   color: var(--blue);
+}
+
+.thumb-nav {
+  position: fixed;
+  right: 10px;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: 10px;
+  z-index: 35;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(10, 49, 71, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 28px rgba(10, 49, 71, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.thumb-nav a {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+}
+
+.thumb-nav a:first-child {
+  background: var(--blue);
+  color: var(--white);
 }
 
 .editorial-page {
@@ -221,7 +262,7 @@ h3 {
   padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -230,7 +271,7 @@ h3 {
 .masthead-name {
   padding: 0.1rem 0 0.48rem;
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 12vw, 4.5rem);
+  font-size: clamp(2.4rem, 12vw, 4.5rem);
   font-weight: 700;
   letter-spacing: 0.025em;
   line-height: 0.98;
@@ -251,7 +292,7 @@ h3 {
 .masthead-sub em {
   color: var(--muted);
   font-family: var(--font-display);
-  font-size: clamp(0.72rem, 2.4vw, 1rem);
+  font-size: clamp(0.95rem, 2.8vw, 1rem);
   font-style: italic;
   white-space: nowrap;
 }
@@ -263,16 +304,34 @@ h3 {
   gap: 0.35rem 0.7rem;
   margin-top: 0.7rem;
   color: var(--gold-dark);
-  font-size: 0.68rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
+.text-swipe {
+  animation: text-swipe-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes text-swipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.2;
+    transform: translateX(-10px);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .masthead-live strong {
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-style: italic;
   font-weight: 700;
   letter-spacing: 0;
@@ -301,7 +360,7 @@ h3 {
 .time-table h3,
 .resource-toggle small {
   color: var(--gold-dark);
-  font-size: 0.62rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -343,19 +402,23 @@ h3 {
 .button,
 .copy-button {
   display: inline-flex;
-  min-height: 42px;
+  min-height: 58px;
   align-items: center;
   justify-content: center;
-  padding: 10px 22px;
+  padding: 15px 24px;
   border: 1px solid var(--blue);
   border-radius: 4px;
   cursor: pointer;
   font-family: var(--font-main);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-decoration: none;
   transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.copy-button {
+  width: min(100%, 228px);
 }
 
 .button.primary,
@@ -401,7 +464,7 @@ h3 {
 .section-intro > .eyebrow {
   display: block;
   color: var(--gold-dark);
-  font-size: 0.62rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -412,52 +475,8 @@ h3 {
   margin-top: 3px;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   font-weight: 700;
-}
-
-.this-week {
-  display: grid;
-  gap: 1rem;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 1.15rem clamp(1.35rem, 4vw, 2.4rem);
-  border-bottom: 1px solid var(--line);
-  text-align: center;
-}
-
-.this-week h2 {
-  margin: 0.35rem 0;
-  font-size: clamp(1.85rem, 8vw, 2.65rem);
-  line-height: 1;
-}
-
-.this-week-copy p:not(.eyebrow) {
-  margin: 0 auto;
-  color: var(--muted);
-}
-
-.this-week-details {
-  display: grid;
-  gap: 0.8rem;
-  align-items: center;
-}
-
-.this-week-details span {
-  display: block;
-  color: var(--gold-dark);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.this-week-details strong {
-  display: block;
-  margin-top: 3px;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.2rem;
 }
 
 .section,
@@ -506,34 +525,46 @@ h3 {
 
 .schedule-tabs {
   display: grid;
+  gap: 10px;
   max-width: 720px;
   margin: 0 auto 1rem;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .tab-button {
-  min-height: 42px;
-  padding: 10px 14px;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
+  min-height: 58px;
+  padding: 16px 18px;
+  border: 2px solid var(--blue);
+  border-radius: 6px;
+  background: var(--white);
   color: var(--ink);
   cursor: pointer;
   font: inherit;
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
+  box-shadow: 0 4px 0 rgba(10, 49, 71, 0.16);
   text-transform: uppercase;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .tab-button:last-child {
-  border-bottom: 0;
+  border-bottom: 2px solid var(--blue);
 }
 
 .tab-button.is-active {
+  border-color: var(--ink);
   background: var(--ink);
   color: var(--white);
+  box-shadow: 0 4px 0 rgba(10, 49, 71, 0.3);
+}
+
+.tab-button:active {
+  box-shadow: 0 1px 0 rgba(10, 49, 71, 0.2);
+  transform: translateY(3px);
 }
 
 .tab-panel {
@@ -567,7 +598,7 @@ h3 {
 .time-table div {
   display: grid;
   gap: 0.25rem;
-  padding: 0.72rem 0;
+  padding: 1rem 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -653,7 +684,7 @@ h3 {
 .community-grid article,
 .program-list article,
 .sponsor-grid article {
-  padding: 1.1rem 0;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--line);
   text-align: center;
 }
@@ -661,7 +692,7 @@ h3 {
 .zmanim-item span {
   display: block;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 1rem;
 }
 
 .zmanim-item strong {
@@ -731,7 +762,8 @@ h3 {
   align-items: center;
   justify-items: center;
   gap: 0.35rem;
-  padding: 1.1rem 2.4rem;
+  min-height: 72px;
+  padding: 1.25rem 2.8rem;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -744,7 +776,7 @@ h3 {
 .faq-question::after {
   color: var(--blue);
   content: "+";
-  font-size: 1.35rem;
+  font-size: 1.7rem;
   font-weight: 600;
 }
 
@@ -794,15 +826,17 @@ h3 {
 .faq-question {
   display: flex;
   width: 100%;
+  min-height: 72px;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 1rem 0;
+  padding: 1.15rem 0;
   border: 0;
   background: transparent;
   color: var(--ink);
   cursor: pointer;
   font: inherit;
+  font-size: 1.05rem;
   font-weight: 600;
   text-align: left;
 }
@@ -843,7 +877,7 @@ h3 {
 }
 
 .zelle-box small {
-  min-height: 18px;
+  min-height: 24px;
   color: var(--gold-dark);
 }
 
@@ -893,7 +927,7 @@ h3 {
 
 .footer-bottom strong {
   color: var(--ink);
-  font-size: 0.72rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -959,12 +993,12 @@ h3 {
   }
 
   .tab-button {
-    border-right: 1px solid var(--line);
+    border-right: 2px solid var(--blue);
     border-bottom: 0;
   }
 
   .tab-button:last-child {
-    border-right: 0;
+    border-right: 2px solid var(--blue);
   }
 
   .schedule-list article,
@@ -996,6 +1030,16 @@ h3 {
 }
 
 @media (max-width: 559px) {
+  .hero-actions,
+  .visit-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .button {
+    width: 100%;
+  }
+
   .schedule-list article {
     text-align: center;
   }
@@ -1007,6 +1051,14 @@ h3 {
 }
 
 @media (min-width: 760px) {
+  body {
+    padding-bottom: 0;
+  }
+
+  .thumb-nav {
+    display: none;
+  }
+
   .site-header {
     padding-right: clamp(24px, 4vw, 48px);
     padding-left: clamp(24px, 4vw, 48px);
@@ -1034,6 +1086,7 @@ h3 {
 
   .site-nav a {
     padding: 0;
+    min-height: 0;
   }
 
   .hero {

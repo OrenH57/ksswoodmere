@@ -2,6 +2,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const { loadBundledBulletin } = require("./lib/bundled-bulletin");
+const { loadLatestBulletinFromDrive } = require("./lib/bulletin-loader");
 
 const root = __dirname;
 const host = "127.0.0.1";
@@ -29,12 +30,35 @@ function safePath(urlPath) {
   return resolved.startsWith(root) ? resolved : null;
 }
 
-const server = http.createServer((request, response) => {
+const server = http.createServer(async (request, response) => {
   const urlPath = (request.url || "/").split("?")[0];
 
   if (urlPath === "/api/bulletin") {
     if (request.method !== "GET") {
       send(response, 405, { "Content-Type": "application/json; charset=utf-8", Allow: "GET" }, JSON.stringify({ error: "Method not allowed" }));
+      return;
+    }
+
+    if (process.env.GOOGLE_DRIVE_FOLDER_ID && process.env.GOOGLE_DRIVE_API_KEY) {
+      try {
+        const { bulletin } = await loadLatestBulletinFromDrive();
+        send(
+          response,
+          200,
+          { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+          JSON.stringify(bulletin)
+        );
+      } catch (error) {
+        send(
+          response,
+          error.statusCode || 500,
+          { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+          JSON.stringify({
+            error: "Could not load the live weekly bulletin.",
+            detail: error instanceof Error ? error.message : String(error),
+          })
+        );
+      }
       return;
     }
 

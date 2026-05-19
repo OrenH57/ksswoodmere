@@ -10,8 +10,8 @@
     >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=editorial-4">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=mobile-1">
   </head>
   <body>
     <header class="site-header">
@@ -38,6 +38,12 @@
         <a href="#visit">Visit</a>
       </nav>
     </header>
+
+    <nav class="thumb-nav" aria-label="Quick navigation">
+      <a href="#schedule">Minyanim</a>
+      <a href="#give">Give</a>
+      <a href="#visit">Visit</a>
+    </nav>
 
     <main id="top" class="editorial-page">
       <section class="masthead" aria-labelledby="masthead-title">
@@ -68,7 +74,6 @@
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#schedule">Minyan Times</a>
-            <a class="button secondary" href="#visit">Plan a Visit</a>
           </div>
         </div>
 
@@ -106,25 +111,6 @@
         <div>
           <span>Next Minyan</span>
           <strong id="next-minyan">Calculating...</strong>
-        </div>
-      </section>
-
-      <section class="this-week" aria-labelledby="this-week-title">
-        <div class="this-week-copy">
-          <p class="eyebrow">This Week</p>
-          <h2 id="this-week-title">Shabbat Bulletin</h2>
-          <p id="this-week-status">Loading the weekly schedule...</p>
-        </div>
-        <div class="this-week-details">
-          <div id="this-week-parsha-block" hidden>
-            <span>Parsha</span>
-            <strong id="this-week-parsha">Loading...</strong>
-          </div>
-          <div>
-            <span>Updated</span>
-            <strong id="this-week-updated">Checking...</strong>
-          </div>
-          <a class="button secondary" href="assets/weekly-bulletin-bamidbar-2026-05-15.pdf">Open Bulletin</a>
         </div>
       </section>
 
@@ -409,6 +395,6 @@
       </div>
     </footer>
 
-    <script src="script.js?v=editorial-2"></script>
+    <script src="script.js?v=mobile-1"></script>
   </body>
 </html>
