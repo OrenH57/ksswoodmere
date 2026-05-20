@@ -4,6 +4,8 @@ const brand = document.querySelector(".brand");
 const brandText = document.querySelector(".brand-text");
 const brandName = document.querySelector(".brand-name");
 const brandSubtitle = document.querySelector(".brand-subtitle");
+const isCoarsePointer = window.matchMedia?.("(pointer: coarse)").matches || false;
+const reduceFirstScrollWork = isCoarsePointer || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const brandTranslations = [
   {
@@ -78,6 +80,8 @@ function rotateBrandLanguage() {
 
   applyBrandTranslation(brandTranslations[0]);
 
+  if (reduceFirstScrollWork) return;
+
   window.brandLanguageTimer = window.setInterval(() => {
     syncBrandLanguage();
   }, 3000);
@@ -85,7 +89,7 @@ function rotateBrandLanguage() {
 
 rotateBrandLanguage();
 
-const shouldTrackScrollProgress = !window.matchMedia?.("(pointer: coarse)").matches;
+const shouldTrackScrollProgress = !isCoarsePointer;
 
 if (shouldTrackScrollProgress) {
   const scrollProgress = document.createElement("div");
@@ -128,7 +132,9 @@ function scheduleNonCritical(task) {
       .catch(() => {});
   };
 
-  if ("requestIdleCallback" in window) {
+  if (isCoarsePointer) {
+    window.setTimeout(run, 2400);
+  } else if ("requestIdleCallback" in window) {
     window.requestIdleCallback(run, { timeout: 1800 });
   } else {
     window.setTimeout(run, 650);
@@ -896,14 +902,19 @@ const motionItems = [
 
 motionItems.forEach((item, index) => {
   item.classList.add("motion-item");
-  item.style.setProperty("--reveal-delay", `${Math.min(index % 4, 3) * 70}ms`);
+  if (!reduceFirstScrollWork) {
+    item.style.setProperty("--reveal-delay", `${Math.min(index % 4, 3) * 70}ms`);
+  }
 });
 
 function showMotionItems(scope = document) {
   scope.querySelectorAll(".motion-item").forEach((item) => item.classList.add("is-visible"));
 }
 
-if ("IntersectionObserver" in window) {
+if (reduceFirstScrollWork) {
+  revealItems.forEach((item) => item.classList.add("is-visible"));
+  motionItems.forEach((item) => item.classList.add("is-visible"));
+} else if ("IntersectionObserver" in window) {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -935,7 +946,11 @@ if ("IntersectionObserver" in window) {
   motionItems.forEach((item) => item.classList.add("is-visible"));
 }
 /* Staggered time reveal when schedule scrolls into view */
-if ('IntersectionObserver' in window) {
+if (reduceFirstScrollWork) {
+  document.querySelectorAll(".schedule-list article strong").forEach((el) => {
+    el.classList.add("is-visible");
+  });
+} else if ('IntersectionObserver' in window) {
   const timeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;

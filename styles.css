@@ -1706,6 +1706,15 @@ h3 {
     -webkit-backdrop-filter: none;
   }
 
+  .reveal,
+  .motion-item,
+  .schedule-list strong {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
   .button {
     width: 100%;
   }

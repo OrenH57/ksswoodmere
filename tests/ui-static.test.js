@@ -124,7 +124,10 @@ assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
-assert.match(script, /shouldTrackScrollProgress = !window\.matchMedia\?\.\("\(pointer: coarse\)"\)\.matches/, "Touch devices should not attach scroll progress work during mobile scrolling");
+assert.match(script, /const isCoarsePointer = window\.matchMedia\?\.\("\(pointer: coarse\)"\)\.matches/, "Public script should detect touch-first devices");
+assert.match(script, /shouldTrackScrollProgress = !isCoarsePointer/, "Touch devices should not attach scroll progress work during mobile scrolling");
+assert.match(script, /if \(reduceFirstScrollWork\) return;[\s\S]*window\.brandLanguageTimer/, "Touch devices should skip rotating header text during early scrolling");
+assert.match(script, /if \(isCoarsePointer\)[\s\S]*window\.setTimeout\(run, 2400\)/, "Touch devices should defer non-critical live data work longer");
 assert.match(script, /function scheduleNonCritical/, "Live data hydration should be deferrable until after initial interaction");
 assert.match(script, /scheduleNonCritical\(loadWeeklyHeader\)/, "Weekly header network updates should be deferred");
 assert.match(script, /scheduleNonCritical\(loadZmanim\)/, "Zmanim network updates should be deferred");
@@ -132,6 +135,7 @@ assert.match(script, /scheduleNonCritical\(initializeSchedule\)/, "Bulletin sche
 assert.match(styles, /\.scroll-progress[\s\S]*transform: scaleX\(0\)/, "Scroll progress should use transform instead of width updates");
 assert.match(script, /scrollProgress\.style\.transform = `scaleX/, "Scroll handler should update transform instead of layout-affecting width");
 assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.site-header[\s\S]*backdrop-filter: none/, "Mobile sticky header should avoid expensive backdrop blur during scroll");
+assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.motion-item,[\s\S]*\.schedule-list strong[\s\S]*transition: none/, "Mobile should avoid first-load reveal transitions that can delay first scroll");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /class="brand-mark" width="48" height="48" decoding="async"/, "Brand images should declare dimensions and async decoding");
 
 ["weekday-shacharit", "sunday-shacharit", "daily-mincha-arvit"].forEach((key) => {
