@@ -8,9 +8,22 @@ const bulletinMeta = document.querySelector("#admin-bulletin-meta");
 const statusText = document.querySelector("#admin-status");
 const updatedText = document.querySelector("#admin-updated");
 const logoutButton = document.querySelector("#admin-logout");
+const timesPanel = document.querySelector(".admin-times-panel");
 
 const groups = ["weekday", "fridayNight", "morning", "afternoon"];
 let content = null;
+
+function syncAdminMobileLayout() {
+  if (!timesPanel) return;
+  if (window.matchMedia("(max-width: 720px)").matches) {
+    timesPanel.removeAttribute("open");
+  } else {
+    timesPanel.setAttribute("open", "");
+  }
+}
+
+syncAdminMobileLayout();
+window.addEventListener("resize", syncAdminMobileLayout);
 
 function setStatus(message, type = "") {
   if (!statusText) return;

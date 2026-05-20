@@ -6,6 +6,10 @@ const giveHtml = fs.readFileSync("give.html", "utf8");
 const scheduleHtml = fs.readFileSync("schedule.html", "utf8");
 const resourcesHtml = fs.readFileSync("resources.html", "utf8");
 const adminHtml = fs.readFileSync("admin.html", "utf8");
+const minyanimRouteHtml = fs.readFileSync("minyanim/index.html", "utf8");
+const communityRouteHtml = fs.readFileSync("community-info/index.html", "utf8");
+const supportRouteHtml = fs.readFileSync("support-us/index.html", "utf8");
+const staffRouteHtml = fs.readFileSync("staff/index.html", "utf8");
 const script = fs.readFileSync("script.js", "utf8");
 const adminScript = fs.readFileSync("admin.js", "utf8");
 const styles = fs.readFileSync("styles.css", "utf8");
@@ -29,6 +33,10 @@ assert.ok(html.indexOf('class="status-strip"') < html.indexOf('id="schedule"'), 
 assert.ok(html.indexOf('id="schedule"') < html.indexOf('class="home-link-strip"'), "Home page should show donate, eruv, and email after the schedule");
 assert.ok(html.indexOf("<span>Next Minyan</span>") < html.indexOf("<span>Address</span>"), "Home page should show next minyan above address");
 assert.match(html, /<header class="site-header">/, "Home page should include the site header");
+assert.equal(minyanimRouteHtml, scheduleHtml, "Static /minyanim route should mirror schedule page");
+assert.equal(communityRouteHtml, resourcesHtml, "Static /community-info route should mirror resources page");
+assert.equal(supportRouteHtml, giveHtml, "Static /support-us route should mirror give page");
+assert.equal(staffRouteHtml, adminHtml, "Static /staff route should mirror admin page");
 assert.match(html, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Home header should use the shared compact nav");
 assert.match(resourcesHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info" aria-current="page">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Resources header should use the shared compact nav");
 assert.match(scheduleHtml, /<a href="\/minyanim" aria-current="page">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Schedule header should use the shared compact nav");
@@ -59,6 +67,7 @@ assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Announ
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /Board Announcement/, "Announcement bar should not mention board");
 assert.match(styles, /\.announcement-banner[\s\S]*text-align: center/, "Announcement banner should center its text");
 assert.match(styles, /\.announcement-banner \.announcement-list article[\s\S]*text-align: center/, "Announcement message text should be centered");
+assert.match(styles, /\.announcement-banner[\s\S]*gap: 0\.35rem/, "Announcement banner should avoid a large label/title gap");
 assert.match(html, /id="announcement-list"/, "Announcement list should be present");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /class="site-loader"/, "Pages should include the delayed loader");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /document\.readyState === "loading"/, "Loader should only appear while the page is not rendering");
@@ -85,6 +94,9 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="(?:index|resources|schedule|give)\.html/, "Public links should use clean URLs instead of .html files");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/(?:give|resources|schedule|admin)"/, "Public links should match button names");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js/, "Public pages should use absolute script URLs");
 
 ["weekday-shacharit", "sunday-shacharit", "daily-mincha-arvit"].forEach((key) => {
   assert.match(`${html}\n${scheduleHtml}`, new RegExp(`data-schedule-key="${key}"`), `${key} should be rendered in markup`);
@@ -112,10 +124,14 @@ assert.match(adminHtml, /id="admin-bulletin-form"/, "Admin bulletin upload form 
 assert.match(adminHtml, /type="file"/, "Admin upload should use a file input");
 assert.match(adminHtml, /accept="application\/pdf,\.pdf"/, "Admin upload should accept PDF files");
 assert.match(adminHtml, /id="admin-content-form"/, "Admin editor form should be present");
+assert.match(adminHtml, /<legend>Announcement<\/legend>/, "Mobile admin should prioritize announcement editing");
+assert.match(adminHtml, /<details class="admin-times-panel" open>/, "Admin times should live in a collapsible panel");
+assert.match(adminHtml, /<summary>Edit regular times<\/summary>/, "Admin times panel should use simple mobile copy");
 assert.doesNotMatch(adminHtml, /Latest Shema/, "Admin editor should not expose Latest Shema as a manual board field");
 assert.match(adminScript, /\/api\/admin\/login/, "Admin page should log in through backend");
 assert.match(adminScript, /\/api\/admin\/bulletin/, "Admin page should upload bulletins through backend");
 assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save content through backend");
+assert.match(adminScript, /function syncAdminMobileLayout/, "Admin page should collapse detailed times on phones");
 assert.doesNotMatch(adminScript, /collectSchedule\("latestShema"\)/, "Admin saves should not add manual Latest Shema times");
 
 assert.match(server, /adminApiHandler/, "Dev server should route admin API requests");
