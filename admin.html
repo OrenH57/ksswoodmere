@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="styles.css?v=admin-1">
   </head>
   <body class="admin-page">
+    <div class="site-loader" aria-hidden="true"><span></span></div>
+    <script>
+      (() => {
+        const loaderDelay = window.setTimeout(() => {
+          if (document.readyState === "loading") document.documentElement.classList.add("is-rendering-slow");
+        }, 900);
+        const clearLoader = () => {
+          window.clearTimeout(loaderDelay);
+          document.documentElement.classList.remove("is-rendering-slow");
+        };
+        document.addEventListener("DOMContentLoaded", clearLoader, { once: true });
+        window.addEventListener("pageshow", clearLoader, { once: true });
+      })();
+    </script>
     <main class="admin-shell">
       <section class="admin-hero" aria-labelledby="admin-title">
         <a class="admin-home" href="/">Kehilat Shaare Shalom</a>

@@ -70,6 +70,34 @@ h3 {
   transform-origin: left center;
 }
 
+.site-loader {
+  position: fixed;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: var(--paper);
+  z-index: 1000;
+}
+
+.is-rendering-slow .site-loader {
+  display: grid;
+}
+
+.site-loader span {
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(10, 49, 71, 0.16);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: loader-spin 760ms linear infinite;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -272,10 +300,12 @@ h3 {
 
 .announcement-banner {
   display: grid;
+  justify-items: center;
   gap: 0.75rem;
   padding: 0.95rem 1.35rem;
   border-bottom: 1px solid rgba(185, 150, 85, 0.45);
   background: linear-gradient(90deg, rgba(185, 150, 85, 0.22), rgba(11, 111, 164, 0.08));
+  text-align: center;
 }
 
 .announcement-banner[hidden] {
@@ -293,15 +323,17 @@ h3 {
 
 .announcement-banner .announcement-list {
   display: grid;
+  justify-items: center;
   gap: 0.75rem;
 }
 
 .announcement-banner .announcement-list article {
   display: grid;
+  justify-items: center;
   gap: 0.2rem;
   padding: 0;
   border-bottom: 0;
-  text-align: left;
+  text-align: center;
 }
 
 .announcement-banner .announcement-list h3 {
@@ -483,8 +515,8 @@ h3 {
 .home-page .hero-copy > p:not(.hero-kicker) {
   max-width: 640px;
   margin-bottom: 0;
-  padding-bottom: 0.95rem;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .hero-actions,
@@ -684,6 +716,11 @@ h3 {
 
 .section-intro h2::after {
   display: none;
+}
+
+.split-section:first-of-type .section-intro > .eyebrow {
+  padding-top: 0;
+  border-top: 0;
 }
 
 .section-intro p:not(.eyebrow),

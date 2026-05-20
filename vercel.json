@@ -1,7 +1,65 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/staff",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/support-us",
+      "destination": "/give.html"
+    },
+    {
+      "source": "/community-info",
+      "destination": "/resources.html"
+    },
+    {
+      "source": "/minyanim",
+      "destination": "/schedule.html"
+    }
+  ],
   "redirects": [
+    {
+      "source": "/.git/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/data/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lib/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/node_modules/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/source",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/page-source",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/tests/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/view-source",
+      "destination": "/",
+      "permanent": false
+    },
     {
       "source": "/index.html",
       "destination": "/",
@@ -9,22 +67,37 @@
     },
     {
       "source": "/admin.html",
-      "destination": "/admin",
+      "destination": "/staff",
       "permanent": true
     },
     {
       "source": "/give.html",
-      "destination": "/give",
+      "destination": "/support-us",
       "permanent": true
     },
     {
       "source": "/resources.html",
-      "destination": "/resources",
+      "destination": "/community-info",
       "permanent": true
     },
     {
       "source": "/schedule.html",
-      "destination": "/schedule",
+      "destination": "/minyanim",
+      "permanent": true
+    },
+    {
+      "source": "/give",
+      "destination": "/support-us",
+      "permanent": true
+    },
+    {
+      "source": "/resources",
+      "destination": "/community-info",
+      "permanent": true
+    },
+    {
+      "source": "/schedule",
+      "destination": "/minyanim",
       "permanent": true
     }
   ]

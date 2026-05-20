@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="styles.css?v=mobile-2">
   </head>
   <body>
+    <div class="site-loader" aria-hidden="true"><span></span></div>
+    <script>
+      (() => {
+        const loaderDelay = window.setTimeout(() => {
+          if (document.readyState === "loading") document.documentElement.classList.add("is-rendering-slow");
+        }, 900);
+        const clearLoader = () => {
+          window.clearTimeout(loaderDelay);
+          document.documentElement.classList.remove("is-rendering-slow");
+        };
+        document.addEventListener("DOMContentLoaded", clearLoader, { once: true });
+        window.addEventListener("pageshow", clearLoader, { once: true });
+      })();
+    </script>
     <header class="site-header">
       <a class="brand" href="/" aria-label="Kehilat Shaare Shalom home">
         <img src="assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark">
@@ -27,16 +41,16 @@
       </button>
 
       <nav id="site-nav" class="site-nav" aria-label="Main navigation">
-        <a href="/#schedule" aria-current="page">Minyanim</a>
-        <a href="/resources#community">Visitor Info</a>
-        <a class="nav-support" href="/give">Support Us</a>
+        <a href="/minyanim" aria-current="page">Minyanim</a>
+        <a href="/community-info">Community Info</a>
+        <a class="nav-support" href="/support-us">Support Us</a>
       </nav>
     </header>
 
     <main id="top" class="editorial-page">
-      <section class="announcement-banner" id="announcements" hidden aria-label="Board announcements">
+      <section class="announcement-banner" id="announcements" hidden aria-label="Announcements">
         <div class="announcement-banner-label">
-          <span>Board Announcement</span>
+          <span>Announcement</span>
         </div>
         <div class="announcement-list" id="announcement-list" aria-live="polite"></div>
       </section>
@@ -142,10 +156,9 @@
         <p>Shabbat Shalom</p>
         <nav aria-label="Footer navigation">
           <a href="/">Home</a>
-          <a href="/#schedule">Minyanim</a>
-          <a href="/give">Support Us</a>
-          <a href="/resources#community">Visitor Info</a>
-          <a href="/admin">Staff</a>
+          <a href="/community-info">Community Info</a>
+          <a href="/support-us">Support Us</a>
+          <a href="/staff">Staff</a>
         </nav>
         <small>&copy; 2026 Kehilat Shaare Shalom. All rights reserved.</small>
       </div>

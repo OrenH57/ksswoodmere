@@ -8,15 +8,20 @@ const resourcesHtml = fs.readFileSync("resources.html", "utf8");
 const adminHtml = fs.readFileSync("admin.html", "utf8");
 const script = fs.readFileSync("script.js", "utf8");
 const adminScript = fs.readFileSync("admin.js", "utf8");
+const styles = fs.readFileSync("styles.css", "utf8");
 const server = fs.readFileSync("dev-server.js", "utf8");
 const vercelConfig = fs.readFileSync("vercel.json", "utf8");
+
+function footerHtml(pageHtml) {
+  return pageHtml.match(/<footer[\s\S]*?<\/footer>/)?.[0] || "";
+}
 
 assert.match(html, /id="schedule"/, "Home page should contain minyan times");
 assert.match(html, /id="zmanim-list"/, "Home page should contain zmanim");
 assert.match(html, /Five Towns Eruv/, "Home page should contain eruv information");
 assert.match(html, /id="give"/, "Home page should contain donation information");
 assert.match(html, /mailto:ksswoodmere@gmail\.com/, "Home page should include an email link");
-assert.match(html, /href="\/resources(?:#|")/, "Home page should link to resources page with a clean URL");
+assert.match(html, /href="\/community-info"/, "Home page should link to community info page with a clean URL");
 assert.doesNotMatch(resourcesHtml, /id="give"/, "Resources page should not duplicate donation information");
 assert.doesNotMatch(resourcesHtml, /Five Towns Eruv Map/, "Resources page should not duplicate eruv information");
 assert.ok(html.indexOf('class="hero"') < html.indexOf('class="status-strip"'), "Home page should match the bulletin-style hero before practical info");
@@ -24,10 +29,10 @@ assert.ok(html.indexOf('class="status-strip"') < html.indexOf('id="schedule"'), 
 assert.ok(html.indexOf('id="schedule"') < html.indexOf('class="home-link-strip"'), "Home page should show donate, eruv, and email after the schedule");
 assert.ok(html.indexOf("<span>Next Minyan</span>") < html.indexOf("<span>Address</span>"), "Home page should show next minyan above address");
 assert.match(html, /<header class="site-header">/, "Home page should include the site header");
-assert.match(html, /<a href="#schedule">Minyanim<\/a>\s*<a href="\/resources#community">Visitor Info<\/a>\s*<a class="nav-support" href="\/give">Support Us<\/a>/, "Home header should use the shared compact nav");
-assert.match(resourcesHtml, /<a href="\/#schedule">Minyanim<\/a>\s*<a href="#community">Visitor Info<\/a>\s*<a class="nav-support" href="\/give">Support Us<\/a>/, "Resources header should use the shared compact nav");
-assert.match(scheduleHtml, /<a href="\/#schedule" aria-current="page">Minyanim<\/a>\s*<a href="\/resources#community">Visitor Info<\/a>\s*<a class="nav-support" href="\/give">Support Us<\/a>/, "Schedule header should use the shared compact nav");
-assert.match(giveHtml, /<a href="\/#schedule">Minyanim<\/a>\s*<a href="\/resources#community">Visitor Info<\/a>\s*<a class="nav-support" href="\/give" aria-current="page">Support Us<\/a>/, "Give header should use the shared compact nav");
+assert.match(html, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Home header should use the shared compact nav");
+assert.match(resourcesHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info" aria-current="page">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Resources header should use the shared compact nav");
+assert.match(scheduleHtml, /<a href="\/minyanim" aria-current="page">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Schedule header should use the shared compact nav");
+assert.match(giveHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us" aria-current="page">Support Us<\/a>/, "Give header should use the shared compact nav");
 assert.doesNotMatch(html, /resources\.html#learning/, "Home header should not expose every resource section as a separate link");
 assert.doesNotMatch(html, /resources\.html#visit/, "Home header should not expose visit as a separate link");
 assert.doesNotMatch(html, />Donate<\/a>/, "Home header should say Support Us, not Donate");
@@ -45,25 +50,41 @@ assert.match(giveHtml, /class="copy-button"[^>]*data-copy="ksswoodmere@gmail\.co
 assert.doesNotMatch(resourcesHtml, /Sponsor &amp; Dedicate/, "Resources page should not duplicate give content");
 assert.match(resourcesHtml, /id="resources"/, "Resources page should contain local resources");
 assert.match(resourcesHtml, /id="learning"/, "Resources page should contain learning content");
+assert.match(resourcesHtml, /<div class="masthead-name" id="masthead-title">Community Info<\/div>/, "Community info masthead should stay compact on mobile");
+assert.match(styles, /\.split-section:first-of-type \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "First resources section should not add an extra top bar");
+assert.match(styles, /\.home-page \.hero-copy > p:not\(\.hero-kicker\)[\s\S]*border-bottom: 0/, "Home hero body text should not add an underline");
 assert.match(html, /id="announcements"[^>]*hidden/, "Announcements section should start hidden");
 assert.match(html, /class="announcement-banner"/, "Announcements should render as a top banner");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Announcement<\/span>/, "Announcement bar should use simple public copy");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /Board Announcement/, "Announcement bar should not mention board");
+assert.match(styles, /\.announcement-banner[\s\S]*text-align: center/, "Announcement banner should center its text");
+assert.match(styles, /\.announcement-banner \.announcement-list article[\s\S]*text-align: center/, "Announcement message text should be centered");
 assert.match(html, /id="announcement-list"/, "Announcement list should be present");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /class="site-loader"/, "Pages should include the delayed loader");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /document\.readyState === "loading"/, "Loader should only appear while the page is not rendering");
+assert.match(styles, /\.is-rendering-slow \.site-loader[\s\S]*display: grid/, "Loader should only show after the delayed slow-render class");
 assert.match(html, /class="site-footer"/, "Public page should include a footer");
 assert.match(html, /aria-label="Footer navigation"/, "Footer should include quick navigation");
-assert.match(html, /href="\/admin">Staff<\/a>/, "Footer should link to the clean admin URL with staff copy");
-assert.match(html, /href="\/resources#community">Visitor Info<\/a>/, "Home footer should include visitor info");
-assert.match(html, /href="\/give">Support Us<\/a>/, "Home footer should link to the give page");
-assert.match(resourcesHtml, /href="\/resources#community">Visitor Info<\/a>/, "Resources footer should match the shared footer links");
-assert.match(scheduleHtml, /href="\/resources#community">Visitor Info<\/a>/, "Schedule footer should match the shared footer links");
-assert.match(giveHtml, /href="\/resources#community">Visitor Info<\/a>/, "Give footer should match the shared footer links");
+assert.match(html, /href="\/staff">Staff<\/a>/, "Footer should link to the clean staff URL with staff copy");
+assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should be ordered without Minyanim");
+assert.match(html, /href="\/community-info">Community Info<\/a>/, "Home footer should include community info");
+assert.match(html, /href="\/support-us">Support Us<\/a>/, "Home footer should link to the support page");
+assert.match(resourcesHtml, /href="\/community-info">Community Info<\/a>/, "Resources footer should match the shared footer links");
+assert.match(scheduleHtml, /href="\/community-info">Community Info<\/a>/, "Schedule footer should match the shared footer links");
+assert.match(giveHtml, /href="\/community-info">Community Info<\/a>/, "Give footer should match the shared footer links");
 assert.match(html, /class="footer-bottom compact-footer"/, "Home footer should use the compact footer");
 assert.match(giveHtml, /class="footer-bottom compact-footer"/, "Give footer should use the compact footer");
 assert.match(resourcesHtml, /class="footer-bottom compact-footer"/, "Resources footer should use the compact footer");
 assert.match(scheduleHtml, /class="footer-bottom compact-footer"/, "Schedule footer should use the compact footer");
+for (const pageFooter of [html, giveHtml, resourcesHtml, scheduleHtml].map(footerHtml)) {
+  assert.doesNotMatch(pageFooter, /Minyanim/, "Public footers should not include Minyanim");
+}
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-grid">/, "Public footers should not duplicate address and contact info");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-bottom compact-footer">(?:(?!<\/div>)[\s\S])*<strong>ksswoodmere@gmail\.com<\/strong>/, "Public footer bottom should not repeat the email address");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Staff Sign In<\/a>/, "Public footer should shorten staff link copy");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="(?:index|resources|schedule|give)\.html/, "Public links should use clean URLs instead of .html files");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/(?:give|resources|schedule|admin)"/, "Public links should match button names");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 
 ["weekday-shacharit", "sunday-shacharit", "daily-mincha-arvit"].forEach((key) => {
   assert.match(`${html}\n${scheduleHtml}`, new RegExp(`data-schedule-key="${key}"`), `${key} should be rendered in markup`);
@@ -102,21 +123,28 @@ assert.match(server, /\/api\/updates/, "Dev server should expose public updates"
 assert.match(server, /cleanPageRoutes/, "Dev server should serve clean page routes");
 assert.match(server, /legacyPageRoutes/, "Dev server should redirect legacy html page URLs");
 assert.match(server, /\["\/index\.html", "\/"\]/, "Dev server should redirect legacy index.html URL");
-assert.match(server, /\["\/give", "\/give\.html"\]/, "Dev server should serve clean give route");
-assert.match(server, /\["\/give\.html", "\/give"\]/, "Dev server should redirect legacy give.html URL");
+assert.match(server, /\["\/support-us", "\/give\.html"\]/, "Dev server should serve clean support route");
+assert.match(server, /\["\/community-info", "\/resources\.html"\]/, "Dev server should serve clean community route");
+assert.match(server, /\["\/minyanim", "\/schedule\.html"\]/, "Dev server should serve clean minyanim route");
+assert.match(server, /\["\/staff", "\/admin\.html"\]/, "Dev server should serve clean staff route");
+assert.match(server, /\["\/give\.html", "\/support-us"\]/, "Dev server should redirect legacy give.html URL");
 assert.match(server, /publicFiles/, "Dev server should restrict static serving to public files");
 assert.match(server, /startsWith\("\/assets\/"\)/, "Dev server should only expose the assets directory publicly");
+assert.match(server, /sourceRedirectPrefixes/, "Dev server should redirect source-like paths");
+assert.match(server, /"\/page-source"/, "Dev server should redirect page source routes");
 assert.match(server, /redirectHome\(response\)/, "Dev server should redirect private source and data paths");
 assert.match(vercelConfig, /"cleanUrls": true/, "Vercel should serve clean extensionless URLs");
+assert.match(vercelConfig, /"source": "\/source"/, "Vercel should redirect source-like URLs");
+assert.match(vercelConfig, /"source": "\/data\/:path\*"/, "Vercel should redirect private data URLs");
 assert.match(vercelConfig, /"source": "\/index\.html"/, "Vercel should redirect legacy index.html URL");
 assert.match(vercelConfig, /"destination": "\/"/, "Vercel should use / as the home URL");
 assert.match(vercelConfig, /"source": "\/admin\.html"/, "Vercel should redirect legacy admin.html URL");
-assert.match(vercelConfig, /"destination": "\/admin"/, "Vercel should use /admin as the admin URL");
+assert.match(vercelConfig, /"destination": "\/staff"/, "Vercel should use /staff as the staff URL");
 assert.match(vercelConfig, /"source": "\/give\.html"/, "Vercel should redirect legacy give.html URL");
-assert.match(vercelConfig, /"destination": "\/give"/, "Vercel should use /give as the give URL");
+assert.match(vercelConfig, /"destination": "\/support-us"/, "Vercel should use /support-us as the support URL");
 assert.match(vercelConfig, /"source": "\/schedule\.html"/, "Vercel should redirect legacy schedule.html URL");
-assert.match(vercelConfig, /"destination": "\/schedule"/, "Vercel should use /schedule as the schedule URL");
+assert.match(vercelConfig, /"destination": "\/minyanim"/, "Vercel should use /minyanim as the schedule URL");
 assert.match(vercelConfig, /"source": "\/resources\.html"/, "Vercel should redirect legacy resources.html URL");
-assert.match(vercelConfig, /"destination": "\/resources"/, "Vercel should use /resources as the resources URL");
+assert.match(vercelConfig, /"destination": "\/community-info"/, "Vercel should use /community-info as the community URL");
 
 console.log("UI static test passed.");

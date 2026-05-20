@@ -40,18 +40,48 @@ const mimeTypes = {
 
 const cleanPageRoutes = new Map([
   ["/admin", "/admin.html"],
+  ["/staff", "/admin.html"],
   ["/give", "/give.html"],
+  ["/support-us", "/give.html"],
   ["/resources", "/resources.html"],
+  ["/community-info", "/resources.html"],
   ["/schedule", "/schedule.html"],
+  ["/minyanim", "/schedule.html"],
 ]);
 const legacyPageRoutes = new Map([
   ["/index.html", "/"],
-  ["/admin.html", "/admin"],
-  ["/give.html", "/give"],
-  ["/resources.html", "/resources"],
-  ["/schedule.html", "/schedule"],
+  ["/admin.html", "/staff"],
+  ["/give.html", "/support-us"],
+  ["/resources.html", "/community-info"],
+  ["/schedule.html", "/minyanim"],
+  ["/give", "/support-us"],
+  ["/resources", "/community-info"],
+  ["/schedule", "/minyanim"],
 ]);
-const publicFiles = new Set(["/admin", "/give", "/resources", "/schedule", "/admin.js", "/index.html", "/script.js", "/styles.css"]);
+const publicFiles = new Set([
+  "/admin",
+  "/staff",
+  "/give",
+  "/support-us",
+  "/resources",
+  "/community-info",
+  "/schedule",
+  "/minyanim",
+  "/admin.js",
+  "/index.html",
+  "/script.js",
+  "/styles.css",
+]);
+const sourceRedirectPrefixes = [
+  "/.git",
+  "/data",
+  "/lib",
+  "/node_modules",
+  "/source",
+  "/page-source",
+  "/tests",
+  "/view-source",
+];
 
 function send(response, statusCode, headers, body) {
   response.writeHead(statusCode, headers);
@@ -109,6 +139,11 @@ const server = http.createServer(async (request, response) => {
 
   if (urlPath === "/api/updates" || urlPath.startsWith("/api/admin/")) {
     await adminApiHandler(request, response, urlPath);
+    return;
+  }
+
+  if (sourceRedirectPrefixes.some((prefix) => urlPath === prefix || urlPath.startsWith(`${prefix}/`))) {
+    redirectHome(response);
     return;
   }
 
