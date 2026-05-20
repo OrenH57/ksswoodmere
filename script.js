@@ -114,15 +114,36 @@ siteNav?.addEventListener("click", (event) => {
 const copyButton = document.querySelector(".copy-button");
 const copyStatus = document.querySelector("#copy-status");
 
+function fallbackCopyText(value) {
+  const textArea = document.createElement("textarea");
+  textArea.value = value;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "fixed";
+  textArea.style.top = "-1000px";
+  textArea.style.opacity = "0";
+  document.body.append(textArea);
+  textArea.select();
+
+  try {
+    return document.execCommand("copy");
+  } finally {
+    textArea.remove();
+  }
+}
+
 copyButton?.addEventListener("click", async () => {
   const value = copyButton.getAttribute("data-copy") || "";
   if (copyStatus) copyStatus.textContent = "Copying...";
 
   try {
-    await navigator.clipboard.writeText(value);
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+    } else if (!fallbackCopyText(value)) {
+      throw new Error("Fallback copy unavailable");
+    }
     if (copyStatus) copyStatus.textContent = "Copied.";
   } catch {
-    if (copyStatus) copyStatus.textContent = "Copy failed. Select the email above.";
+    if (copyStatus) copyStatus.textContent = `Email: ${value}`;
   }
 });
 
@@ -496,21 +517,17 @@ function renderTimeTable(title, items) {
   if (!Array.isArray(items) || !items.length) return "";
 
   return `
-    <article class="time-table">
-      <h3>${escapeHtml(title)}</h3>
-      <dl>
-        ${items
-          .map(
-            (item) => `
-              <div>
-                <dt>${escapeHtml(item.label)}</dt>
-                <dd>${escapeHtml(item.time)}</dd>
-              </div>
-            `
-          )
-          .join("")}
-      </dl>
-    </article>
+    ${items
+      .map(
+        (item) => `
+          <article>
+            <p>${escapeHtml(title)}</p>
+            <h3>${escapeHtml(item.label)}</h3>
+            <strong>${escapeHtml(item.time)}</strong>
+          </article>
+        `
+      )
+      .join("")}
   `;
 }
 

@@ -6,11 +6,10 @@ const bulletinForm = document.querySelector("#admin-bulletin-form");
 const bulletinFile = document.querySelector("#admin-bulletin-file");
 const bulletinMeta = document.querySelector("#admin-bulletin-meta");
 const statusText = document.querySelector("#admin-status");
-const configMessage = document.querySelector("#admin-config-message");
 const updatedText = document.querySelector("#admin-updated");
 const logoutButton = document.querySelector("#admin-logout");
 
-const groups = ["weekday", "fridayNight", "morning", "latestShema", "afternoon"];
+const groups = ["weekday", "fridayNight", "morning", "afternoon"];
 let content = null;
 
 function setStatus(message, type = "") {
@@ -177,7 +176,6 @@ function collectContent() {
     shabbat: {
       fridayNight: collectSchedule("fridayNight"),
       morning: collectSchedule("morning"),
-      latestShema: collectSchedule("latestShema"),
       afternoon: collectSchedule("afternoon"),
     },
     announcements: collectAnnouncements(),
@@ -271,11 +269,6 @@ document.querySelector("[data-add-announcement]")?.addEventListener("click", () 
 async function initializeAdmin() {
   try {
     const status = await apiRequest("/api/admin/status");
-    if (configMessage) {
-      configMessage.textContent = status.configured
-        ? "Use the shared board password to continue."
-        : "Admin is not configured yet. Set ADMIN_PASSWORD on the server before using this page.";
-    }
 
     if (status.authenticated) {
       await loadEditor();

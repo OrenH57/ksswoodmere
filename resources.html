@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resources | Kehilat Shaare Shalom</title>
+    <meta name="description" content="Learning, community, visitor information, local resources, giving, and contact details for Kehilat Shaare Shalom.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=mobile-2">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Kehilat Shaare Shalom home">
+        <img src="assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark">
+        <span class="brand-text" aria-live="polite">
+          <span class="brand-name">Shaare Shalom</span>
+          <span class="brand-subtitle">Kehilat Shaare Shalom</span>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+        <a href="/#schedule">Minyanim</a>
+        <a href="#community">Visitor Info</a>
+        <a class="nav-support" href="/give">Support Us</a>
+      </nav>
+    </header>
+
+    <main id="top" class="editorial-page">
+      <section class="announcement-banner" id="announcements" hidden aria-label="Board announcements">
+        <div class="announcement-banner-label">
+          <span>Board Announcement</span>
+        </div>
+        <div class="announcement-list" id="announcement-list" aria-live="polite"></div>
+      </section>
+
+      <section class="masthead" aria-labelledby="masthead-title">
+        <div class="masthead-name" id="masthead-title">Community Resources</div>
+        <div class="masthead-sub">
+          <span></span>
+          <em>Learning, Shabbat, giving, and local information</em>
+          <span></span>
+        </div>
+      </section>
+
+      <section id="learning" class="section split-section">
+        <div class="section-intro">
+          <p class="eyebrow">Torah Learning</p>
+          <h2>Learning</h2>
+          <p>
+            Weekly learning is part of the rhythm of Shaare Shalom: Torah, conversation,
+            and food around the table.
+          </p>
+        </div>
+
+        <div class="program-list">
+          <article>
+            <span>Monday Night &middot; 8:30 PM</span>
+            <h3>Learning with Food</h3>
+            <p>Join the community for Torah learning, dinner, and conversation on Monday nights.</p>
+          </article>
+          <article>
+            <span>Shabbat Morning &middot; 8:00 AM</span>
+            <h3>Ben Ish Hai Class</h3>
+            <p>Start Shabbat morning with Ben Ish Hai classes before Shacharit.</p>
+          </article>
+          <article>
+            <span>Shabbat Afternoon &middot; 6:45 PM</span>
+            <h3>Parsha Shiur</h3>
+            <p>A weekly opportunity to learn and prepare for Seuda Shlishit and Arvit.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="community" class="section community-section">
+        <div class="section-intro">
+          <p class="eyebrow">Community</p>
+          <h2>Shabbat at the Shul</h2>
+        </div>
+
+        <div class="community-grid">
+          <article>
+            <h3>Kiddush</h3>
+            <p>Held after Shabbat morning tefillah. A weekly moment to greet one another, welcome guests, and build community.</p>
+          </article>
+          <article>
+            <h3>Seuda Shlishit</h3>
+            <p>Held Shabbat afternoon after Mincha. Join the community for food, Torah, and the calm closing hours of Shabbat.</p>
+          </article>
+          <article>
+            <h3>Families Welcome</h3>
+            <p>Kids program with Avi is held Shabbat afternoon, with family-friendly programming when available.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section visit-preview">
+        <div class="section-intro">
+          <p class="eyebrow">What to Expect</p>
+          <h2>New to Shaare Shalom?</h2>
+        </div>
+
+        <div class="faq-list">
+          <article>
+            <button type="button" class="faq-question">Where should I enter?</button>
+            <div class="faq-answer">
+              <p>Use the rear entrance at 22 Andover Lane in Woodmere.</p>
+            </div>
+          </article>
+          <article>
+            <button type="button" class="faq-question">Can guests come for Shabbat?</button>
+            <div class="faq-answer">
+              <p>Yes. Guests and new families are welcome. Shabbat times and special announcements are shared weekly by the shul.</p>
+            </div>
+          </article>
+          <article>
+            <button type="button" class="faq-question">Is there programming for children?</button>
+            <div class="faq-answer">
+              <p>Kids program with Avi is held Shabbat afternoon, with family-friendly programming when available.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="resources" class="section resources-section">
+        <div class="section-intro">
+          <p class="eyebrow">Local Resources</p>
+          <h2>Mikvah Information</h2>
+          <p>Local mikvah directory for the Five Towns and nearby area. Please verify hours and status directly before relying on them.</p>
+        </div>
+
+        <div class="resource-accordion">
+          <article>
+            <button type="button" class="resource-toggle" aria-expanded="false" aria-controls="mikvah-drawer">
+              <span>
+                <strong>Mikvah Information</strong>
+                <small>Local mikvah directory for the Five Towns and nearby area</small>
+              </span>
+            </button>
+            <div class="resource-drawer" id="mikvah-drawer" hidden>
+              <div class="resource-grid mikvah-grid">
+                <article>
+                  <h3>Cong. Mikvah South Shore</h3>
+                  <p>1156 Peninsula Blvd.<br>Hewlett, NY<br>516-569-5514</p>
+                  <p class="resource-note">Also has a separate mikvah for keilim.</p>
+                </article>
+                <article>
+                  <h3>Far Rockaway/Lawrence Mikvah</h3>
+                  <p>1121A Sage Street<br>Far Rockaway, NY<br>718-327-9727</p>
+                  <p class="resource-note">Also has a separate mikvah for keilim.</p>
+                </article>
+                <article>
+                  <h3>Grove Street Mikvah</h3>
+                  <p>134 Grove Ave.<br>Cedarhurst, NY 11516<br>516-699-2000</p>
+                  <a href="mailto:info@grovestreetmikvah.org">info@grovestreetmikvah.org</a>
+                  <p class="resource-note">Women's mikvah only.</p>
+                </article>
+                <article>
+                  <h3>Inwood Mikvah</h3>
+                  <p>76 Roosevelt Ave.<br>Inwood, NY 11096<br>516-231-8000</p>
+                  <a href="mailto:info@Inwoodmikvah.org">info@Inwoodmikvah.org</a>
+                  <p class="resource-note">Also has a separate mikvah for keilim.</p>
+                </article>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="visit" class="visit-section">
+        <div class="visit-panel">
+          <div>
+            <p class="eyebrow">Visit Us</p>
+            <h2>22 Andover Lane, Woodmere</h2>
+            <p>Use the rear entrance. Visitors, guests, and new families are welcome.</p>
+          </div>
+          <div class="visit-actions">
+            <a class="button primary" href="mailto:ksswoodmere@gmail.com">Email the Shul</a>
+            <a class="button secondary" href="https://www.google.com/maps/search/?api=1&query=22%20Andover%20Lane%20Woodmere%20NY">Open Map</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-bottom compact-footer">
+        <p>Shabbat Shalom</p>
+        <nav aria-label="Footer navigation">
+          <a href="/">Home</a>
+          <a href="/#schedule">Minyanim</a>
+          <a href="/give">Support Us</a>
+          <a href="/resources#community">Visitor Info</a>
+          <a href="/admin">Staff</a>
+        </nav>
+        <small>&copy; 2026 Kehilat Shaare Shalom. All rights reserved.</small>
+      </div>
+    </footer>
+
+    <script src="script.js?v=mobile-2"></script>
+  </body>
+</html>

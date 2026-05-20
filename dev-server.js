@@ -38,7 +38,20 @@ const mimeTypes = {
   ".png": "image/png",
 };
 
-const publicFiles = new Set(["/admin.html", "/admin.js", "/index.html", "/script.js", "/styles.css"]);
+const cleanPageRoutes = new Map([
+  ["/admin", "/admin.html"],
+  ["/give", "/give.html"],
+  ["/resources", "/resources.html"],
+  ["/schedule", "/schedule.html"],
+]);
+const legacyPageRoutes = new Map([
+  ["/index.html", "/"],
+  ["/admin.html", "/admin"],
+  ["/give.html", "/give"],
+  ["/resources.html", "/resources"],
+  ["/schedule.html", "/schedule"],
+]);
+const publicFiles = new Set(["/admin", "/give", "/resources", "/schedule", "/admin.js", "/index.html", "/script.js", "/styles.css"]);
 
 function send(response, statusCode, headers, body) {
   response.writeHead(statusCode, headers);
@@ -51,11 +64,12 @@ function redirectHome(response) {
 
 function safePath(urlPath) {
   const decodedPath = decodeURIComponent(urlPath.split("?")[0]);
-  const requestedPath = decodedPath === "/" ? "/index.html" : decodedPath;
+  const requestedPath = decodedPath === "/" ? "/index.html" : cleanPageRoutes.get(decodedPath) || decodedPath;
   const normalizedPath = requestedPath.replace(/\\/g, "/");
+  const publicPath = decodedPath === "/" ? "/index.html" : decodedPath;
 
   if (normalizedPath.split("/").some((part) => part.startsWith("."))) return null;
-  if (!publicFiles.has(normalizedPath) && !normalizedPath.startsWith("/assets/")) return null;
+  if (!publicFiles.has(publicPath) && !normalizedPath.startsWith("/assets/")) return null;
 
   const resolved = path.resolve(root, `.${requestedPath}`);
   return resolved.startsWith(root) ? resolved : null;
@@ -95,6 +109,11 @@ const server = http.createServer(async (request, response) => {
 
   if (urlPath === "/api/updates" || urlPath.startsWith("/api/admin/")) {
     await adminApiHandler(request, response, urlPath);
+    return;
+  }
+
+  if (legacyPageRoutes.has(urlPath)) {
+    send(response, 301, { Location: legacyPageRoutes.get(urlPath), "Content-Type": "text/plain; charset=utf-8" }, "Moved");
     return;
   }
 
