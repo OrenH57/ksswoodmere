@@ -49,7 +49,6 @@
             <h2 id="editor-title">Board Updates</h2>
             <p id="admin-updated" class="admin-muted">No saved updates yet.</p>
           </div>
-          <button class="button secondary" id="admin-logout" type="button">Log Out</button>
         </div>
 
         <form id="admin-content-form" class="admin-editor">
@@ -61,7 +60,6 @@
 
           <div class="admin-actions">
             <button class="button primary" type="submit">Save Updates</button>
-            <a class="button secondary" href="/">View Site</a>
           </div>
 
           <details class="admin-times-panel" open>
@@ -102,6 +100,11 @@
           </label>
           <button class="button primary" type="submit">Upload and Parse</button>
         </form>
+
+        <div class="admin-secondary-actions">
+          <a class="button secondary" href="/">View Site</a>
+          <button class="button secondary" id="admin-logout" type="button">Log Out</button>
+        </div>
       </section>
 
       <p id="admin-status" class="admin-status" aria-live="polite"></p>

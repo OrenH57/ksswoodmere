@@ -23,6 +23,7 @@ function footerHtml(pageHtml) {
 assert.match(html, /id="schedule"/, "Home page should contain minyan times");
 assert.match(html, /id="zmanim-list"/, "Home page should contain zmanim");
 assert.match(html, /Five Towns Eruv/, "Home page should contain eruv information");
+assert.match(html, /Open Five Towns Eruv Map/, "Home eruv link should clearly read as clickable");
 assert.match(html, /id="give"/, "Home page should contain donation information");
 assert.match(html, /mailto:ksswoodmere@gmail\.com/, "Home page should include an email link");
 assert.match(html, /href="\/community-info"/, "Home page should link to community info page with a clean URL");
@@ -37,10 +38,10 @@ assert.equal(minyanimRouteHtml, scheduleHtml, "Static /minyanim route should mir
 assert.equal(communityRouteHtml, resourcesHtml, "Static /community-info route should mirror resources page");
 assert.equal(supportRouteHtml, giveHtml, "Static /support-us route should mirror give page");
 assert.equal(staffRouteHtml, adminHtml, "Static /staff route should mirror admin page");
-assert.match(html, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Home header should use the shared compact nav");
-assert.match(resourcesHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info" aria-current="page">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Resources header should use the shared compact nav");
-assert.match(scheduleHtml, /<a href="\/minyanim" aria-current="page">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Schedule header should use the shared compact nav");
-assert.match(giveHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a class="nav-support" href="\/support-us" aria-current="page">Support Us<\/a>/, "Give header should use the shared compact nav");
+assert.match(html, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Home header should use the shared compact nav");
+assert.match(resourcesHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info" aria-current="page">Learning \/ Community<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Resources header should use the shared compact nav");
+assert.match(scheduleHtml, /<a href="\/minyanim" aria-current="page">Minyanim<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a class="nav-support" href="\/support-us">Support Us<\/a>/, "Schedule header should use the shared compact nav");
+assert.match(giveHtml, /<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a class="nav-support" href="\/support-us" aria-current="page">Support Us<\/a>/, "Give header should use the shared compact nav");
 assert.doesNotMatch(html, /resources\.html#learning/, "Home header should not expose every resource section as a separate link");
 assert.doesNotMatch(html, /resources\.html#visit/, "Home header should not expose visit as a separate link");
 assert.doesNotMatch(html, />Donate<\/a>/, "Home header should say Support Us, not Donate");
@@ -51,6 +52,9 @@ assert.doesNotMatch(scheduleHtml, /class="thumb-nav"/, "Schedule page should not
 assert.doesNotMatch(html, /class="hero-actions"/, "Home hero should not include extra CTA buttons");
 assert.doesNotMatch(html, />Minyan Times</, "Home hero should not duplicate the schedule with a button");
 assert.match(scheduleHtml, /id="schedule"/, "Schedule page should contain the schedule section");
+assert.match(scheduleHtml, /class="status-strip schedule-status-strip"/, "Schedule page should center a single next-minyan status box");
+assert.doesNotMatch(scheduleHtml, /<span>Address<\/span>/, "Schedule page should not repeat the address status box");
+assert.match(styles, /\.schedule-status-strip[\s\S]*grid-template-columns: minmax\(260px, 1fr\)/, "Schedule next-minyan box should not keep an empty desktop column");
 assert.match(giveHtml, /id="give"/, "Give page should contain Zelle support section");
 assert.match(giveHtml, /body class="give-page"/, "Give page should use give-specific layout tuning");
 assert.match(giveHtml, /Sponsor &amp; Dedicate/, "Give page should contain sponsor and dedication content");
@@ -58,8 +62,10 @@ assert.match(giveHtml, /class="copy-button"[^>]*data-copy="ksswoodmere@gmail\.co
 assert.doesNotMatch(resourcesHtml, /Sponsor &amp; Dedicate/, "Resources page should not duplicate give content");
 assert.match(resourcesHtml, /id="resources"/, "Resources page should contain local resources");
 assert.match(resourcesHtml, /id="learning"/, "Resources page should contain learning content");
+assert.doesNotMatch(resourcesHtml, /<h2>Learning<\/h2>/, "Learning section should not repeat a redundant heading");
 assert.match(resourcesHtml, /<div class="masthead-name" id="masthead-title">Community Info<\/div>/, "Community info masthead should stay compact on mobile");
-assert.match(styles, /\.split-section:first-of-type \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "First resources section should not add an extra top bar");
+assert.match(styles, /#learning \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "Learning section should not add an extra top bar");
+assert.match(styles, /#learning \.section-intro[\s\S]*margin-bottom: 0\.65rem/, "Learning section spacing should be compact after removing the heading");
 assert.match(styles, /\.home-page \.hero-copy > p:not\(\.hero-kicker\)[\s\S]*border-bottom: 0/, "Home hero body text should not add an underline");
 assert.match(html, /id="announcements"[^>]*hidden/, "Announcements section should start hidden");
 assert.match(html, /class="announcement-banner"/, "Announcements should render as a top banner");
@@ -75,12 +81,12 @@ assert.match(styles, /\.is-rendering-slow \.site-loader[\s\S]*display: grid/, "L
 assert.match(html, /class="site-footer"/, "Public page should include a footer");
 assert.match(html, /aria-label="Footer navigation"/, "Footer should include quick navigation");
 assert.match(html, /href="\/staff">Staff<\/a>/, "Footer should link to the clean staff URL with staff copy");
-assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/community-info">Community Info<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should be ordered without Minyanim");
-assert.match(html, /href="\/community-info">Community Info<\/a>/, "Home footer should include community info");
+assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should be ordered without Minyanim");
+assert.match(html, /href="\/community-info">Learning \/ Community<\/a>/, "Home footer should include learning and community");
 assert.match(html, /href="\/support-us">Support Us<\/a>/, "Home footer should link to the support page");
-assert.match(resourcesHtml, /href="\/community-info">Community Info<\/a>/, "Resources footer should match the shared footer links");
-assert.match(scheduleHtml, /href="\/community-info">Community Info<\/a>/, "Schedule footer should match the shared footer links");
-assert.match(giveHtml, /href="\/community-info">Community Info<\/a>/, "Give footer should match the shared footer links");
+assert.match(resourcesHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Resources footer should match the shared footer links");
+assert.match(scheduleHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Schedule footer should match the shared footer links");
+assert.match(giveHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Give footer should match the shared footer links");
 assert.match(html, /class="footer-bottom compact-footer"/, "Home footer should use the compact footer");
 assert.match(giveHtml, /class="footer-bottom compact-footer"/, "Give footer should use the compact footer");
 assert.match(resourcesHtml, /class="footer-bottom compact-footer"/, "Resources footer should use the compact footer");
@@ -113,6 +119,7 @@ assert.match(script, /function renderAnnouncements/, "Public page should render 
 assert.match(script, /function applyBoardUpdates/, "Public page should merge board updates");
 assert.match(script, /function fallbackCopyText/, "Copy button should have a clipboard fallback");
 assert.doesNotMatch(script, /Copy failed/, "Copy button should not show scary failure text");
+assert.match(styles, /\.zmanim-item strong[\s\S]*font-family: var\(--font-display\)[\s\S]*font-size: clamp\(1\.4rem, 7vw, 1\.85rem\)/, "Zmanim times should match the regular time typography");
 
 assert.match(adminHtml, /Staff Sign In/, "Admin page should present staff sign-in copy");
 assert.doesNotMatch(adminHtml, /Board Admin/, "Admin landing page should not use board admin copy");
@@ -127,6 +134,14 @@ assert.match(adminHtml, /id="admin-content-form"/, "Admin editor form should be 
 assert.match(adminHtml, /<legend>Announcement<\/legend>/, "Mobile admin should prioritize announcement editing");
 assert.match(adminHtml, /<details class="admin-times-panel" open>/, "Admin times should live in a collapsible panel");
 assert.match(adminHtml, /<summary>Edit regular times<\/summary>/, "Admin times panel should use simple mobile copy");
+assert.ok(
+  adminHtml.indexOf("Save Updates") < adminHtml.indexOf("Upload and Parse") &&
+    adminHtml.indexOf("Upload and Parse") < adminHtml.indexOf("View Site") &&
+    adminHtml.indexOf("View Site") < adminHtml.indexOf("Log Out"),
+  "Mobile admin buttons should flow from save to upload to utility actions"
+);
+assert.match(adminHtml, /class="admin-secondary-actions"/, "Admin utility buttons should be grouped separately");
+assert.match(styles, /\.admin-secondary-actions \.button[\s\S]*width: 100%/, "Admin utility buttons should be full-width on phone");
 assert.doesNotMatch(adminHtml, /Latest Shema/, "Admin editor should not expose Latest Shema as a manual board field");
 assert.match(adminScript, /\/api\/admin\/login/, "Admin page should log in through backend");
 assert.match(adminScript, /\/api\/admin\/bulletin/, "Admin page should upload bulletins through backend");

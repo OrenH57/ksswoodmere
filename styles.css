@@ -603,6 +603,10 @@ h3 {
   border-top: 0;
 }
 
+.schedule-status-strip {
+  max-width: 560px;
+}
+
 .status-strip div {
   padding: 0.82rem 0.9rem;
   border-right: 1px solid var(--line);
@@ -718,9 +722,14 @@ h3 {
   display: none;
 }
 
-.split-section:first-of-type .section-intro > .eyebrow {
+#learning .section-intro > .eyebrow {
+  margin-bottom: 0.55rem;
   padding-top: 0;
   border-top: 0;
+}
+
+#learning .section-intro {
+  margin-bottom: 0.65rem;
 }
 
 .section-intro p:not(.eyebrow),
@@ -883,7 +892,9 @@ h3 {
 .zmanim-item strong {
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: clamp(1.4rem, 7vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 .program-list h3,
@@ -973,7 +984,8 @@ h3 {
 }
 
 .admin-card-header,
-.admin-actions {
+.admin-actions,
+.admin-secondary-actions {
   display: grid;
   gap: 1rem;
   align-items: start;
@@ -1539,6 +1551,10 @@ h3 {
     grid-template-columns: minmax(260px, 0.9fr) minmax(340px, 1.1fr);
   }
 
+  .schedule-status-strip {
+    grid-template-columns: minmax(260px, 1fr);
+  }
+
   .status-strip div {
     border-bottom: 0;
   }
@@ -1786,6 +1802,7 @@ h3 {
 
   .admin-card-header,
   .admin-actions,
+  .admin-secondary-actions,
   .admin-upload {
     grid-template-columns: 1fr auto;
     align-items: center;
@@ -1842,6 +1859,7 @@ h3 {
 
   .admin-card-header .button,
   .admin-actions .button,
+  .admin-secondary-actions .button,
   .admin-upload .button,
   .admin-add {
     width: 100%;
@@ -1870,6 +1888,11 @@ h3 {
   }
 
   .admin-upload {
+    margin-top: 0.8rem;
+  }
+
+  .admin-secondary-actions {
+    gap: 0.65rem;
     margin-top: 0.8rem;
   }
 
