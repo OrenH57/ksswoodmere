@@ -85,37 +85,55 @@ function rotateBrandLanguage() {
 
 rotateBrandLanguage();
 
-const scrollProgress = document.createElement("div");
-scrollProgress.className = "scroll-progress";
-document.body.prepend(scrollProgress);
+const shouldTrackScrollProgress = !window.matchMedia?.("(pointer: coarse)").matches;
 
-let maxScroll = 0;
-let scrollProgressFrame = 0;
+if (shouldTrackScrollProgress) {
+  const scrollProgress = document.createElement("div");
+  scrollProgress.className = "scroll-progress";
+  document.body.prepend(scrollProgress);
 
-function updateMaxScroll() {
-  maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+  let maxScroll = 0;
+  let scrollProgressFrame = 0;
+
+  function updateMaxScroll() {
+    maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+  }
+
+  function renderScrollProgress() {
+    scrollProgressFrame = 0;
+    const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    scrollProgress.style.transform = `scaleX(${Math.min(progress, 1)})`;
+  }
+
+  function queueScrollProgress() {
+    if (scrollProgressFrame) return;
+    scrollProgressFrame = window.requestAnimationFrame(renderScrollProgress);
+  }
+
+  function refreshScrollProgress() {
+    updateMaxScroll();
+    queueScrollProgress();
+  }
+
+  window.addEventListener("scroll", queueScrollProgress, { passive: true });
+  window.addEventListener("resize", refreshScrollProgress);
+  window.addEventListener("load", refreshScrollProgress, { once: true });
+  refreshScrollProgress();
 }
 
-function renderScrollProgress() {
-  scrollProgressFrame = 0;
-  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-  scrollProgress.style.transform = `scaleX(${Math.min(progress, 1)})`;
-}
+function scheduleNonCritical(task) {
+  const run = () => {
+    Promise.resolve()
+      .then(task)
+      .catch(() => {});
+  };
 
-function queueScrollProgress() {
-  if (scrollProgressFrame) return;
-  scrollProgressFrame = window.requestAnimationFrame(renderScrollProgress);
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 1800 });
+  } else {
+    window.setTimeout(run, 650);
+  }
 }
-
-function refreshScrollProgress() {
-  updateMaxScroll();
-  queueScrollProgress();
-}
-
-window.addEventListener("scroll", queueScrollProgress, { passive: true });
-window.addEventListener("resize", refreshScrollProgress);
-window.addEventListener("load", refreshScrollProgress, { once: true });
-refreshScrollProgress();
 
 navToggle?.addEventListener("click", () => {
   const isOpen = siteNav.classList.toggle("is-open");
@@ -369,7 +387,7 @@ async function loadWeeklyHeader() {
   }
 }
 
-loadWeeklyHeader();
+scheduleNonCritical(loadWeeklyHeader);
 
 async function loadZmanim() {
   if (!zmanimList || !zmanimStatus) return;
@@ -407,7 +425,7 @@ async function loadZmanim() {
   }
 }
 
-loadZmanim();
+scheduleNonCritical(loadZmanim);
 
 function escapeHtml(value) {
   return String(value || "")
@@ -751,7 +769,7 @@ async function initializeSchedule() {
   }
 }
 
-initializeSchedule();
+scheduleNonCritical(initializeSchedule);
 
 function nextMinyanText() {
   const now = new Date();

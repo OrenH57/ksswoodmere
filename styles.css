@@ -1700,6 +1700,12 @@ h3 {
     width: calc(100% - 1.5rem);
   }
 
+  .site-header {
+    background: rgba(255, 254, 249, 0.99);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .button {
     width: 100%;
   }
