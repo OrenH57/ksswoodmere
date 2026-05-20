@@ -26,11 +26,12 @@
         };
         document.addEventListener("DOMContentLoaded", clearLoader, { once: true });
         window.addEventListener("pageshow", clearLoader, { once: true });
+        window.setTimeout(clearLoader, 2500);
       })();
     </script>
     <header class="site-header">
       <a class="brand" href="/" aria-label="Kehilat Shaare Shalom home">
-        <img src="/assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark">
+        <img src="/assets/shaare-shalom-logo-blue.png" alt="" class="brand-mark" width="48" height="48" decoding="async">
         <span class="brand-text" aria-live="polite">
           <span class="brand-name">Shaare Shalom</span>
           <span class="brand-subtitle">Kehilat Shaare Shalom</span>

@@ -21,12 +21,14 @@
 
 html {
   overflow-x: hidden;
+  overflow-y: auto;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+  overflow-y: auto;
   padding-bottom: 96px;
   background: var(--paper);
   color: var(--ink);
@@ -34,6 +36,8 @@ body {
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.55;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 body.home-page {
@@ -64,10 +68,12 @@ h3 {
   top: 0;
   left: 0;
   z-index: 40;
-  width: 0;
+  width: 100%;
   height: 3px;
   background: var(--blue);
   transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform;
 }
 
 .site-loader {
@@ -76,6 +82,7 @@ h3 {
   display: none;
   place-items: center;
   background: var(--paper);
+  pointer-events: none;
   z-index: 1000;
 }
 
@@ -393,20 +400,26 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
+  justify-content: center;
 }
 
 .masthead-sub span {
-  flex: 1;
+  flex: 1 1 44px;
+  min-width: 28px;
   height: 1px;
   background: var(--ink);
 }
 
 .masthead-sub em {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(100%, 520px);
   color: var(--muted);
   font-family: var(--font-display);
   font-size: clamp(0.95rem, 2.8vw, 1rem);
   font-style: italic;
-  white-space: nowrap;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .masthead-live {
@@ -428,13 +441,11 @@ h3 {
 
 @keyframes text-swipe-in {
   from {
-    clip-path: inset(0 100% 0 0);
     opacity: 0.2;
     transform: translateX(-10px);
   }
 
   to {
-    clip-path: inset(0 0 0 0);
     opacity: 1;
     transform: translateX(0);
   }
@@ -1814,6 +1825,22 @@ h3 {
 
   .footer-bottom small {
     width: auto;
+  }
+
+  .footer-bottom.compact-footer {
+    display: grid;
+    grid-template-columns: max-content max-content minmax(280px, 1fr) max-content;
+    align-items: center;
+    gap: 1rem 1.35rem;
+    text-align: left;
+  }
+
+  .compact-footer nav {
+    justify-content: center;
+  }
+
+  .footer-bottom.compact-footer small {
+    text-align: right;
   }
 
   .admin-card-header,

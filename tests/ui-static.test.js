@@ -75,6 +75,8 @@ assert.match(resourcesHtml, /<div class="masthead-name" id="masthead-title">Comm
 assert.match(styles, /#learning \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "Learning section should not add an extra top bar");
 assert.match(styles, /#learning \.section-intro[\s\S]*margin-bottom: 0\.95rem/, "Learning section spacing should account for the restored heading");
 assert.match(styles, /\.home-page \.hero-copy > p:not\(\.hero-kicker\)[\s\S]*border-bottom: 0/, "Home hero body text should not add an underline");
+assert.match(styles, /\.masthead-sub em[\s\S]*max-width: min\(100%, 520px\)[\s\S]*text-align: center/, "Masthead subtitle should center and wrap cleanly on mobile");
+assert.doesNotMatch(styles, /\.masthead-sub em[\s\S]*white-space: nowrap/, "Masthead subtitle should not clip off-screen on mobile");
 assert.match(html, /id="announcements"[^>]*hidden/, "Announcements section should start hidden");
 assert.match(html, /class="announcement-banner"/, "Announcements should render as a top banner");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Announcement<\/span>/, "Announcement bar should use simple public copy");
@@ -85,7 +87,10 @@ assert.match(styles, /\.announcement-banner[\s\S]*gap: 0\.35rem/, "Announcement 
 assert.match(html, /id="announcement-list"/, "Announcement list should be present");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /class="site-loader"/, "Pages should include the delayed loader");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /document\.readyState === "loading"/, "Loader should only appear while the page is not rendering");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /window\.setTimeout\(clearLoader, 2500\)/, "Loader should have a fail-safe clear so it cannot trap mobile scrolling");
 assert.match(styles, /\.is-rendering-slow \.site-loader[\s\S]*display: grid/, "Loader should only show after the delayed slow-render class");
+assert.match(styles, /body[\s\S]*-webkit-overflow-scrolling: touch;[\s\S]*touch-action: pan-y;/, "Mobile pages should explicitly allow vertical touch scrolling");
+assert.match(styles, /\.site-loader[\s\S]*pointer-events: none/, "Loader should not intercept mobile scroll gestures");
 assert.match(html, /class="site-footer"/, "Public page should include a footer");
 assert.match(html, /aria-label="Footer navigation"/, "Footer should include quick navigation");
 assert.match(html, /href="\/staff">Staff<\/a>/, "Footer should link to the clean staff URL with staff copy");
@@ -103,6 +108,7 @@ assert.match(html, /class="footer-bottom compact-footer"/, "Home footer should u
 assert.match(giveHtml, /class="footer-bottom compact-footer"/, "Give footer should use the compact footer");
 assert.match(resourcesHtml, /class="footer-bottom compact-footer"/, "Resources footer should use the compact footer");
 assert.match(scheduleHtml, /class="footer-bottom compact-footer"/, "Schedule footer should use the compact footer");
+assert.match(styles, /@media \(min-width: 760px\)[\s\S]*\.footer-bottom\.compact-footer[\s\S]*grid-template-columns: max-content max-content minmax\(280px, 1fr\) max-content/, "Laptop footer should use a deliberate desktop row layout");
 for (const pageFooter of [html, giveHtml, resourcesHtml, scheduleHtml].map(footerHtml)) {
   assert.match(pageFooter, /Minyanim/, "Public footers should include Minyanim");
 }
@@ -115,6 +121,12 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js/, "Public pages should use absolute script URLs");
+assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
+assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
+assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
+assert.match(styles, /\.scroll-progress[\s\S]*transform: scaleX\(0\)/, "Scroll progress should use transform instead of width updates");
+assert.match(script, /scrollProgress\.style\.transform = `scaleX/, "Scroll handler should update transform instead of layout-affecting width");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /class="brand-mark" width="48" height="48" decoding="async"/, "Brand images should declare dimensions and async decoding");
 
 ["weekday-shacharit", "sunday-shacharit", "daily-mincha-arvit"].forEach((key) => {
   assert.match(`${html}\n${scheduleHtml}`, new RegExp(`data-schedule-key="${key}"`), `${key} should be rendered in markup`);

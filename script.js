@@ -89,15 +89,33 @@ const scrollProgress = document.createElement("div");
 scrollProgress.className = "scroll-progress";
 document.body.prepend(scrollProgress);
 
-function updateScrollProgress() {
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-  scrollProgress.style.width = `${Math.min(progress, 1) * 100}%`;
+let maxScroll = 0;
+let scrollProgressFrame = 0;
+
+function updateMaxScroll() {
+  maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
 }
 
-window.addEventListener("scroll", updateScrollProgress, { passive: true });
-window.addEventListener("resize", updateScrollProgress);
-updateScrollProgress();
+function renderScrollProgress() {
+  scrollProgressFrame = 0;
+  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  scrollProgress.style.transform = `scaleX(${Math.min(progress, 1)})`;
+}
+
+function queueScrollProgress() {
+  if (scrollProgressFrame) return;
+  scrollProgressFrame = window.requestAnimationFrame(renderScrollProgress);
+}
+
+function refreshScrollProgress() {
+  updateMaxScroll();
+  queueScrollProgress();
+}
+
+window.addEventListener("scroll", queueScrollProgress, { passive: true });
+window.addEventListener("resize", refreshScrollProgress);
+window.addEventListener("load", refreshScrollProgress, { once: true });
+refreshScrollProgress();
 
 navToggle?.addEventListener("click", () => {
   const isOpen = siteNav.classList.toggle("is-open");
@@ -239,8 +257,9 @@ function setTextWithSwipe(element, value) {
   if (!element || value == null || element.textContent === String(value)) return;
   element.textContent = value;
   element.classList.remove("text-swipe");
-  void element.offsetWidth;
-  element.classList.add("text-swipe");
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => element.classList.add("text-swipe"));
+  });
 }
 
 async function fetchJsonWithCache(url, ttl = 15 * 60 * 1000) {
