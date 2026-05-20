@@ -60,6 +60,9 @@ assert.match(styles, /\.schedule-section \.section-intro > \.eyebrow[\s\S]*borde
 assert.match(styles, /\.home-page \.status-strip[\s\S]*border-top: 1px solid var\(--line\)/, "Home status strip should keep an even outer border on mobile");
 assert.match(styles, /\.status-strip div[\s\S]*border-right: 0[\s\S]*border-bottom: 1px solid var\(--line\)/, "Stacked status boxes should not show a one-sided inner border");
 assert.match(styles, /@media \(min-width: 560px\)[\s\S]*\.status-strip div:last-child[\s\S]*border-right: 0/, "Desktop status boxes should rely on the parent outline instead of a duplicate right edge");
+assert.match(styles, /\.schedule-tabs[\s\S]*border-radius: 0/, "Schedule tabs should keep sharp corners");
+assert.match(styles, /\.tab-button[\s\S]*border-radius: 0/, "Schedule tab buttons should keep sharp corners");
+assert.match(styles, /\.home-link-strip a[\s\S]*box-shadow: 0 8px 24px/, "Home practical links should read as button-like panels");
 assert.match(giveHtml, /id="give"/, "Give page should contain Zelle support section");
 assert.match(giveHtml, /body class="give-page"/, "Give page should use give-specific layout tuning");
 assert.match(giveHtml, /Sponsor &amp; Dedicate/, "Give page should contain sponsor and dedication content");
