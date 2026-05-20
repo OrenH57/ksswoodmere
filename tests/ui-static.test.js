@@ -81,18 +81,21 @@ assert.match(styles, /\.is-rendering-slow \.site-loader[\s\S]*display: grid/, "L
 assert.match(html, /class="site-footer"/, "Public page should include a footer");
 assert.match(html, /aria-label="Footer navigation"/, "Footer should include quick navigation");
 assert.match(html, /href="\/staff">Staff<\/a>/, "Footer should link to the clean staff URL with staff copy");
-assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should be ordered without Minyanim");
+assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should align with the header navigation order");
+assert.match(html, /href="\/minyanim">Minyanim<\/a>/, "Home footer should include minyanim");
 assert.match(html, /href="\/community-info">Learning \/ Community<\/a>/, "Home footer should include learning and community");
 assert.match(html, /href="\/support-us">Support Us<\/a>/, "Home footer should link to the support page");
+assert.match(resourcesHtml, /href="\/minyanim">Minyanim<\/a>/, "Resources footer should include minyanim");
 assert.match(resourcesHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Resources footer should match the shared footer links");
 assert.match(scheduleHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Schedule footer should match the shared footer links");
+assert.match(giveHtml, /href="\/minyanim">Minyanim<\/a>/, "Give footer should include minyanim");
 assert.match(giveHtml, /href="\/community-info">Learning \/ Community<\/a>/, "Give footer should match the shared footer links");
 assert.match(html, /class="footer-bottom compact-footer"/, "Home footer should use the compact footer");
 assert.match(giveHtml, /class="footer-bottom compact-footer"/, "Give footer should use the compact footer");
 assert.match(resourcesHtml, /class="footer-bottom compact-footer"/, "Resources footer should use the compact footer");
 assert.match(scheduleHtml, /class="footer-bottom compact-footer"/, "Schedule footer should use the compact footer");
 for (const pageFooter of [html, giveHtml, resourcesHtml, scheduleHtml].map(footerHtml)) {
-  assert.doesNotMatch(pageFooter, /Minyanim/, "Public footers should not include Minyanim");
+  assert.match(pageFooter, /Minyanim/, "Public footers should include Minyanim");
 }
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-grid">/, "Public footers should not duplicate address and contact info");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-bottom compact-footer">(?:(?!<\/div>)[\s\S])*<strong>ksswoodmere@gmail\.com<\/strong>/, "Public footer bottom should not repeat the email address");
