@@ -134,7 +134,7 @@ assert.match(script, /scheduleNonCritical\(loadZmanim\)/, "Zmanim network update
 assert.match(script, /scheduleNonCritical\(initializeSchedule\)/, "Bulletin schedule hydration should be deferred");
 assert.match(styles, /\.scroll-progress[\s\S]*transform: scaleX\(0\)/, "Scroll progress should use transform instead of width updates");
 assert.match(script, /scrollProgress\.style\.transform = `scaleX/, "Scroll handler should update transform instead of layout-affecting width");
-assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.site-header[\s\S]*backdrop-filter: none/, "Mobile sticky header should avoid expensive backdrop blur during scroll");
+assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.site-header[\s\S]*backdrop-filter: blur\(12px\)/, "Mobile sticky header should keep the frosted blur treatment");
 assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.motion-item,[\s\S]*\.schedule-list strong[\s\S]*transition: none/, "Mobile should avoid first-load reveal transitions that can delay first scroll");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /class="brand-mark" width="48" height="48" decoding="async"/, "Brand images should declare dimensions and async decoding");
 
@@ -154,6 +154,7 @@ assert.match(script, /function applyBoardUpdates/, "Public page should merge boa
 assert.match(script, /function fallbackCopyText/, "Copy button should have a clipboard fallback");
 assert.doesNotMatch(script, /Copy failed/, "Copy button should not show scary failure text");
 assert.match(styles, /\.zmanim-item strong[\s\S]*font-family: var\(--font-display\)[\s\S]*font-size: clamp\(1\.4rem, 7vw, 1\.85rem\)/, "Zmanim times should match the regular time typography");
+assert.match(styles, /\.zmanim-panel[\s\S]*text-align: center/, "Zmanim heading text should be centered");
 
 assert.match(adminHtml, /Staff Sign In/, "Admin page should present staff sign-in copy");
 assert.doesNotMatch(adminHtml, /Board Admin/, "Admin landing page should not use board admin copy");
