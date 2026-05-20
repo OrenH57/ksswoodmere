@@ -25,13 +25,14 @@ assert.match(html, /id="zmanim-list"/, "Home page should contain zmanim");
 assert.match(html, /Five Towns Eruv/, "Home page should contain eruv information");
 assert.match(html, /Open Five Towns Eruv Map/, "Home eruv link should clearly read as clickable");
 assert.match(html, /id="give"/, "Home page should contain donation information");
-assert.match(html, /mailto:ksswoodmere@gmail\.com/, "Home page should include an email link");
+assert.match(html, /<span>Support &amp; Dedications<\/span>\s*<strong>Zelle, Kiddush, and Torah learning<\/strong>/, "Home practical links should make the support action specific");
+assert.doesNotMatch(html, /<span>Email<\/span>\s*<strong>ksswoodmere@gmail\.com<\/strong>/, "Home page should not duplicate the same support email as a separate box");
 assert.match(html, /href="\/community-info"/, "Home page should link to community info page with a clean URL");
 assert.doesNotMatch(resourcesHtml, /id="give"/, "Resources page should not duplicate donation information");
 assert.doesNotMatch(resourcesHtml, /Five Towns Eruv Map/, "Resources page should not duplicate eruv information");
 assert.ok(html.indexOf('class="hero"') < html.indexOf('class="status-strip"'), "Home page should match the bulletin-style hero before practical info");
 assert.ok(html.indexOf('class="status-strip"') < html.indexOf('id="schedule"'), "Home page should show minyan schedule under next minyan");
-assert.ok(html.indexOf('id="schedule"') < html.indexOf('class="home-link-strip"'), "Home page should show donate, eruv, and email after the schedule");
+assert.ok(html.indexOf('id="schedule"') < html.indexOf('class="home-link-strip"'), "Home page should show support and eruv after the schedule");
 assert.ok(html.indexOf("<span>Next Minyan</span>") < html.indexOf("<span>Address</span>"), "Home page should show next minyan above address");
 assert.match(html, /<header class="site-header">/, "Home page should include the site header");
 assert.equal(minyanimRouteHtml, scheduleHtml, "Static /minyanim route should mirror schedule page");
@@ -55,6 +56,10 @@ assert.match(scheduleHtml, /id="schedule"/, "Schedule page should contain the sc
 assert.match(scheduleHtml, /class="status-strip schedule-status-strip"/, "Schedule page should center a single next-minyan status box");
 assert.doesNotMatch(scheduleHtml, /<span>Address<\/span>/, "Schedule page should not repeat the address status box");
 assert.match(styles, /\.schedule-status-strip[\s\S]*grid-template-columns: minmax\(260px, 1fr\)/, "Schedule next-minyan box should not keep an empty desktop column");
+assert.match(styles, /\.schedule-section \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "Schedule section should not add an extra standalone top line");
+assert.match(styles, /\.home-page \.status-strip[\s\S]*border-top: 1px solid var\(--line\)/, "Home status strip should keep an even outer border on mobile");
+assert.match(styles, /\.status-strip div[\s\S]*border-right: 0[\s\S]*border-bottom: 1px solid var\(--line\)/, "Stacked status boxes should not show a one-sided inner border");
+assert.match(styles, /@media \(min-width: 560px\)[\s\S]*\.status-strip div:last-child[\s\S]*border-right: 0/, "Desktop status boxes should rely on the parent outline instead of a duplicate right edge");
 assert.match(giveHtml, /id="give"/, "Give page should contain Zelle support section");
 assert.match(giveHtml, /body class="give-page"/, "Give page should use give-specific layout tuning");
 assert.match(giveHtml, /Sponsor &amp; Dedicate/, "Give page should contain sponsor and dedication content");
@@ -62,10 +67,10 @@ assert.match(giveHtml, /class="copy-button"[^>]*data-copy="ksswoodmere@gmail\.co
 assert.doesNotMatch(resourcesHtml, /Sponsor &amp; Dedicate/, "Resources page should not duplicate give content");
 assert.match(resourcesHtml, /id="resources"/, "Resources page should contain local resources");
 assert.match(resourcesHtml, /id="learning"/, "Resources page should contain learning content");
-assert.doesNotMatch(resourcesHtml, /<h2>Learning<\/h2>/, "Learning section should not repeat a redundant heading");
+assert.match(resourcesHtml, /<p class="eyebrow">Torah<\/p>\s*<h2>Learning<\/h2>/, "Learning section should use Torah as the gold label and restore the heading");
 assert.match(resourcesHtml, /<div class="masthead-name" id="masthead-title">Community Info<\/div>/, "Community info masthead should stay compact on mobile");
 assert.match(styles, /#learning \.section-intro > \.eyebrow[\s\S]*border-top: 0/, "Learning section should not add an extra top bar");
-assert.match(styles, /#learning \.section-intro[\s\S]*margin-bottom: 0\.65rem/, "Learning section spacing should be compact after removing the heading");
+assert.match(styles, /#learning \.section-intro[\s\S]*margin-bottom: 0\.95rem/, "Learning section spacing should account for the restored heading");
 assert.match(styles, /\.home-page \.hero-copy > p:not\(\.hero-kicker\)[\s\S]*border-bottom: 0/, "Home hero body text should not add an underline");
 assert.match(html, /id="announcements"[^>]*hidden/, "Announcements section should start hidden");
 assert.match(html, /class="announcement-banner"/, "Announcements should render as a top banner");
@@ -81,6 +86,7 @@ assert.match(styles, /\.is-rendering-slow \.site-loader[\s\S]*display: grid/, "L
 assert.match(html, /class="site-footer"/, "Public page should include a footer");
 assert.match(html, /aria-label="Footer navigation"/, "Footer should include quick navigation");
 assert.match(html, /href="\/staff">Staff<\/a>/, "Footer should link to the clean staff URL with staff copy");
+assert.match(html, /class="footer-email" href="mailto:ksswoodmere@gmail\.com">ksswoodmere@gmail\.com<\/a>/, "Footer should include the public email link");
 assert.match(html, /<nav aria-label="Footer navigation">\s*<a href="\/">Home<\/a>\s*<a href="\/minyanim">Minyanim<\/a>\s*<a href="\/community-info">Learning \/ Community<\/a>\s*<a href="\/support-us">Support Us<\/a>\s*<a href="\/staff">Staff<\/a>\s*<\/nav>/, "Footer links should align with the header navigation order");
 assert.match(html, /href="\/minyanim">Minyanim<\/a>/, "Home footer should include minyanim");
 assert.match(html, /href="\/community-info">Learning \/ Community<\/a>/, "Home footer should include learning and community");
@@ -98,7 +104,7 @@ for (const pageFooter of [html, giveHtml, resourcesHtml, scheduleHtml].map(foote
   assert.match(pageFooter, /Minyanim/, "Public footers should include Minyanim");
 }
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-grid">/, "Public footers should not duplicate address and contact info");
-assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-bottom compact-footer">(?:(?!<\/div>)[\s\S])*<strong>ksswoodmere@gmail\.com<\/strong>/, "Public footer bottom should not repeat the email address");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-bottom compact-footer">(?:(?!<\/div>)[\s\S])*<strong>ksswoodmere@gmail\.com<\/strong>/, "Public footer email should not be styled as duplicate primary info");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Staff Sign In<\/a>/, "Public footer should shorten staff link copy");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="(?:index|resources|schedule|give)\.html/, "Public links should use clean URLs instead of .html files");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/(?:give|resources|schedule|admin)"/, "Public links should match button names");
