@@ -127,11 +127,10 @@ assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "S
 assert.match(script, /const isCoarsePointer = window\.matchMedia\?\.\("\(pointer: coarse\)"\)\.matches/, "Public script should detect touch-first devices");
 assert.match(script, /shouldTrackScrollProgress = !isCoarsePointer/, "Touch devices should not attach scroll progress work during mobile scrolling");
 assert.match(script, /if \(reduceFirstScrollWork\) return;[\s\S]*window\.brandLanguageTimer/, "Touch devices should skip rotating header text during early scrolling");
-assert.match(script, /if \(isCoarsePointer\)[\s\S]*window\.setTimeout\(run, 2400\)/, "Touch devices should defer non-critical live data work longer");
-assert.match(script, /function scheduleNonCritical/, "Live data hydration should be deferrable until after initial interaction");
-assert.match(script, /scheduleNonCritical\(loadWeeklyHeader\)/, "Weekly header network updates should be deferred");
-assert.match(script, /scheduleNonCritical\(loadZmanim\)/, "Zmanim network updates should be deferred");
-assert.match(script, /scheduleNonCritical\(initializeSchedule\)/, "Bulletin schedule hydration should be deferred");
+assert.doesNotMatch(script, /function scheduleNonCritical|scheduleNonCritical\(/, "Live data hydration should not be deferred");
+assert.match(script, /loadWeeklyHeader\(\)/, "Weekly header network updates should hydrate immediately");
+assert.match(script, /loadZmanim\(\)/, "Zmanim network updates should hydrate immediately");
+assert.match(script, /initializeSchedule\(\)/, "Bulletin schedule hydration should run immediately");
 assert.match(styles, /\.scroll-progress[\s\S]*transform: scaleX\(0\)/, "Scroll progress should use transform instead of width updates");
 assert.match(script, /scrollProgress\.style\.transform = `scaleX/, "Scroll handler should update transform instead of layout-affecting width");
 assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.site-header[\s\S]*backdrop-filter: blur\(12px\)/, "Mobile sticky header should keep the frosted blur treatment");

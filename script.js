@@ -125,22 +125,6 @@ if (shouldTrackScrollProgress) {
   refreshScrollProgress();
 }
 
-function scheduleNonCritical(task) {
-  const run = () => {
-    Promise.resolve()
-      .then(task)
-      .catch(() => {});
-  };
-
-  if (isCoarsePointer) {
-    window.setTimeout(run, 2400);
-  } else if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(run, { timeout: 1800 });
-  } else {
-    window.setTimeout(run, 650);
-  }
-}
-
 navToggle?.addEventListener("click", () => {
   const isOpen = siteNav.classList.toggle("is-open");
   navToggle.setAttribute("aria-expanded", String(isOpen));
@@ -393,7 +377,7 @@ async function loadWeeklyHeader() {
   }
 }
 
-scheduleNonCritical(loadWeeklyHeader);
+loadWeeklyHeader();
 
 async function loadZmanim() {
   if (!zmanimList || !zmanimStatus) return;
@@ -431,7 +415,7 @@ async function loadZmanim() {
   }
 }
 
-scheduleNonCritical(loadZmanim);
+loadZmanim();
 
 function escapeHtml(value) {
   return String(value || "")
@@ -775,7 +759,7 @@ async function initializeSchedule() {
   }
 }
 
-scheduleNonCritical(initializeSchedule);
+initializeSchedule();
 
 function nextMinyanText() {
   const now = new Date();
