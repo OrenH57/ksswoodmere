@@ -302,6 +302,18 @@ async function fetchJsonWithCache(url, ttl = 15 * 60 * 1000) {
   }
 }
 
+async function fetchFreshJson(url) {
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Cache-Control": "no-cache",
+    },
+  });
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+  return response.json();
+}
+
 function nextWeekdayDate(dayNumber) {
   const date = new Date();
   const daysUntil = (dayNumber - date.getDay() + 7) % 7;
@@ -642,7 +654,7 @@ async function applyBoardUpdates() {
   if (isFilePreview) return;
 
   try {
-    const updates = await fetchJsonWithCache("/api/updates", apiCacheTtl.bulletin);
+    const updates = await fetchFreshJson("/api/updates");
     const hasScheduleUpdates = Boolean(updates.updatedAt);
     const hasAnnouncements = Array.isArray(updates.announcements) && updates.announcements.length > 0;
 

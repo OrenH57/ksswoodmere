@@ -155,6 +155,8 @@ assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /class="
 assert.match(script, /\/api\/updates/, "Public page should fetch board updates");
 assert.match(script, /function renderAnnouncements/, "Public page should render announcements");
 assert.match(script, /function applyBoardUpdates/, "Public page should merge board updates");
+assert.match(script, /function fetchFreshJson/, "Board updates should be able to bypass local cache");
+assert.match(script, /fetchFreshJson\("\/api\/updates"\)/, "Public board updates should not be cached in localStorage");
 assert.match(script, /function fallbackCopyText/, "Copy button should have a clipboard fallback");
 assert.doesNotMatch(script, /Copy failed/, "Copy button should not show scary failure text");
 assert.match(styles, /\.zmanim-item strong[\s\S]*font-family: var\(--font-display\)[\s\S]*font-size: clamp\(1\.4rem, 7vw, 1\.85rem\)/, "Zmanim times should match the regular time typography");
