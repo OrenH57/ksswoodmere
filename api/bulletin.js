@@ -1,6 +1,6 @@
 const { loadPreferredBulletin } = require("../lib/bulletin-loader");
 
-const CACHE_HEADER = "s-maxage=900, stale-while-revalidate=3600";
+const CACHE_HEADER = "no-store";
 
 function sendJson(response, statusCode, payload) {
   response.statusCode = statusCode;

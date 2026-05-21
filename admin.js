@@ -148,6 +148,32 @@ function renderEditor(data) {
   }
 }
 
+function countBulletinTimes(bulletin) {
+  const shabbat = bulletin?.shabbat || {};
+  return (
+    (bulletin?.weekday || []).length +
+    (shabbat.fridayNight || []).length +
+    (shabbat.morning || []).length +
+    (shabbat.latestShema || []).length +
+    (shabbat.afternoon || []).length
+  );
+}
+
+function contentFromParsedBulletin(bulletin) {
+  return {
+    updatedAt: content?.updatedAt || null,
+    updatedBy: content?.updatedBy || "",
+    weekday: bulletin?.weekday || [],
+    shabbat: {
+      fridayNight: bulletin?.shabbat?.fridayNight || [],
+      morning: bulletin?.shabbat?.morning || [],
+      latestShema: bulletin?.shabbat?.latestShema || [],
+      afternoon: bulletin?.shabbat?.afternoon || [],
+    },
+    announcements: content?.announcements || [],
+  };
+}
+
 async function loadBulletinMeta() {
   const data = await apiRequest("/api/admin/bulletin");
   if (bulletinMeta) bulletinMeta.textContent = formatUploadedMeta(data.uploaded);
@@ -249,9 +275,17 @@ bulletinForm?.addEventListener("submit", async (event) => {
       body: formData,
     });
     if (bulletinMeta) bulletinMeta.textContent = formatUploadedMeta(uploaded.uploaded);
+    if (uploaded.bulletin) renderEditor(contentFromParsedBulletin(uploaded.bulletin));
     bulletinForm.reset();
+    localStorage.removeItem("kss-cache:/api/updates");
     localStorage.removeItem("kss-cache:/api/bulletin");
-    setStatus("Bulletin uploaded. Times were parsed and are ready on the public site.", "success");
+    const parsedCount = countBulletinTimes(uploaded.bulletin);
+    setStatus(
+      parsedCount
+        ? `Bulletin uploaded and ${parsedCount} times were parsed. Review the editable times below, then save updates if needed.`
+        : "Bulletin uploaded, but no schedule times were found. Review the PDF text or enter times manually.",
+      parsedCount ? "success" : "error"
+    );
   } catch (error) {
     setStatus(error.message, "error");
   }

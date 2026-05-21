@@ -18,6 +18,7 @@ const uploadedBulletinModule = fs.readFileSync("lib/uploaded-bulletin.js", "utf8
 const blobStorageModule = fs.readFileSync("lib/blob-storage.js", "utf8");
 const bulletinLoaderModule = fs.readFileSync("lib/bulletin-loader.js", "utf8");
 const runtimeStorageModule = fs.readFileSync("lib/runtime-storage.js", "utf8");
+const bulletinApi = fs.readFileSync("api/bulletin.js", "utf8");
 const styles = fs.readFileSync("styles.css", "utf8");
 const server = fs.readFileSync("dev-server.js", "utf8");
 const vercelConfig = fs.readFileSync("vercel.json", "utf8");
@@ -192,6 +193,10 @@ assert.match(adminScript, /\/api\/admin\/login/, "Admin page should log in throu
 assert.match(adminScript, /\/api\/admin\/bulletin/, "Admin page should upload bulletins through backend");
 assert.match(adminScript, /new FormData\(\)/, "Admin bulletin upload should avoid base64 JSON payload bloat");
 assert.doesNotMatch(adminScript, /base64: await readFileAsBase64/, "Admin bulletin upload should not base64-wrap PDFs");
+assert.match(adminScript, /contentFromParsedBulletin/, "Admin upload should map parsed bulletin times into editable content");
+assert.match(adminScript, /renderEditor\(contentFromParsedBulletin\(uploaded\.bulletin\)\)/, "Admin upload should refresh the visible editor with parsed times");
+assert.match(adminScript, /countBulletinTimes\(uploaded\.bulletin\)/, "Admin upload should report whether parsed schedule times were found");
+assert.match(adminScript, /localStorage\.removeItem\("kss-cache:\/api\/updates"\)/, "Admin upload should clear public board update cache too");
 assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save content through backend");
 assert.match(adminApiModule, /multipart\/form-data/, "Admin API should accept multipart bulletin uploads");
 assert.match(adminApiModule, /parseMultipartFile/, "Admin API should parse uploaded bulletin files from multipart bodies");
@@ -216,6 +221,7 @@ assert.match(blobStorageModule, /continue;/, "Blob reads should tolerate public-
 assert.match(blobStorageModule, /jsonCacheControlMaxAge = 60/, "Blob JSON writes should keep metadata cache windows short");
 assert.match(blobStorageModule, /function storageMode/, "Blob storage should report its active persistence mode");
 assert.match(bulletinLoaderModule, /await hasUploadedBulletin\(\)/, "Bulletin loader should await Blob-backed upload checks");
+assert.match(bulletinApi, /const CACHE_HEADER = "no-store"/, "Public bulletin API should not serve stale uploaded schedules");
 assert.match(adminScript, /function syncAdminMobileLayout/, "Admin page should collapse detailed times on phones");
 assert.doesNotMatch(adminScript, /collectSchedule\("latestShema"\)/, "Admin saves should not add manual Latest Shema times");
 
