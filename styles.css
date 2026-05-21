@@ -1939,11 +1939,21 @@ h3 {
   }
 
   .admin-actions {
-    order: 2;
+    order: 3;
+    position: sticky;
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 10;
+    margin-top: 0.2rem;
+    padding: 0.7rem;
+    border: 1px solid rgba(10, 49, 71, 0.12);
+    border-radius: 6px;
+    background: rgba(255, 254, 249, 0.96);
+    box-shadow: 0 14px 34px rgba(10, 49, 71, 0.14);
+    backdrop-filter: blur(10px);
   }
 
   .admin-times-panel {
-    order: 3;
+    order: 2;
   }
 
   .admin-upload {

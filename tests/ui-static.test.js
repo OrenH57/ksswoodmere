@@ -125,7 +125,7 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js/, "Public pages should use absolute script URLs");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=mobile-3"/, "Public pages should use a cache-busted script URL");
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
@@ -176,13 +176,16 @@ assert.match(adminHtml, /<legend>Announcement<\/legend>/, "Mobile admin should p
 assert.match(adminHtml, /<details class="admin-times-panel" open>/, "Admin times should live in a collapsible panel");
 assert.match(adminHtml, /<summary>Edit regular times<\/summary>/, "Admin times panel should use simple mobile copy");
 assert.ok(
-  adminHtml.indexOf("Save Updates") < adminHtml.indexOf("Upload and Parse") &&
+  adminHtml.indexOf("Edit regular times") < adminHtml.indexOf("Save Updates") &&
+    adminHtml.indexOf("Save Updates") < adminHtml.indexOf("Upload and Parse") &&
     adminHtml.indexOf("Upload and Parse") < adminHtml.indexOf("View Site") &&
     adminHtml.indexOf("View Site") < adminHtml.indexOf("Log Out"),
-  "Mobile admin buttons should flow from save to upload to utility actions"
+  "Mobile admin save button should sit at the bottom of the edit form before utility actions"
 );
+assert.match(adminHtml, /src="\/admin\.js\?v=admin-2"/, "Admin page should use a cache-busted admin script URL");
 assert.match(adminHtml, /class="admin-secondary-actions"/, "Admin utility buttons should be grouped separately");
 assert.match(styles, /\.admin-secondary-actions \.button[\s\S]*width: 100%/, "Admin utility buttons should be full-width on phone");
+assert.match(styles, /@media \(max-width: 720px\)[\s\S]*\.admin-actions[\s\S]*position: sticky[\s\S]*bottom: max\(0\.75rem, env\(safe-area-inset-bottom\)\)/, "Mobile admin save button should stay reachable at the bottom");
 assert.doesNotMatch(adminHtml, /Latest Shema/, "Admin editor should not expose Latest Shema as a manual board field");
 assert.match(adminScript, /\/api\/admin\/login/, "Admin page should log in through backend");
 assert.match(adminScript, /\/api\/admin\/bulletin/, "Admin page should upload bulletins through backend");
