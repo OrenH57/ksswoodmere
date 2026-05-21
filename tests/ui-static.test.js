@@ -196,11 +196,18 @@ assert.match(adminContentModule, /getRuntimeDataDir/, "Admin content writes shou
 assert.match(adminContentModule, /getBundledDataDir/, "Admin content reads should fall back to bundled defaults");
 assert.match(adminContentModule, /writeBlobJson\("admin-content\.json"/, "Admin content saves should prefer Vercel Blob when configured");
 assert.match(adminContentModule, /readBlobJson\("admin-content\.json"/, "Admin content reads should prefer Vercel Blob when configured");
+assert.match(adminContentModule, /requirePersistentStorage/, "Admin content saves should fail loudly in Vercel when Blob persistence fails");
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
 assert.match(uploadedBulletinModule, /writeBlobBuffer\("uploaded-bulletin\.pdf"/, "Uploaded bulletin PDFs should save to Vercel Blob when configured");
 assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin\.json"/, "Uploaded bulletin metadata should save to Vercel Blob when configured");
+assert.match(uploadedBulletinModule, /requirePersistentStorage/, "Bulletin uploads should fail loudly in Vercel when Blob persistence fails");
 assert.match(blobStorageModule, /@vercel\/blob/, "Blob storage should use the Vercel Blob SDK");
 assert.match(blobStorageModule, /BLOB_READ_WRITE_TOKEN/, "Blob storage should activate only when the Vercel Blob token is configured");
+assert.match(blobStorageModule, /access: "private"/, "Blob storage should keep admin data private");
+assert.match(blobStorageModule, /allowOverwrite: true/, "Blob storage should overwrite stable admin paths");
+assert.match(blobStorageModule, /useCache: false/, "Blob reads should bypass stale Blob cache");
+assert.match(blobStorageModule, /jsonCacheControlMaxAge = 60/, "Blob JSON writes should keep metadata cache windows short");
+assert.match(blobStorageModule, /function storageMode/, "Blob storage should report its active persistence mode");
 assert.match(bulletinLoaderModule, /await hasUploadedBulletin\(\)/, "Bulletin loader should await Blob-backed upload checks");
 assert.match(adminScript, /function syncAdminMobileLayout/, "Admin page should collapse detailed times on phones");
 assert.doesNotMatch(adminScript, /collectSchedule\("latestShema"\)/, "Admin saves should not add manual Latest Shema times");
