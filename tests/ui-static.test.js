@@ -12,6 +12,7 @@ const supportRouteHtml = fs.readFileSync("support-us/index.html", "utf8");
 const staffRouteHtml = fs.readFileSync("staff/index.html", "utf8");
 const script = fs.readFileSync("script.js", "utf8");
 const adminScript = fs.readFileSync("admin.js", "utf8");
+const adminApiModule = fs.readFileSync("lib/admin-api.js", "utf8");
 const adminContentModule = fs.readFileSync("lib/admin-content.js", "utf8");
 const uploadedBulletinModule = fs.readFileSync("lib/uploaded-bulletin.js", "utf8");
 const blobStorageModule = fs.readFileSync("lib/blob-storage.js", "utf8");
@@ -182,14 +183,18 @@ assert.ok(
     adminHtml.indexOf("View Site") < adminHtml.indexOf("Log Out"),
   "Mobile admin save button should sit at the bottom of the edit form before utility actions"
 );
-assert.match(adminHtml, /src="\/admin\.js\?v=admin-2"/, "Admin page should use a cache-busted admin script URL");
+assert.match(adminHtml, /src="\/admin\.js\?v=admin-3"/, "Admin page should use a cache-busted admin script URL");
 assert.match(adminHtml, /class="admin-secondary-actions"/, "Admin utility buttons should be grouped separately");
 assert.match(styles, /\.admin-secondary-actions \.button[\s\S]*width: 100%/, "Admin utility buttons should be full-width on phone");
 assert.match(styles, /@media \(max-width: 720px\)[\s\S]*\.admin-actions[\s\S]*position: sticky[\s\S]*bottom: max\(0\.75rem, env\(safe-area-inset-bottom\)\)/, "Mobile admin save button should stay reachable at the bottom");
 assert.doesNotMatch(adminHtml, /Latest Shema/, "Admin editor should not expose Latest Shema as a manual board field");
 assert.match(adminScript, /\/api\/admin\/login/, "Admin page should log in through backend");
 assert.match(adminScript, /\/api\/admin\/bulletin/, "Admin page should upload bulletins through backend");
+assert.match(adminScript, /new FormData\(\)/, "Admin bulletin upload should avoid base64 JSON payload bloat");
+assert.doesNotMatch(adminScript, /base64: await readFileAsBase64/, "Admin bulletin upload should not base64-wrap PDFs");
 assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save content through backend");
+assert.match(adminApiModule, /multipart\/form-data/, "Admin API should accept multipart bulletin uploads");
+assert.match(adminApiModule, /parseMultipartFile/, "Admin API should parse uploaded bulletin files from multipart bodies");
 assert.match(runtimeStorageModule, /process\.env\.VERCEL/, "Runtime storage should detect read-only serverless deployments");
 assert.match(runtimeStorageModule, /os\.tmpdir\(\)/, "Runtime storage should fall back to a writable temp directory");
 assert.match(adminContentModule, /getRuntimeDataDir/, "Admin content writes should use runtime storage");
@@ -200,6 +205,7 @@ assert.match(adminContentModule, /requirePersistentStorage/, "Admin content save
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
 assert.match(uploadedBulletinModule, /writeBlobBuffer\("uploaded-bulletin\.pdf"/, "Uploaded bulletin PDFs should save to Vercel Blob when configured");
 assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin\.json"/, "Uploaded bulletin metadata should save to Vercel Blob when configured");
+assert.match(uploadedBulletinModule, /Buffer\.isBuffer\(buffer\)/, "Uploaded bulletin saves should accept raw multipart buffers");
 assert.match(uploadedBulletinModule, /requirePersistentStorage/, "Bulletin uploads should fail loudly in Vercel when Blob persistence fails");
 assert.match(blobStorageModule, /@vercel\/blob/, "Blob storage should use the Vercel Blob SDK");
 assert.match(blobStorageModule, /BLOB_READ_WRITE_TOKEN/, "Blob storage should activate only when the Vercel Blob token is configured");

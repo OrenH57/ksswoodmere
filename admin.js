@@ -32,11 +32,12 @@ function setStatus(message, type = "") {
 }
 
 async function apiRequest(url, options = {}) {
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const response = await fetch(url, {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.body && !isFormData ? { "Content-Type": "application/json" } : {}),
       ...options.headers,
     },
     ...options,
@@ -53,18 +54,6 @@ function formatUploadedMeta(meta) {
     : "unknown date";
   const size = meta.size ? `${Math.round(meta.size / 1024)} KB` : "PDF";
   return `${meta.fileName} - uploaded ${date} (${size})`;
-}
-
-function readFileAsBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      const result = String(reader.result || "");
-      resolve(result.includes(",") ? result.split(",").pop() : result);
-    });
-    reader.addEventListener("error", () => reject(new Error("Could not read the selected file.")));
-    reader.readAsDataURL(file);
-  });
 }
 
 function itemRow(group, item = {}, index = 0) {
@@ -252,12 +241,12 @@ bulletinForm?.addEventListener("submit", async (event) => {
   setStatus("Uploading and parsing bulletin...");
 
   try {
+    const formData = new FormData();
+    formData.append("bulletin", file, file.name);
+
     const uploaded = await apiRequest("/api/admin/bulletin", {
       method: "POST",
-      body: JSON.stringify({
-        fileName: file.name,
-        base64: await readFileAsBase64(file),
-      }),
+      body: formData,
     });
     if (bulletinMeta) bulletinMeta.textContent = formatUploadedMeta(uploaded.uploaded);
     bulletinForm.reset();
