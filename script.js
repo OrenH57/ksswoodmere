@@ -215,10 +215,11 @@ const fallbackBulletin = {
       { label: "Gr\"A", time: "9:14 AM" },
     ],
     afternoon: [
+      { label: "Kids program with Avi", time: "5:15 PM" },
+      { label: "Ladies Tehillim & Brachot", time: "6:00 PM" },
+      { label: "Parsha Shiur", time: "6:45 PM" },
       { label: "Mincha", time: "7:15 PM" },
       { label: "Arvit", time: "8:30 PM" },
-      { label: "Shabbat Ends", time: "8:45 PM" },
-      { label: "Rabbenu Tam", time: "9:18 PM" },
     ],
   },
   weekday: defaultRegularSchedule,

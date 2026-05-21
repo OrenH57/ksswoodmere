@@ -208,7 +208,7 @@ assert.match(adminContentModule, /writeBlobJson\("admin-content\.json"/, "Admin 
 assert.match(adminContentModule, /readBlobJson\("admin-content\.json"/, "Admin content reads should prefer Vercel Blob when configured");
 assert.match(adminContentModule, /requirePersistentStorage/, "Admin content saves should fail loudly in Vercel when Blob persistence fails");
 assert.match(adminContentModule, /normalizeScheduleGroup/, "Admin content should normalize schedule groups before publishing");
-assert.match(adminContentModule, /isCoreAfternoonTime/, "Admin content should omit non-schedule Shabbat afternoon program rows");
+assert.match(adminContentModule, /isCoreAfternoonTime/, "Admin content should keep the approved Shabbat afternoon rows");
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
 assert.match(uploadedBulletinModule, /writeBlobBuffer\("uploaded-bulletin\.pdf"/, "Uploaded bulletin PDFs should save to Vercel Blob when configured");
 assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin\.json"/, "Uploaded bulletin metadata should save to Vercel Blob when configured");
