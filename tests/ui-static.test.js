@@ -206,6 +206,7 @@ assert.match(blobStorageModule, /BLOB_READ_WRITE_TOKEN/, "Blob storage should ac
 assert.match(blobStorageModule, /access: "private"/, "Blob storage should keep admin data private");
 assert.match(blobStorageModule, /allowOverwrite: true/, "Blob storage should overwrite stable admin paths");
 assert.match(blobStorageModule, /useCache: false/, "Blob reads should bypass stale Blob cache");
+assert.match(blobStorageModule, /continue;/, "Blob reads should tolerate public-to-private access rollovers");
 assert.match(blobStorageModule, /jsonCacheControlMaxAge = 60/, "Blob JSON writes should keep metadata cache windows short");
 assert.match(blobStorageModule, /function storageMode/, "Blob storage should report its active persistence mode");
 assert.match(bulletinLoaderModule, /await hasUploadedBulletin\(\)/, "Bulletin loader should await Blob-backed upload checks");
