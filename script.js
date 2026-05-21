@@ -227,6 +227,7 @@ const fallbackBulletin = {
   notes: {
     parsha: "Bamidbar",
     dateText: "May 15-16",
+    holidayName: "",
   },
 };
 
@@ -568,11 +569,17 @@ function renderTimeTable(title, items) {
   `;
 }
 
-function renderShabbatSchedule(shabbat) {
+function titleWithHoliday(title, holidayName) {
+  const normalized = String(holidayName || "").trim();
+  return normalized ? `${normalized} - ${title}` : title;
+}
+
+function renderShabbatSchedule(shabbat, notes = {}) {
   if (!shabbatScheduleGrid || !shabbat) return;
 
+  const thursdayTitle = titleWithHoliday("Thursday Night", notes.holidayName);
   const html = [
-    renderTimeTable("Thursday Night", shabbat.thursdayNight),
+    renderTimeTable(thursdayTitle, shabbat.thursdayNight),
     renderTimeTable("Friday Night", shabbat.fridayNight),
     renderTimeTable("Shabbat Morning", [...(shabbat.morning || []), ...(shabbat.latestShema || [])]),
     renderTimeTable("Shabbat Afternoon", shabbat.afternoon),
@@ -638,7 +645,7 @@ function setParshaText(parsha) {
 
 function renderBulletinData(data, statusText) {
   renderRegularSchedule(data.weekday);
-  renderShabbatSchedule(data.shabbat);
+  renderShabbatSchedule(data.shabbat, data.notes);
   renderAnnouncements(data.announcements);
   updateFastInfoFromBulletin(data.weekday);
 
@@ -659,7 +666,7 @@ async function applyBoardUpdates() {
 
     if (hasScheduleUpdates) {
       renderRegularSchedule(updates.weekday);
-      renderShabbatSchedule(updates.shabbat);
+      renderShabbatSchedule(updates.shabbat, updates.notes);
       updateFastInfoFromBulletin(updates.weekday);
       const updatedDate = new Intl.DateTimeFormat("en-US", {
         month: "short",

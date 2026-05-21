@@ -172,6 +172,9 @@ function contentFromParsedBulletin(bulletin) {
       latestShema: bulletin?.shabbat?.latestShema || [],
       afternoon: bulletin?.shabbat?.afternoon || [],
     },
+    notes: {
+      holidayName: bulletin?.notes?.holidayName || content?.notes?.holidayName || "",
+    },
     announcements: content?.announcements || [],
   };
 }
@@ -208,6 +211,9 @@ function collectContent() {
       fridayNight: collectSchedule("fridayNight"),
       morning: collectSchedule("morning"),
       afternoon: collectSchedule("afternoon"),
+    },
+    notes: {
+      holidayName: content?.notes?.holidayName || "",
     },
     announcements: collectAnnouncements(),
   };

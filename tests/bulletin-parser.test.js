@@ -123,6 +123,7 @@ T I K U N   L E I L   S H A V U O T
 
 const shavuot = parseBulletinText(shavuotText);
 
+assert.equal(shavuot.notes.holidayName, "Shavuot");
 assert.deepEqual(shavuot.shabbat.thursdayNight, [
   { label: "Mincha & Arvit", time: "7:30 PM" },
   { label: "Candle Lighting", time: "7:51 PM" },
