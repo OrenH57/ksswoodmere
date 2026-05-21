@@ -53,4 +53,36 @@ assert.deepEqual(parsed.weekday, [
   { label: "Daily Mincha & Arvit", time: "7:15 PM" },
 ]);
 
+const holidayText = `
+Kehilat Shaare Shalom
+Shavuot Schedule
+May 21-23, 2026
+EREV YOM TOV
+Candle Lighting 7:49
+Mincha & Arvit 7:20
+FIRST DAY
+Shacharit 8:30
+Hallel 9:45
+Torah Reading 10:15
+Yizkor 11:00
+Mussaf 11:20
+YOM TOV AFTERNOON
+Rabbi's Shiur 6:45
+Mincha 7:25
+Arvit 8:45
+Yom Tov Ends 8:56
+`;
+
+const holiday = parseBulletinText(holidayText);
+
+assert.deepEqual(holiday.shabbat.fridayNight, [
+  { label: "Candle Lighting", time: "7:49 PM" },
+  { label: "Mincha & Arvit", time: "7:20 PM" },
+]);
+assert.deepEqual(holiday.shabbat.morning.slice(0, 2), [
+  { label: "Shacharit", time: "8:30 AM" },
+  { label: "Hallel", time: "9:45 AM" },
+]);
+assert.deepEqual(holiday.shabbat.afternoon.at(-1), { label: "Yom Tov Ends", time: "8:56 PM" });
+
 console.log("Bulletin parser test passed.");
