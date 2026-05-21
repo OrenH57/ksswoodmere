@@ -16,6 +16,7 @@
     }
   ],
   "shabbat": {
+    "thursdayNight": [],
     "fridayNight": [
       {
         "label": "Candle Lighting",

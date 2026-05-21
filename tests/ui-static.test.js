@@ -174,6 +174,7 @@ assert.match(adminHtml, /id="admin-bulletin-form"/, "Admin bulletin upload form 
 assert.match(adminHtml, /type="file"/, "Admin upload should use a file input");
 assert.match(adminHtml, /accept="application\/pdf,\.pdf"/, "Admin upload should accept PDF files");
 assert.match(adminHtml, /id="admin-content-form"/, "Admin editor form should be present");
+assert.match(adminHtml, /id="admin-thursdayNight"/, "Admin editor should support Thursday night holiday times");
 assert.match(adminHtml, /<legend>Announcement<\/legend>/, "Mobile admin should prioritize announcement editing");
 assert.match(adminHtml, /<details class="admin-times-panel" open>/, "Admin times should live in a collapsible panel");
 assert.match(adminHtml, /<summary>Edit regular times<\/summary>/, "Admin times panel should use simple mobile copy");
@@ -195,6 +196,7 @@ assert.match(adminScript, /new FormData\(\)/, "Admin bulletin upload should avoi
 assert.doesNotMatch(adminScript, /base64: await readFileAsBase64/, "Admin bulletin upload should not base64-wrap PDFs");
 assert.match(adminScript, /contentFromParsedBulletin/, "Admin upload should map parsed bulletin times into editable content");
 assert.match(adminScript, /renderEditor\(contentFromParsedBulletin\(uploaded\.bulletin\)\)/, "Admin upload should refresh the visible editor with parsed times");
+assert.match(adminScript, /collectSchedule\("thursdayNight"\)/, "Admin saves should include Thursday night holiday times");
 assert.match(adminScript, /countBulletinTimes\(uploaded\.bulletin\)/, "Admin upload should report whether parsed schedule times were found");
 assert.match(adminScript, /localStorage\.removeItem\("kss-cache:\/api\/updates"\)/, "Admin upload should clear public board update cache too");
 assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save content through backend");

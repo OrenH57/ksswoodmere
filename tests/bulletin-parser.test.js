@@ -123,6 +123,11 @@ T I K U N   L E I L   S H A V U O T
 
 const shavuot = parseBulletinText(shavuotText);
 
+assert.deepEqual(shavuot.shabbat.thursdayNight, [
+  { label: "Mincha & Arvit", time: "7:30 PM" },
+  { label: "Candle Lighting", time: "7:51 PM" },
+  { label: "Tikun Leil Shavuot", time: "11:30 PM" },
+]);
 assert.deepEqual(shavuot.shabbat.fridayNight, [
   { label: "Candle Lighting", time: "7:52 PM" },
   { label: "Mincha - Kabbalat Shabbat & Arvit", time: "7:15 PM" },

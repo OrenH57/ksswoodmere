@@ -10,7 +10,7 @@ const updatedText = document.querySelector("#admin-updated");
 const logoutButton = document.querySelector("#admin-logout");
 const timesPanel = document.querySelector(".admin-times-panel");
 
-const groups = ["weekday", "fridayNight", "morning", "afternoon"];
+const groups = ["weekday", "thursdayNight", "fridayNight", "morning", "afternoon"];
 let content = null;
 
 function syncAdminMobileLayout() {
@@ -152,6 +152,7 @@ function countBulletinTimes(bulletin) {
   const shabbat = bulletin?.shabbat || {};
   return (
     (bulletin?.weekday || []).length +
+    (shabbat.thursdayNight || []).length +
     (shabbat.fridayNight || []).length +
     (shabbat.morning || []).length +
     (shabbat.latestShema || []).length +
@@ -165,6 +166,7 @@ function contentFromParsedBulletin(bulletin) {
     updatedBy: content?.updatedBy || "",
     weekday: bulletin?.weekday || [],
     shabbat: {
+      thursdayNight: bulletin?.shabbat?.thursdayNight || [],
       fridayNight: bulletin?.shabbat?.fridayNight || [],
       morning: bulletin?.shabbat?.morning || [],
       latestShema: bulletin?.shabbat?.latestShema || [],
@@ -202,6 +204,7 @@ function collectContent() {
   return {
     weekday: collectSchedule("weekday"),
     shabbat: {
+      thursdayNight: collectSchedule("thursdayNight"),
       fridayNight: collectSchedule("fridayNight"),
       morning: collectSchedule("morning"),
       afternoon: collectSchedule("afternoon"),

@@ -197,6 +197,7 @@ const fallbackBulletin = {
     fileName: "weekly-bulletin-bamidbar-2026-05-15.pdf",
   },
   shabbat: {
+    thursdayNight: [],
     fridayNight: [
       { label: "Candle Lighting", time: "7:45 PM" },
       { label: "Shir Hashirim", time: "7:00 PM" },
@@ -571,6 +572,7 @@ function renderShabbatSchedule(shabbat) {
   if (!shabbatScheduleGrid || !shabbat) return;
 
   const html = [
+    renderTimeTable("Thursday Night", shabbat.thursdayNight),
     renderTimeTable("Friday Night", shabbat.fridayNight),
     renderTimeTable("Shabbat Morning", [...(shabbat.morning || []), ...(shabbat.latestShema || [])]),
     renderTimeTable("Shabbat Afternoon", shabbat.afternoon),
