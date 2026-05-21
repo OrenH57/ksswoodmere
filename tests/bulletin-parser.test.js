@@ -46,7 +46,12 @@ assert.deepEqual(parsed.shabbat.latestShema, [
   { label: "M\"A", time: "8:26 AM" },
   { label: "Gr\"A", time: "9:14 AM" },
 ]);
-assert.deepEqual(parsed.shabbat.afternoon.at(-1), { label: "Rabbenu Tam", time: "9:18 PM" });
+assert.deepEqual(parsed.shabbat.afternoon, [
+  { label: "Mincha", time: "7:15 PM" },
+  { label: "Arvit", time: "8:30 PM" },
+  { label: "Shabbat Ends", time: "8:45 PM" },
+  { label: "Rabbenu Tam", time: "9:18 PM" },
+]);
 assert.deepEqual(parsed.weekday, [
   { label: "Sunday Shacharit", time: "7:45 AM" },
   { label: "Monday-Friday Shacharit", time: "6:00 AM" },
@@ -83,6 +88,10 @@ assert.deepEqual(holiday.shabbat.morning.slice(0, 2), [
   { label: "Shacharit", time: "8:30 AM" },
   { label: "Hallel", time: "9:45 AM" },
 ]);
-assert.deepEqual(holiday.shabbat.afternoon.at(-1), { label: "Yom Tov Ends", time: "8:56 PM" });
+assert.deepEqual(holiday.shabbat.afternoon, [
+  { label: "Mincha", time: "7:25 PM" },
+  { label: "Arvit", time: "8:45 PM" },
+  { label: "Yom Tov Ends", time: "8:56 PM" },
+]);
 
 console.log("Bulletin parser test passed.");
