@@ -4,8 +4,10 @@ const brand = document.querySelector(".brand");
 const brandText = document.querySelector(".brand-text");
 const brandName = document.querySelector(".brand-name");
 const brandSubtitle = document.querySelector(".brand-subtitle");
+const hero = document.querySelector(".home-page .hero");
 const isCoarsePointer = window.matchMedia?.("(pointer: coarse)").matches || false;
 const reduceFirstScrollWork = isCoarsePointer || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+const heroMobileMedia = window.matchMedia?.("(max-width: 559px)");
 
 const brandTranslations = [
   {
@@ -89,6 +91,97 @@ function rotateBrandLanguage() {
 
 rotateBrandLanguage();
 
+const heroPhotos = [
+  {
+    src: "/assets/6efc2da7-3e0a-4d50-9bd9-59be8874d426.jpg",
+    mobileSrc: "/assets/6efc2da7-3e0a-4d50-9bd9-59be8874d426.jpg",
+    position: "48% 46%",
+    mobilePosition: "58% 44%",
+    overlayStart: "0.64",
+    overlayMid: "0.38",
+    overlayEnd: "0.18",
+    mobileOverlayStart: "0.74",
+    mobileOverlayMid: "0.44",
+    mobileOverlayEnd: "0.22",
+  },
+  {
+    src: "/assets/hero-learning-room.jpeg",
+    mobileSrc: "/assets/hero-learning-room-mobile.jpeg",
+    position: "16% 54%",
+    mobilePosition: "12% 54%",
+    size: "126% auto",
+    mobileSize: "auto 112%",
+    overlayStart: "0.76",
+    overlayMid: "0.48",
+    overlayEnd: "0.16",
+    mobileOverlayStart: "0.82",
+    mobileOverlayMid: "0.52",
+    mobileOverlayEnd: "0.18",
+  },
+  {
+    src: "/assets/hero-torah-scroll.jpeg",
+    mobileSrc: "/assets/hero-torah-scroll-mobile.jpeg",
+    position: "48% 58%",
+    mobilePosition: "42% 56%",
+    overlayStart: "0.78",
+    overlayMid: "0.5",
+    overlayEnd: "0.14",
+    mobileOverlayStart: "0.82",
+    mobileOverlayMid: "0.54",
+    mobileOverlayEnd: "0.16",
+  },
+  {
+    src: "/assets/hero-community-meal.jpeg",
+    mobileSrc: "/assets/hero-community-meal-mobile.jpeg",
+    position: "34% 48%",
+    mobilePosition: "36% 42%",
+    overlayStart: "0.8",
+    overlayMid: "0.52",
+    overlayEnd: "0.14",
+    mobileOverlayStart: "0.84",
+    mobileOverlayMid: "0.58",
+    mobileOverlayEnd: "0.16",
+  },
+];
+
+function initializeHeroPhotos() {
+  if (!hero) return;
+
+  const controls = [...hero.querySelectorAll("[data-hero-direction]")];
+  let activeIndex = 0;
+
+  function setHeroPhoto(index) {
+    activeIndex = (index + heroPhotos.length) % heroPhotos.length;
+    const photo = heroPhotos[activeIndex] || heroPhotos[0];
+    const isMobileHero = heroMobileMedia?.matches || false;
+    const photoSrc = isMobileHero ? photo.mobileSrc : photo.src;
+    hero.style.setProperty("--hero-photo", `url("${photoSrc || photo.src}")`);
+    hero.style.setProperty("--hero-position", isMobileHero ? photo.mobilePosition : photo.position);
+    hero.style.setProperty("--hero-size", (isMobileHero ? photo.mobileSize : photo.size) || "cover");
+    hero.style.setProperty("--hero-paper-start", isMobileHero ? photo.mobileOverlayStart : photo.overlayStart);
+    hero.style.setProperty("--hero-paper-mid", isMobileHero ? photo.mobileOverlayMid : photo.overlayMid);
+    hero.style.setProperty("--hero-blue-end", isMobileHero ? photo.mobileOverlayEnd : photo.overlayEnd);
+    hero.setAttribute("data-hero-photo-index", String(activeIndex));
+  }
+
+  if (!controls.length) {
+    setHeroPhoto(0);
+    return;
+  }
+
+  controls.forEach((control) => {
+    control.addEventListener("click", () => {
+      const direction = control.dataset.heroDirection === "previous" ? -1 : 1;
+      setHeroPhoto(activeIndex + direction);
+    });
+  });
+
+  heroMobileMedia?.addEventListener("change", () => setHeroPhoto(activeIndex));
+  setHeroPhoto(0);
+}
+
+initializeHeroPhotos();
+
 const shouldTrackScrollProgress = !isCoarsePointer;
 
 if (shouldTrackScrollProgress) {
@@ -128,12 +221,14 @@ if (shouldTrackScrollProgress) {
 navToggle?.addEventListener("click", () => {
   const isOpen = siteNav.classList.toggle("is-open");
   navToggle.setAttribute("aria-expanded", String(isOpen));
+  navToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
 });
 
 siteNav?.addEventListener("click", (event) => {
   if (event.target instanceof HTMLAnchorElement) {
     siteNav.classList.remove("is-open");
     navToggle?.setAttribute("aria-expanded", "false");
+    navToggle?.setAttribute("aria-label", "Open menu");
   }
 });
 
