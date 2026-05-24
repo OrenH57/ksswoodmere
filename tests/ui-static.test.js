@@ -198,6 +198,7 @@ assert.match(adminScript, /contentFromParsedBulletin/, "Admin upload should map 
 assert.match(adminScript, /renderEditor\(contentFromParsedBulletin\(uploaded\.bulletin\)\)/, "Admin upload should refresh the visible editor with parsed times");
 assert.match(adminScript, /collectSchedule\("thursdayNight"\)/, "Admin saves should include Thursday night holiday times");
 assert.match(adminScript, /holidayName: content\?\.notes\?\.holidayName/, "Admin saves should preserve parsed holiday names");
+assert.match(adminScript, /holidayName: bulletin\?\.notes\?\.holidayName \|\| ""/, "Admin upload should clear old holiday names when the new bulletin has none");
 assert.match(adminScript, /countBulletinTimes\(uploaded\.bulletin\)/, "Admin upload should report whether parsed schedule times were found");
 assert.match(adminScript, /localStorage\.removeItem\("kss-cache:\/api\/updates"\)/, "Admin upload should clear public board update cache too");
 assert.match(adminScript, /\/api\/admin\/content/, "Admin page should save content through backend");
@@ -213,6 +214,8 @@ assert.match(adminContentModule, /requirePersistentStorage/, "Admin content save
 assert.match(adminContentModule, /normalizeScheduleGroup/, "Admin content should normalize schedule groups before publishing");
 assert.match(adminContentModule, /isCoreAfternoonTime/, "Admin content should keep the approved Shabbat afternoon rows");
 assert.match(adminContentModule, /normalizeNotes/, "Admin content should preserve schedule notes such as holiday names");
+assert.match(adminContentModule, /hasOwnProperty\.call\(input\.shabbat, group\)/, "Admin content should keep explicitly empty schedule groups");
+assert.match(adminContentModule, /hasOwnProperty\.call\(input, "holidayName"\)/, "Admin content should keep explicitly empty holiday names");
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
 assert.match(uploadedBulletinModule, /writeBlobBuffer\("uploaded-bulletin\.pdf"/, "Uploaded bulletin PDFs should save to Vercel Blob when configured");
 assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin\.json"/, "Uploaded bulletin metadata should save to Vercel Blob when configured");
@@ -228,7 +231,9 @@ assert.match(blobStorageModule, /jsonCacheControlMaxAge = 60/, "Blob JSON writes
 assert.match(blobStorageModule, /function storageMode/, "Blob storage should report its active persistence mode");
 assert.match(bulletinLoaderModule, /await hasUploadedBulletin\(\)/, "Bulletin loader should await Blob-backed upload checks");
 assert.match(bulletinApi, /const CACHE_HEADER = "no-store"/, "Public bulletin API should not serve stale uploaded schedules");
-assert.match(script, /titleWithHoliday\("Thursday Night", notes\.holidayName\)/, "Public schedule should prefix Thursday night with the holiday name");
+assert.match(script, /titleWithHoliday\("Thursday Night", holidayName\)/, "Public schedule should prefix Thursday night with the holiday name");
+assert.match(script, /function inferHolidayName/, "Public schedule should infer holiday names from saved Thursday rows");
+assert.match(script, /thursdayText[\s\S]*shavuot/i, "Public schedule should infer Shavuot from Thursday schedule labels");
 assert.match(adminScript, /function syncAdminMobileLayout/, "Admin page should collapse detailed times on phones");
 assert.doesNotMatch(adminScript, /collectSchedule\("latestShema"\)/, "Admin saves should not add manual Latest Shema times");
 

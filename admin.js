@@ -173,7 +173,7 @@ function contentFromParsedBulletin(bulletin) {
       afternoon: bulletin?.shabbat?.afternoon || [],
     },
     notes: {
-      holidayName: bulletin?.notes?.holidayName || content?.notes?.holidayName || "",
+      holidayName: bulletin?.notes?.holidayName || "",
     },
     announcements: content?.announcements || [],
   };

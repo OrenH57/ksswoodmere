@@ -574,10 +574,17 @@ function titleWithHoliday(title, holidayName) {
   return normalized ? `${normalized} - ${title}` : title;
 }
 
+function inferHolidayName(notes, shabbat) {
+  if (notes?.holidayName) return notes.holidayName;
+  const thursdayText = (shabbat?.thursdayNight || []).map((item) => item.label).join(" ");
+  return /\bshavuot\b/i.test(thursdayText) ? "Shavuot" : "";
+}
+
 function renderShabbatSchedule(shabbat, notes = {}) {
   if (!shabbatScheduleGrid || !shabbat) return;
 
-  const thursdayTitle = titleWithHoliday("Thursday Night", notes.holidayName);
+  const holidayName = inferHolidayName(notes, shabbat);
+  const thursdayTitle = titleWithHoliday("Thursday Night", holidayName);
   const html = [
     renderTimeTable(thursdayTitle, shabbat.thursdayNight),
     renderTimeTable("Friday Night", shabbat.fridayNight),
