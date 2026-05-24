@@ -133,8 +133,8 @@ const heroPhotos = [
   {
     src: "/assets/hero-community-meal.jpeg",
     mobileSrc: "/assets/hero-community-meal-mobile.jpeg",
-    position: "34% 48%",
-    mobilePosition: "36% 42%",
+    position: "62% 48%",
+    mobilePosition: "60% 42%",
     overlayStart: "0.8",
     overlayMid: "0.52",
     overlayEnd: "0.14",
