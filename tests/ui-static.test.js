@@ -240,12 +240,13 @@ assert.match(script, /thursdayText[\s\S]*shavuot/i, "Public schedule should infe
 assert.match(script, /function initializeHeroPhotos/, "Home hero should initialize photo arrow behavior");
 assert.match(script, /data-hero-direction/, "Home hero controls should advance photos by direction");
 assert.match(script, /heroMobileMedia/, "Home hero should react to mobile viewport changes");
-assert.match(script, /6efc2da7-3e0a-4d50-9bd9-59be8874d426\.jpg[\s\S]*hero-community-meal-mobile\.jpeg/, "Home hero should use the cropped primary photo and optimized mobile photos");
-assert.doesNotMatch(script, /hero-community-table/, "Home hero should not include the community table photo");
+assert.match(script, /6efc2da7-3e0a-4d50-9bd9-59be8874d426\.jpg[\s\S]*hero-learning-room-mobile\.jpeg/, "Home hero should use the cropped primary photo and optimized mobile photos");
+assert.doesNotMatch(script, /hero-community-table|hero-community-meal/, "Home hero should not include the table or meal photos");
 assert.match(script, /position: "16% 54%"[\s\S]*size: "126% auto"/, "Home hero should crop the learning room photo away from the right-edge face");
+assert.match(script, /hero-torah-scroll\.jpeg[\s\S]*position: "50% 50%"[\s\S]*mobilePosition: "50% 50%"/, "Home hero should center the brown Torah scroll photo on desktop and phone");
 assert.match(script, /--hero-size/, "Home hero should support photo-specific crop zoom");
 assert.match(script, /--hero-paper-start/, "Home hero should tune the overlay per photo");
-assert.match(script, /6efc2da7-3e0a-4d50-9bd9-59be8874d426\.jpg[\s\S]*hero-community-meal\.jpeg/, "Home hero should use the real community photos");
+assert.match(script, /6efc2da7-3e0a-4d50-9bd9-59be8874d426\.jpg[\s\S]*hero-torah-scroll\.jpeg/, "Home hero should use the selected community photos");
 assert.doesNotMatch(script, /test-community-hero\.png/, "Home hero should not use the generated test image in production rotation");
 assert.match(adminScript, /function syncAdminMobileLayout/, "Admin page should collapse detailed times on phones");
 assert.doesNotMatch(adminScript, /collectSchedule\("latestShema"\)/, "Admin saves should not add manual Latest Shema times");
