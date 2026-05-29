@@ -9,8 +9,16 @@ const statusText = document.querySelector("#admin-status");
 const updatedText = document.querySelector("#admin-updated");
 const logoutButton = document.querySelector("#admin-logout");
 const timesPanel = document.querySelector(".admin-times-panel");
+const bulletinSubmitButton = bulletinForm?.querySelector('button[type="submit"]');
 
 const groups = ["weekday", "thursdayNight", "fridayNight", "morning", "afternoon"];
+const defaultScheduleLabels = {
+  weekday: "Regular Minyanim",
+  thursdayNight: "Thursday Night",
+  fridayNight: "Friday Night",
+  morning: "Shabbat Morning",
+  afternoon: "Shabbat Afternoon",
+};
 let content = null;
 
 function syncAdminMobileLayout() {
@@ -115,12 +123,30 @@ function groupItems(group) {
   return content?.shabbat?.[group] || [];
 }
 
+function scheduleLabel(group) {
+  return content?.scheduleLabels?.[group] || defaultScheduleLabels[group] || "";
+}
+
+function renderHeaderLabelInput(group, fieldset) {
+  if (!fieldset) return;
+
+  fieldset.querySelector(".admin-header-label")?.remove();
+  const label = document.createElement("label");
+  label.className = "admin-header-label admin-wide";
+  label.innerHTML = `
+    <span>Header Label</span>
+    <input data-schedule-label="${group}" value="${escapeAttribute(scheduleLabel(group))}" maxlength="80" required>
+  `;
+  fieldset.querySelector("legend")?.after(label);
+}
+
 function renderEditor(data) {
   content = data;
   groups.forEach((group) => {
     const target = document.querySelector(`#admin-${group}`);
     if (!target) return;
 
+    renderHeaderLabelInput(group, target.closest("fieldset"));
     target.innerHTML = "";
     groupItems(group).forEach((item, index) => target.append(itemRow(group, item, index)));
 
@@ -175,6 +201,7 @@ function contentFromParsedBulletin(bulletin) {
     notes: {
       holidayName: bulletin?.notes?.holidayName || "",
     },
+    scheduleLabels: content?.scheduleLabels || defaultScheduleLabels,
     announcements: content?.announcements || [],
   };
 }
@@ -203,6 +230,15 @@ function collectAnnouncements() {
     .filter((item) => item.title || item.body);
 }
 
+function collectScheduleLabels() {
+  return Object.fromEntries(
+    groups.map((group) => [
+      group,
+      document.querySelector(`[data-schedule-label="${group}"]`)?.value.trim() || defaultScheduleLabels[group],
+    ])
+  );
+}
+
 function collectContent() {
   return {
     weekday: collectSchedule("weekday"),
@@ -215,6 +251,7 @@ function collectContent() {
     notes: {
       holidayName: content?.notes?.holidayName || "",
     },
+    scheduleLabels: collectScheduleLabels(),
     announcements: collectAnnouncements(),
   };
 }
@@ -273,7 +310,9 @@ bulletinForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  setStatus("Uploading and parsing bulletin...");
+  setStatus("Uploading and parsing bulletin...", "loading");
+  bulletinForm.setAttribute("aria-busy", "true");
+  if (bulletinSubmitButton) bulletinSubmitButton.disabled = true;
 
   try {
     const formData = new FormData();
@@ -289,14 +328,18 @@ bulletinForm?.addEventListener("submit", async (event) => {
     localStorage.removeItem("kss-cache:/api/updates");
     localStorage.removeItem("kss-cache:/api/bulletin");
     const parsedCount = countBulletinTimes(uploaded.bulletin);
+    const parserWarning = uploaded.bulletin?.source?.parserWarning ? ` ${uploaded.bulletin.source.parserWarning}` : "";
     setStatus(
       parsedCount
-        ? `Bulletin uploaded and ${parsedCount} times were parsed. Review the editable times below, then save updates if needed.`
+        ? `Bulletin uploaded and ${parsedCount} times were parsed.${parserWarning} Review the editable times below, then save updates if needed.`
         : "Bulletin uploaded, but no schedule times were found. Review the PDF text or enter times manually.",
       parsedCount ? "success" : "error"
     );
   } catch (error) {
     setStatus(error.message, "error");
+  } finally {
+    bulletinForm.removeAttribute("aria-busy");
+    if (bulletinSubmitButton) bulletinSubmitButton.disabled = false;
   }
 });
 

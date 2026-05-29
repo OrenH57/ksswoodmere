@@ -96,7 +96,8 @@ const heroPhotos = [
     src: "/assets/6efc2da7-3e0a-4d50-9bd9-59be8874d426.jpg",
     mobileSrc: "/assets/6efc2da7-3e0a-4d50-9bd9-59be8874d426.jpg",
     position: "48% 46%",
-    mobilePosition: "58% 44%",
+    mobilePosition: "58% 16%",
+    mobileSize: "auto 132%",
     overlayStart: "0.64",
     overlayMid: "0.38",
     overlayEnd: "0.18",
@@ -142,13 +143,13 @@ function initializeHeroPhotos() {
     activeIndex = (index + heroPhotos.length) % heroPhotos.length;
     const photo = heroPhotos[activeIndex] || heroPhotos[0];
     const isMobileHero = heroMobileMedia?.matches || false;
-    const photoSrc = isMobileHero ? photo.mobileSrc : photo.src;
+    const photoSrc = photo.src;
     hero.style.setProperty("--hero-photo", `url("${photoSrc || photo.src}")`);
-    hero.style.setProperty("--hero-position", isMobileHero ? photo.mobilePosition : photo.position);
-    hero.style.setProperty("--hero-size", (isMobileHero ? photo.mobileSize : photo.size) || "cover");
-    hero.style.setProperty("--hero-paper-start", isMobileHero ? photo.mobileOverlayStart : photo.overlayStart);
-    hero.style.setProperty("--hero-paper-mid", isMobileHero ? photo.mobileOverlayMid : photo.overlayMid);
-    hero.style.setProperty("--hero-blue-end", isMobileHero ? photo.mobileOverlayEnd : photo.overlayEnd);
+    hero.style.setProperty("--hero-position", isMobileHero && photo.mobilePosition ? photo.mobilePosition : photo.position);
+    hero.style.setProperty("--hero-size", (isMobileHero && photo.mobileSize ? photo.mobileSize : photo.size) || "cover");
+    hero.style.setProperty("--hero-paper-start", photo.overlayStart);
+    hero.style.setProperty("--hero-paper-mid", photo.overlayMid);
+    hero.style.setProperty("--hero-blue-end", photo.overlayEnd);
     hero.setAttribute("data-hero-photo-index", String(activeIndex));
   }
 
@@ -274,6 +275,13 @@ const defaultRegularSchedule = [
   { label: "Sunday Shacharit", time: "7:45 AM" },
   { label: "Daily Mincha & Arvit", time: "7:15 PM" },
 ];
+const defaultScheduleLabels = {
+  weekday: "Regular Minyanim",
+  thursdayNight: "Thursday Night",
+  fridayNight: "Friday Night",
+  morning: "Shabbat Morning",
+  afternoon: "Shabbat Afternoon",
+};
 
 const fallbackBulletin = {
   source: {
@@ -312,6 +320,7 @@ const fallbackBulletin = {
     dateText: "May 15-16",
     holidayName: "",
   },
+  scheduleLabels: defaultScheduleLabels,
 };
 
 const apiCacheTtl = {
@@ -652,6 +661,10 @@ function renderTimeTable(title, items) {
   `;
 }
 
+function scheduleLabelsFor(data) {
+  return { ...defaultScheduleLabels, ...(data?.scheduleLabels || {}) };
+}
+
 function titleWithHoliday(title, holidayName) {
   const normalized = String(holidayName || "").trim();
   return normalized ? `${normalized} - ${title}` : title;
@@ -667,12 +680,13 @@ function renderShabbatSchedule(shabbat, notes = {}) {
   if (!shabbatScheduleGrid || !shabbat) return;
 
   const holidayName = inferHolidayName(notes, shabbat);
-  const thursdayTitle = titleWithHoliday("Thursday Night", holidayName);
+  const labels = { ...defaultScheduleLabels, ...(notes.scheduleLabels || {}) };
+  const thursdayTitle = titleWithHoliday(labels.thursdayNight, holidayName);
   const html = [
     renderTimeTable(thursdayTitle, shabbat.thursdayNight),
-    renderTimeTable("Friday Night", shabbat.fridayNight),
-    renderTimeTable("Shabbat Morning", [...(shabbat.morning || []), ...(shabbat.latestShema || [])]),
-    renderTimeTable("Shabbat Afternoon", shabbat.afternoon),
+    renderTimeTable(labels.fridayNight, shabbat.fridayNight),
+    renderTimeTable(labels.morning, [...(shabbat.morning || []), ...(shabbat.latestShema || [])]),
+    renderTimeTable(labels.afternoon, shabbat.afternoon),
   ]
     .filter(Boolean)
     .join("");
@@ -735,7 +749,7 @@ function setParshaText(parsha) {
 
 function renderBulletinData(data, statusText) {
   renderRegularSchedule(data.weekday);
-  renderShabbatSchedule(data.shabbat, data.notes);
+  renderShabbatSchedule(data.shabbat, { ...(data.notes || {}), scheduleLabels: scheduleLabelsFor(data) });
   renderAnnouncements(data.announcements);
   updateFastInfoFromBulletin(data.weekday);
 
@@ -756,7 +770,7 @@ async function applyBoardUpdates() {
 
     if (hasScheduleUpdates) {
       renderRegularSchedule(updates.weekday);
-      renderShabbatSchedule(updates.shabbat, updates.notes);
+      renderShabbatSchedule(updates.shabbat, { ...(updates.notes || {}), scheduleLabels: scheduleLabelsFor(updates) });
       updateFastInfoFromBulletin(updates.weekday);
       const updatedDate = new Intl.DateTimeFormat("en-US", {
         month: "short",

@@ -130,7 +130,7 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=mobile-3"/, "Public pages should use a cache-busted script URL");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=mobile-4"/, "Public pages should use a cache-busted script URL");
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
@@ -188,7 +188,7 @@ assert.ok(
     adminHtml.indexOf("View Site") < adminHtml.indexOf("Log Out"),
   "Mobile admin save button should sit at the bottom of the edit form before utility actions"
 );
-assert.match(adminHtml, /src="\/admin\.js\?v=admin-3"/, "Admin page should use a cache-busted admin script URL");
+assert.match(adminHtml, /src="\/admin\.js\?v=admin-4"/, "Admin page should use a cache-busted admin script URL");
 assert.match(adminHtml, /class="admin-secondary-actions"/, "Admin utility buttons should be grouped separately");
 assert.match(styles, /\.admin-secondary-actions \.button[\s\S]*width: 100%/, "Admin utility buttons should be full-width on phone");
 assert.match(styles, /@media \(max-width: 720px\)[\s\S]*\.admin-actions[\s\S]*position: sticky[\s\S]*bottom: max\(0\.75rem, env\(safe-area-inset-bottom\)\)/, "Mobile admin save button should stay reachable at the bottom");
@@ -200,6 +200,8 @@ assert.doesNotMatch(adminScript, /base64: await readFileAsBase64/, "Admin bullet
 assert.match(adminScript, /contentFromParsedBulletin/, "Admin upload should map parsed bulletin times into editable content");
 assert.match(adminScript, /renderEditor\(contentFromParsedBulletin\(uploaded\.bulletin\)\)/, "Admin upload should refresh the visible editor with parsed times");
 assert.match(adminScript, /collectSchedule\("thursdayNight"\)/, "Admin saves should include Thursday night holiday times");
+assert.match(adminScript, /data-schedule-label/, "Admin editor should expose schedule header label fields");
+assert.match(adminScript, /scheduleLabels: collectScheduleLabels\(\)/, "Admin saves should include custom schedule header labels");
 assert.match(adminScript, /holidayName: content\?\.notes\?\.holidayName/, "Admin saves should preserve parsed holiday names");
 assert.match(adminScript, /holidayName: bulletin\?\.notes\?\.holidayName \|\| ""/, "Admin upload should clear old holiday names when the new bulletin has none");
 assert.match(adminScript, /countBulletinTimes\(uploaded\.bulletin\)/, "Admin upload should report whether parsed schedule times were found");
@@ -217,6 +219,7 @@ assert.match(adminContentModule, /requirePersistentStorage/, "Admin content save
 assert.match(adminContentModule, /normalizeScheduleGroup/, "Admin content should normalize schedule groups before publishing");
 assert.match(adminContentModule, /isCoreAfternoonTime/, "Admin content should keep the approved Shabbat afternoon rows");
 assert.match(adminContentModule, /normalizeNotes/, "Admin content should preserve schedule notes such as holiday names");
+assert.match(adminContentModule, /normalizeScheduleLabels/, "Admin content should normalize custom schedule header labels");
 assert.match(adminContentModule, /hasOwnProperty\.call\(input\.shabbat, group\)/, "Admin content should keep explicitly empty schedule groups");
 assert.match(adminContentModule, /hasOwnProperty\.call\(input, "holidayName"\)/, "Admin content should keep explicitly empty holiday names");
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
@@ -234,9 +237,11 @@ assert.match(blobStorageModule, /jsonCacheControlMaxAge = 60/, "Blob JSON writes
 assert.match(blobStorageModule, /function storageMode/, "Blob storage should report its active persistence mode");
 assert.match(bulletinLoaderModule, /await hasUploadedBulletin\(\)/, "Bulletin loader should await Blob-backed upload checks");
 assert.match(bulletinApi, /const CACHE_HEADER = "no-store"/, "Public bulletin API should not serve stale uploaded schedules");
-assert.match(script, /titleWithHoliday\("Thursday Night", holidayName\)/, "Public schedule should prefix Thursday night with the holiday name");
+assert.match(script, /titleWithHoliday\(labels\.thursdayNight, holidayName\)/, "Public schedule should prefix Thursday night with the holiday name");
 assert.match(script, /function inferHolidayName/, "Public schedule should infer holiday names from saved Thursday rows");
 assert.match(script, /thursdayText[\s\S]*shavuot/i, "Public schedule should infer Shavuot from Thursday schedule labels");
+assert.match(script, /scheduleLabelsFor/, "Public schedule should read custom schedule header labels");
+assert.match(script, /renderTimeTable\(labels\.fridayNight/, "Public Shabbat schedule should render editable header labels");
 assert.match(script, /function initializeHeroPhotos/, "Home hero should initialize photo arrow behavior");
 assert.match(script, /data-hero-direction/, "Home hero controls should advance photos by direction");
 assert.match(script, /heroMobileMedia/, "Home hero should react to mobile viewport changes");
