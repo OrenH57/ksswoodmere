@@ -622,8 +622,9 @@ function revealScheduleTimes(scope = document) {
   });
 }
 
-function renderRegularSchedule(items) {
+function renderRegularSchedule(items, scheduleLabels = defaultScheduleLabels) {
   if (!regularScheduleList || !Array.isArray(items) || !items.length) return;
+  const labels = { ...defaultScheduleLabels, ...(scheduleLabels || {}) };
 
   regularScheduleList.innerHTML = items
     .map((item) => {
@@ -631,7 +632,7 @@ function renderRegularSchedule(items) {
       const key = scheduleKeyForLabel(item.label);
       return `
         <article>
-          <p>${escapeHtml(split.context)}</p>
+          <p>${escapeHtml(split.context === "Schedule" ? labels.weekday : split.context)}</p>
           <h3>${escapeHtml(split.name)}</h3>
           <strong${key ? ` data-schedule-key="${escapeHtml(key)}"` : ""}>${escapeHtml(item.time)}</strong>
         </article>
@@ -748,7 +749,7 @@ function setParshaText(parsha) {
 }
 
 function renderBulletinData(data, statusText) {
-  renderRegularSchedule(data.weekday);
+  renderRegularSchedule(data.weekday, scheduleLabelsFor(data));
   renderShabbatSchedule(data.shabbat, { ...(data.notes || {}), scheduleLabels: scheduleLabelsFor(data) });
   renderAnnouncements(data.announcements);
   updateFastInfoFromBulletin(data.weekday);
@@ -769,7 +770,7 @@ async function applyBoardUpdates() {
     const hasAnnouncements = Array.isArray(updates.announcements) && updates.announcements.length > 0;
 
     if (hasScheduleUpdates) {
-      renderRegularSchedule(updates.weekday);
+      renderRegularSchedule(updates.weekday, scheduleLabelsFor(updates));
       renderShabbatSchedule(updates.shabbat, { ...(updates.notes || {}), scheduleLabels: scheduleLabelsFor(updates) });
       updateFastInfoFromBulletin(updates.weekday);
       const updatedDate = new Intl.DateTimeFormat("en-US", {
