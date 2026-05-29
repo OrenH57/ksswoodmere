@@ -21,6 +21,30 @@ const defaultScheduleLabels = {
 };
 let content = null;
 
+function splitScheduleLabel(label) {
+  const normalized = String(label || "").trim();
+  const match = normalized.match(/^(Sunday|Monday-Friday|Mon-Fri|Daily)\s+(.+)$/i);
+
+  if (!match) {
+    return { header: "", label: normalized };
+  }
+
+  return {
+    header: match[1].replace("Mon-Fri", "Monday-Friday"),
+    label: match[2],
+  };
+}
+
+function scheduleKeyForItem(item = {}) {
+  const normalized = `${item.key || ""} ${item.header || ""} ${item.label || ""}`.toLowerCase();
+  if (normalized.includes("weekday-shacharit") || normalized.includes("monday") || normalized.includes("mon-fri")) {
+    return "weekday-shacharit";
+  }
+  if (normalized.includes("sunday-shacharit") || normalized.includes("sunday")) return "sunday-shacharit";
+  if (normalized.includes("daily-mincha-arvit") || normalized.includes("mincha")) return "daily-mincha-arvit";
+  return "";
+}
+
 function syncAdminMobileLayout() {
   if (!timesPanel) return;
   if (window.matchMedia("(max-width: 720px)").matches) {
@@ -68,17 +92,41 @@ function itemRow(group, item = {}, index = 0) {
   const wrapper = document.createElement("div");
   wrapper.className = "admin-row";
   wrapper.dataset.group = group;
-  wrapper.innerHTML = `
-    <label>
-      <span>Label</span>
-      <input data-field="label" value="${escapeAttribute(item.label || "")}" maxlength="80" required>
-    </label>
-    <label>
-      <span>Time</span>
-      <input data-field="time" value="${escapeAttribute(item.time || "")}" placeholder="7:15 PM" pattern="^\\d{1,2}:\\d{2}\\s?(AM|PM|am|pm)$" required>
-    </label>
-    <button class="admin-remove" type="button" aria-label="Remove row ${index + 1}">Remove</button>
-  `;
+  if (group === "weekday") wrapper.classList.add("admin-weekday-row");
+  const split = splitScheduleLabel(item.label);
+  const header = item.header || (group === "weekday" ? split.header : "");
+  const label = group === "weekday" && !item.header ? split.label : item.label || "";
+  const key = group === "weekday" ? scheduleKeyForItem({ ...item, header, label }) : "";
+  if (key) wrapper.dataset.scheduleKey = key;
+
+  wrapper.innerHTML =
+    group === "weekday"
+      ? `
+        <label>
+          <span>Golden Header</span>
+          <input data-field="header" value="${escapeAttribute(header)}" maxlength="80" placeholder="Monday-Friday" required>
+        </label>
+        <label>
+          <span>Name</span>
+          <input data-field="label" value="${escapeAttribute(label)}" maxlength="80" placeholder="Shacharit" required>
+        </label>
+        <label>
+          <span>Time</span>
+          <input data-field="time" value="${escapeAttribute(item.time || "")}" placeholder="7:15 PM" pattern="^\\d{1,2}:\\d{2}\\s?(AM|PM|am|pm)$" required>
+        </label>
+        <button class="admin-remove" type="button" aria-label="Remove row ${index + 1}">Remove</button>
+      `
+      : `
+        <label>
+          <span>Label</span>
+          <input data-field="label" value="${escapeAttribute(item.label || "")}" maxlength="80" required>
+        </label>
+        <label>
+          <span>Time</span>
+          <input data-field="time" value="${escapeAttribute(item.time || "")}" placeholder="7:15 PM" pattern="^\\d{1,2}:\\d{2}\\s?(AM|PM|am|pm)$" required>
+        </label>
+        <button class="admin-remove" type="button" aria-label="Remove row ${index + 1}">Remove</button>
+      `;
   wrapper.querySelector(".admin-remove").addEventListener("click", () => wrapper.remove());
   return wrapper;
 }
@@ -213,11 +261,18 @@ async function loadBulletinMeta() {
 
 function collectSchedule(group) {
   return [...document.querySelectorAll(`.admin-row[data-group="${group}"]`)]
-    .map((row) => ({
-      label: row.querySelector('[data-field="label"]')?.value.trim() || "",
-      time: row.querySelector('[data-field="time"]')?.value.trim() || "",
-    }))
-    .filter((item) => item.label && item.time);
+    .map((row) => {
+      const item = {
+        label: row.querySelector('[data-field="label"]')?.value.trim() || "",
+        time: row.querySelector('[data-field="time"]')?.value.trim() || "",
+      };
+      if (group === "weekday") {
+        item.header = row.querySelector('[data-field="header"]')?.value.trim() || "";
+        item.key = row.dataset.scheduleKey || scheduleKeyForItem(item);
+      }
+      return item;
+    })
+    .filter((item) => item.label && item.time && (group !== "weekday" || item.header));
 }
 
 function collectAnnouncements() {

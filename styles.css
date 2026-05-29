@@ -2024,6 +2024,10 @@ h3 {
     grid-template-columns: minmax(0, 1.2fr) minmax(140px, 0.45fr) auto;
   }
 
+  .admin-weekday-row {
+    grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1fr) minmax(140px, 0.45fr) auto;
+  }
+
   .admin-announcement-row {
     grid-template-columns: minmax(0, 1fr) minmax(160px, 0.45fr) auto;
   }

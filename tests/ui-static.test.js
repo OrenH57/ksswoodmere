@@ -1,5 +1,6 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const { normalizeContent } = require("../lib/admin-content");
 
 const html = fs.readFileSync("index.html", "utf8");
 const giveHtml = fs.readFileSync("give.html", "utf8");
@@ -122,6 +123,16 @@ assert.match(styles, /@media \(min-width: 760px\)[\s\S]*\.footer-bottom\.compact
 for (const pageFooter of [html, giveHtml, resourcesHtml, scheduleHtml].map(footerHtml)) {
   assert.match(pageFooter, /Minyanim/, "Public footers should include Minyanim");
 }
+
+const normalizedExplicitRegularSchedule = normalizeContent({
+  weekday: [{ header: "Weekday", label: "Early Shacharit", time: "6:05 am", key: "weekday-shacharit" }],
+});
+assert.deepEqual(
+  normalizedExplicitRegularSchedule.weekday[0],
+  { label: "Early Shacharit", time: "6:05 AM", header: "Weekday", key: "weekday-shacharit" },
+  "Admin content should preserve editable regular schedule headers and stable keys"
+);
+
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-grid">/, "Public footers should not duplicate address and contact info");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /<div class="footer-bottom compact-footer">(?:(?!<\/div>)[\s\S])*<strong>ksswoodmere@gmail\.com<\/strong>/, "Public footer email should not be styled as duplicate primary info");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Staff Sign In<\/a>/, "Public footer should shorten staff link copy");
@@ -202,6 +213,9 @@ assert.match(adminScript, /renderEditor\(contentFromParsedBulletin\(uploaded\.bu
 assert.match(adminScript, /collectSchedule\("thursdayNight"\)/, "Admin saves should include Thursday night holiday times");
 assert.match(adminScript, /data-schedule-label/, "Admin editor should expose schedule header label fields");
 assert.match(adminScript, /scheduleLabels: collectScheduleLabels\(\)/, "Admin saves should include custom schedule header labels");
+assert.match(adminScript, /Golden Header/, "Admin regular schedule rows should expose the gold public header text");
+assert.match(adminScript, /data-field="header"/, "Admin regular schedule rows should save an explicit public header");
+assert.match(adminScript, /dataset\.scheduleKey/, "Admin regular schedule rows should preserve stable schedule keys");
 assert.match(adminScript, /holidayName: content\?\.notes\?\.holidayName/, "Admin saves should preserve parsed holiday names");
 assert.match(adminScript, /holidayName: bulletin\?\.notes\?\.holidayName \|\| ""/, "Admin upload should clear old holiday names when the new bulletin has none");
 assert.match(adminScript, /countBulletinTimes\(uploaded\.bulletin\)/, "Admin upload should report whether parsed schedule times were found");
@@ -220,6 +234,8 @@ assert.match(adminContentModule, /normalizeScheduleGroup/, "Admin content should
 assert.match(adminContentModule, /isCoreAfternoonTime/, "Admin content should keep the approved Shabbat afternoon rows");
 assert.match(adminContentModule, /normalizeNotes/, "Admin content should preserve schedule notes such as holiday names");
 assert.match(adminContentModule, /normalizeScheduleLabels/, "Admin content should normalize custom schedule header labels");
+assert.match(adminContentModule, /cleanScheduleKey/, "Admin content should normalize stable regular schedule keys");
+assert.match(adminContentModule, /normalized\.header = header/, "Admin content should preserve explicit regular schedule headers");
 assert.match(adminContentModule, /hasOwnProperty\.call\(input\.shabbat, group\)/, "Admin content should keep explicitly empty schedule groups");
 assert.match(adminContentModule, /hasOwnProperty\.call\(input, "holidayName"\)/, "Admin content should keep explicitly empty holiday names");
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
@@ -241,6 +257,8 @@ assert.match(script, /titleWithHoliday\(labels\.thursdayNight, holidayName\)/, "
 assert.match(script, /function inferHolidayName/, "Public schedule should infer holiday names from saved Thursday rows");
 assert.match(script, /thursdayText[\s\S]*shavuot/i, "Public schedule should infer Shavuot from Thursday schedule labels");
 assert.match(script, /scheduleLabelsFor/, "Public schedule should read custom schedule header labels");
+assert.match(script, /function scheduleDisplayForItem/, "Public schedule should prefer explicit row headers before label parsing");
+assert.match(script, /function scheduleKeyForItem/, "Public schedule should use stable row keys before text inference");
 assert.match(script, /renderTimeTable\(labels\.fridayNight/, "Public Shabbat schedule should render editable header labels");
 assert.match(script, /function initializeHeroPhotos/, "Home hero should initialize photo arrow behavior");
 assert.match(script, /data-hero-direction/, "Home hero controls should advance photos by direction");

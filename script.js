@@ -543,8 +543,24 @@ function splitScheduleLabel(label) {
   };
 }
 
-function scheduleKeyForLabel(label) {
-  const normalized = String(label || "").toLowerCase();
+function scheduleDisplayForItem(item = {}, scheduleLabels = defaultScheduleLabels) {
+  const label = String(item.label || "").trim();
+  if (item.header) {
+    return { context: String(item.header).trim(), name: label };
+  }
+
+  const split = splitScheduleLabel(label);
+  return {
+    context: split.context === "Schedule" ? scheduleLabels.weekday : split.context,
+    name: split.name,
+  };
+}
+
+function scheduleKeyForItem(item = {}) {
+  const normalized = `${item.key || ""} ${item.header || ""} ${item.label || ""}`.toLowerCase();
+  if (normalized.includes("weekday-shacharit")) return "weekday-shacharit";
+  if (normalized.includes("sunday-shacharit")) return "sunday-shacharit";
+  if (normalized.includes("daily-mincha-arvit")) return "daily-mincha-arvit";
   if (normalized.includes("monday") || normalized.includes("mon-fri")) return "weekday-shacharit";
   if (normalized.includes("sunday")) return "sunday-shacharit";
   if (normalized.includes("mincha")) return "daily-mincha-arvit";
@@ -569,7 +585,7 @@ function buildMinyanSchedule(items) {
   items.forEach((item) => {
     const time = parseScheduleTime(item.time);
     if (!time) return;
-    const key = scheduleKeyForLabel(item.label);
+    const key = scheduleKeyForItem(item);
     if (key === "weekday-shacharit") {
       schedule.push({ label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], ...time });
     }
@@ -599,7 +615,7 @@ function updateScheduleValues(items) {
   if (!Array.isArray(items) || !items.length) return;
 
   items.forEach((item) => {
-    const key = scheduleKeyForLabel(item.label);
+    const key = scheduleKeyForItem(item);
     if (!key) return;
     document.querySelectorAll(`[data-schedule-key="${key}"]`).forEach((value) => {
       value.textContent = item.time;
@@ -628,12 +644,12 @@ function renderRegularSchedule(items, scheduleLabels = defaultScheduleLabels) {
 
   regularScheduleList.innerHTML = items
     .map((item) => {
-      const split = splitScheduleLabel(item.label);
-      const key = scheduleKeyForLabel(item.label);
+      const display = scheduleDisplayForItem(item, labels);
+      const key = scheduleKeyForItem(item);
       return `
         <article>
-          <p>${escapeHtml(split.context === "Schedule" ? labels.weekday : split.context)}</p>
-          <h3>${escapeHtml(split.name)}</h3>
+          <p>${escapeHtml(display.context)}</p>
+          <h3>${escapeHtml(display.name)}</h3>
           <strong${key ? ` data-schedule-key="${escapeHtml(key)}"` : ""}>${escapeHtml(item.time)}</strong>
         </article>
       `;
