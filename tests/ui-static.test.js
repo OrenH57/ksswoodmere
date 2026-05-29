@@ -171,6 +171,7 @@ assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /class="
 assert.match(script, /\/api\/updates/, "Public page should fetch board updates");
 assert.match(script, /function renderAnnouncements/, "Public page should render announcements");
 assert.match(script, /function applyBoardUpdates/, "Public page should merge board updates");
+assert.match(script, /if \(await applyBoardUpdates\(\)\) return true/, "Public schedule should render saved board updates before loading the slower bulletin endpoint");
 assert.match(script, /function fetchFreshJson/, "Board updates should be able to bypass local cache");
 assert.match(script, /fetchFreshJson\("\/api\/updates"\)/, "Public board updates should not be cached in localStorage");
 assert.match(script, /function fallbackCopyText/, "Copy button should have a clipboard fallback");
@@ -241,6 +242,9 @@ assert.match(adminContentModule, /hasOwnProperty\.call\(input, "holidayName"\)/,
 assert.match(uploadedBulletinModule, /getRuntimeDataDir/, "Uploaded bulletin writes should use runtime storage");
 assert.match(uploadedBulletinModule, /writeBlobBuffer\("uploaded-bulletin\.pdf"/, "Uploaded bulletin PDFs should save to Vercel Blob when configured");
 assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin\.json"/, "Uploaded bulletin metadata should save to Vercel Blob when configured");
+assert.match(uploadedBulletinModule, /writeBlobJson\("uploaded-bulletin-parsed\.json"/, "Uploaded bulletin parsed data should be cached to avoid reparsing on public page loads");
+assert.match(uploadedBulletinModule, /function readParsedBulletin/, "Uploaded bulletin reads should use cached parsed data when available");
+assert.match(uploadedBulletinModule, /cacheParsedBulletin\(reparsed\)/, "Uploaded bulletin reads should cache one-time fallback reparses");
 assert.match(uploadedBulletinModule, /Buffer\.isBuffer\(buffer\)/, "Uploaded bulletin saves should accept raw multipart buffers");
 assert.match(uploadedBulletinModule, /requirePersistentStorage/, "Bulletin uploads should fail loudly in Vercel when Blob persistence fails");
 assert.match(blobStorageModule, /@vercel\/blob/, "Blob storage should use the Vercel Blob SDK");

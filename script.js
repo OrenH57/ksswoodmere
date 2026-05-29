@@ -800,9 +800,12 @@ async function applyBoardUpdates() {
     }
 
     if (hasAnnouncements) renderAnnouncements(updates.announcements);
+    return hasScheduleUpdates;
   } catch {
     // Board updates are optional; the bulletin remains the source of truth if unavailable.
   }
+
+  return false;
 }
 
 async function loadBulletinSchedule() {
@@ -810,6 +813,8 @@ async function loadBulletinSchedule() {
     renderBulletinData(fallbackBulletin, "Backup bulletin shown from Bamidbar.");
     return true;
   }
+
+  if (await applyBoardUpdates()) return true;
 
   try {
     const data = await fetchJsonWithCache("/api/bulletin", apiCacheTtl.bulletin);
