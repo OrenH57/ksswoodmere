@@ -141,7 +141,7 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=mobile-4"/, "Public pages should use a cache-busted script URL");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=(?:mobile-4|shabbat-counter-1)"/, "Public pages should use a cache-busted script URL");
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
@@ -152,6 +152,14 @@ assert.doesNotMatch(script, /function scheduleNonCritical|scheduleNonCritical\(/
 assert.match(script, /loadWeeklyHeader\(\)/, "Weekly header network updates should hydrate immediately");
 assert.match(script, /loadZmanim\(\)/, "Zmanim network updates should hydrate immediately");
 assert.match(script, /initializeSchedule\(\)/, "Bulletin schedule hydration should run immediately");
+assert.match(script, /function shabbatScheduleEntries/, "Next minyan should include Shabbat and holiday schedule entries");
+assert.match(`${html}\n${scheduleHtml}`, /data-shabbat-time="candles"/, "Next minyan cards should show candle-lighting time");
+assert.match(`${html}\n${scheduleHtml}`, /data-shabbat-time="havdalah"/, "Next minyan cards should show Havdalah time");
+assert.match(script, /Promise\.all\(\[loadBulletinSchedule\(\), loadWeeklyShabbatTimes\(\)\]\)/, "Next minyan Shabbat times should load alongside the bulletin schedule");
+assert.match(styles, /\.status-shabbat-times/, "Next minyan Shabbat times should have compact supporting styles");
+assert.match(script, /scheduleEntriesForItems\(schedule\.fridayNight, 5, "Friday Night"\)/, "Next minyan should include Friday night times");
+assert.match(script, /scheduleEntriesForItems\(schedule\.afternoon, 6, "Shabbat Afternoon"\)/, "Next minyan should include Shabbat afternoon times");
+assert.match(script, /minyanSchedule = buildMinyanSchedule\(data\)/, "Next minyan should be rebuilt from the full published schedule");
 assert.match(styles, /\.scroll-progress[\s\S]*transform: scaleX\(0\)/, "Scroll progress should use transform instead of width updates");
 assert.match(script, /scrollProgress\.style\.transform = `scaleX/, "Scroll handler should update transform instead of layout-affecting width");
 assert.match(styles, /@media \(max-width: 559px\)[\s\S]*\.site-header[\s\S]*backdrop-filter: blur\(12px\)/, "Mobile sticky header should keep the frosted blur treatment");

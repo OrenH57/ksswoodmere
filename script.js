@@ -579,10 +579,10 @@ function parseScheduleTime(timeText) {
   return { hour, minute };
 }
 
-function buildMinyanSchedule(items) {
+function regularScheduleEntries(items) {
   const schedule = [];
 
-  items.forEach((item) => {
+  (items || []).forEach((item) => {
     const time = parseScheduleTime(item.time);
     if (!time) return;
     const key = scheduleKeyForItem(item);
@@ -596,6 +596,39 @@ function buildMinyanSchedule(items) {
       schedule.push({ label: "Mincha & Arvit", detail: "Daily", day: [0, 1, 2, 3, 4, 5, 6], ...time });
     }
   });
+
+  return schedule;
+}
+
+function scheduleEntriesForItems(items, day, detail) {
+  return (items || [])
+    .map((item) => {
+      const time = parseScheduleTime(item.time);
+      if (!time) return null;
+      return {
+        label: item.label,
+        detail,
+        day: [day],
+        ...time,
+      };
+    })
+    .filter(Boolean);
+}
+
+function shabbatScheduleEntries(shabbat = {}) {
+  const schedule = shabbat || {};
+  return [
+    ...scheduleEntriesForItems(schedule.thursdayNight, 4, "Thursday Night"),
+    ...scheduleEntriesForItems(schedule.fridayNight, 5, "Friday Night"),
+    ...scheduleEntriesForItems([...(schedule.morning || []), ...(schedule.latestShema || [])], 6, "Shabbat Morning"),
+    ...scheduleEntriesForItems(schedule.afternoon, 6, "Shabbat Afternoon"),
+  ];
+}
+
+function buildMinyanSchedule(data) {
+  const weekday = Array.isArray(data) ? data : data?.weekday;
+  const shabbat = Array.isArray(data) ? null : data?.shabbat;
+  const schedule = [...shabbatScheduleEntries(shabbat), ...regularScheduleEntries(weekday)];
 
   return schedule.length ? schedule : [
     { label: "Shacharit", detail: "Monday-Friday", day: [1, 2, 3, 4, 5], hour: 6, minute: 0 },
@@ -622,7 +655,6 @@ function updateScheduleValues(items) {
     });
   });
 
-  minyanSchedule = buildMinyanSchedule(items);
   refreshNextMinyan();
 }
 
@@ -737,8 +769,10 @@ function renderAnnouncements(items) {
     .join("");
 }
 
-function updateFastInfoFromBulletin(items) {
-  updateScheduleValues(items);
+function updateFastInfoFromBulletin(data) {
+  updateScheduleValues(data?.weekday);
+  minyanSchedule = buildMinyanSchedule(data);
+  refreshNextMinyan();
 }
 
 function describeBulletinSource(data) {
@@ -768,7 +802,7 @@ function renderBulletinData(data, statusText) {
   renderRegularSchedule(data.weekday, scheduleLabelsFor(data));
   renderShabbatSchedule(data.shabbat, { ...(data.notes || {}), scheduleLabels: scheduleLabelsFor(data) });
   renderAnnouncements(data.announcements);
-  updateFastInfoFromBulletin(data.weekday);
+  updateFastInfoFromBulletin(data);
 
   const sourceText = describeBulletinSource(data);
   if (bulletinStatus) setTextWithSwipe(bulletinStatus, statusText);
@@ -788,7 +822,7 @@ async function applyBoardUpdates() {
     if (hasScheduleUpdates) {
       renderRegularSchedule(updates.weekday, scheduleLabelsFor(updates));
       renderShabbatSchedule(updates.shabbat, { ...(updates.notes || {}), scheduleLabels: scheduleLabelsFor(updates) });
-      updateFastInfoFromBulletin(updates.weekday);
+      updateFastInfoFromBulletin(updates);
       const updatedDate = new Intl.DateTimeFormat("en-US", {
         month: "short",
         day: "numeric",
@@ -897,10 +931,7 @@ async function loadWeeklyShabbatTimes() {
 }
 
 async function initializeSchedule() {
-  const bulletinLoaded = await loadBulletinSchedule();
-  if (!bulletinLoaded) {
-    await loadWeeklyShabbatTimes();
-  }
+  await Promise.all([loadBulletinSchedule(), loadWeeklyShabbatTimes()]);
 }
 
 initializeSchedule();
