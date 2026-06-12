@@ -702,24 +702,6 @@ h3 {
   line-height: 1.05;
 }
 
-.status-shabbat-times {
-  margin: 0.55rem 0 0;
-  color: var(--ink-muted);
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.status-shabbat-times b {
-  color: var(--ink);
-  font-weight: 700;
-}
-
-.status-shabbat-times i {
-  margin: 0 0.35rem;
-  color: var(--gold-dark);
-  font-style: normal;
-}
-
 .home-link-strip {
   display: grid;
   grid-template-columns: 1fr;

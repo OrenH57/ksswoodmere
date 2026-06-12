@@ -602,6 +602,7 @@ function regularScheduleEntries(items) {
 
 function scheduleEntriesForItems(items, day, detail) {
   return (items || [])
+    .filter((item) => /sha(?:h|ch)arit|mincha|arvit|maariv/i.test(item.label || ""))
     .map((item) => {
       const time = parseScheduleTime(item.time);
       if (!time) return null;
@@ -862,76 +863,8 @@ async function loadBulletinSchedule() {
   }
 }
 
-function nextDateForDay(dayNumber) {
-  const date = new Date();
-  const daysUntil = (dayNumber - date.getDay() + 7) % 7;
-  date.setDate(date.getDate() + daysUntil);
-  return date;
-}
-
-function formatDateForApi(date) {
-  return date.toISOString().slice(0, 10);
-}
-
-function setShabbatTime(key, value) {
-  document.querySelectorAll(`[data-shabbat-time="${key}"]`).forEach((item) => {
-    item.textContent = value || "Check bulletin";
-  });
-}
-
-async function loadWeeklyShabbatTimes() {
-  const targets = document.querySelectorAll("[data-shabbat-time]");
-  if (!targets.length) return;
-
-  if (isFilePreview) {
-    targets.forEach((item) => {
-      item.textContent = "Updates weekly";
-      item.title = "Live zmanim load when the site is hosted.";
-    });
-    return;
-  }
-
-  const friday = nextDateForDay(5);
-  const shabbat = new Date(friday);
-  shabbat.setDate(friday.getDate() + 1);
-
-  try {
-    const shabbatData = await fetchJsonWithCache(
-      "https://www.hebcal.com/shabbat?cfg=json&zip=11598&M=on",
-      apiCacheTtl.shabbat
-    );
-    const candles = shabbatData.items?.find((item) => item.category === "candles");
-    const havdalah = shabbatData.items?.find((item) => item.category === "havdalah");
-
-    const fridayZmanim = await fetchJsonWithCache(
-      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(friday)}`,
-      apiCacheTtl.zmanim
-    );
-    const shabbatZmanim = await fetchJsonWithCache(
-      `https://www.hebcal.com/zmanim?cfg=json&zip=11598&date=${formatDateForApi(shabbat)}`,
-      apiCacheTtl.zmanim
-    );
-
-    setShabbatTime("candles", formatZman(candles?.date));
-    setShabbatTime("havdalah", formatZman(havdalah?.date));
-    setShabbatTime("sunset", formatZman(fridayZmanim.times?.sunset));
-    setShabbatTime("tzeit", formatZman(fridayZmanim.times?.tzeit7083deg));
-    setShabbatTime("shemaMGA", formatZman(shabbatZmanim.times?.sofZmanShmaMGA));
-    setShabbatTime("shemaGRA", formatZman(shabbatZmanim.times?.sofZmanShma));
-    setShabbatTime("chatzot", formatZman(shabbatZmanim.times?.chatzot));
-    setShabbatTime(
-      "rabbenuTam",
-      formatZman(shabbatZmanim.times?.tzeit72min || shabbatZmanim.times?.tzeit72)
-    );
-  } catch {
-    targets.forEach((item) => {
-      item.textContent = "Check bulletin";
-    });
-  }
-}
-
 async function initializeSchedule() {
-  await Promise.all([loadBulletinSchedule(), loadWeeklyShabbatTimes()]);
+  await loadBulletinSchedule();
 }
 
 initializeSchedule();
