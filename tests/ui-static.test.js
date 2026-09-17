@@ -314,4 +314,54 @@ assert.match(vercelConfig, /"destination": "\/minyanim"/, "Vercel should use /mi
 assert.match(vercelConfig, /"source": "\/resources\.html"/, "Vercel should redirect legacy resources.html URL");
 assert.match(vercelConfig, /"destination": "\/community-info"/, "Vercel should use /community-info as the community URL");
 
+const siteOrigin = "https://ksswoodmere.org";
+const publicPages = [
+  { route: "/", pageHtml: html },
+  { route: "/minyanim", pageHtml: scheduleHtml },
+  { route: "/community-info", pageHtml: resourcesHtml },
+  { route: "/support-us", pageHtml: giveHtml },
+];
+const decodeText = (value) => value.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+const jsonLdGraph = (pageHtml) => JSON.parse(pageHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])["@graph"];
+const sitemap = fs.readFileSync("sitemap.xml", "utf8");
+const robotsTxt = fs.readFileSync("robots.txt", "utf8");
+const llmsTxt = fs.readFileSync("llms.txt", "utf8");
+
+for (const { route, pageHtml } of publicPages) {
+  const title = decodeText(pageHtml.match(/<title>([\s\S]*?)<\/title>/)[1]);
+  const description = pageHtml.match(/<meta\s+name="description"\s+content="([^"]*)"/)[1];
+  assert.ok(title.length <= 60, `${route} title should stay under 60 characters for search results`);
+  assert.ok(description.length <= 160, `${route} description should stay under 160 characters for search results`);
+  assert.match(`${title} ${description}`, /Woodmere|Five Towns/, `${route} search snippet should target Woodmere or the Five Towns`);
+  assert.match(`${title} ${description}`, /shul|synagogue|minyan/i, `${route} search snippet should say shul, synagogue, or minyan`);
+  assert.match(pageHtml, new RegExp(`<link rel="canonical" href="${siteOrigin}${route}">`), `${route} canonical should use the non-redirecting apex domain`);
+  assert.match(pageHtml, new RegExp(`<meta property="og:url" content="${siteOrigin}${route}">`), `${route} share URL should match its canonical`);
+  assert.match(pageHtml, /<meta property="og:image" content="https:\/\/ksswoodmere\.org\/assets\/og-share-card\.jpg">/, `${route} should publish the share card`);
+  assert.match(pageHtml, /<meta name="twitter:card" content="summary_large_image">/, `${route} should publish a large share card`);
+  const graph = jsonLdGraph(pageHtml);
+  const synagogue = graph.find((node) => node["@type"] === "Synagogue");
+  assert.equal(synagogue.address.addressLocality, "Woodmere", `${route} structured data should place the shul in Woodmere`);
+  assert.equal(synagogue.address.postalCode, "11598", `${route} structured data should include the Woodmere zip`);
+  assert.ok(synagogue.areaServed.some((place) => /Five Towns/.test(place.name)), `${route} structured data should serve the Five Towns`);
+  assert.equal(graph.find((node) => node["@type"] === "WebPage").url, `${siteOrigin}${route}`, `${route} WebPage schema should match the canonical`);
+  assert.ok(sitemap.includes(`<loc>${siteOrigin}${route}</loc>`), `Sitemap should list ${route}`);
+  assert.ok(llmsTxt.includes(`${siteOrigin}${route}`), `llms.txt should link ${route}`);
+}
+assert.doesNotMatch(publicPages.map(({ pageHtml }) => pageHtml).join("\n"), /www\.ksswoodmere\.org/, "Public pages should not point search engines at the redirecting www host");
+assert.doesNotMatch(sitemap, /\/staff/, "Sitemap should not list the staff sign-in page");
+assert.match(adminHtml, /<meta name="robots" content="noindex, nofollow">/, "Staff sign-in should stay out of search results");
+assert.doesNotMatch(robotsTxt, /Disallow: \/staff/, "robots.txt should let crawlers see the staff page noindex tag");
+assert.match(robotsTxt, /Sitemap: https:\/\/ksswoodmere\.org\/sitemap\.xml/, "robots.txt should point crawlers at the sitemap");
+
+const faqSchema = jsonLdGraph(resourcesHtml).find((node) => node["@type"] === "FAQPage");
+const visibleFaqs = [...resourcesHtml.match(/<div class="faq-list">[\s\S]*?\n\s{8}<\/div>/)[0]
+  .matchAll(/class="faq-question">([\s\S]*?)<\/button>[\s\S]*?class="faq-answer">([\s\S]*?)<\/div>/g)]
+  .map(([, question, answer]) => ({ question: decodeText(question), answer: decodeText(answer) }));
+assert.deepEqual(
+  faqSchema.mainEntity.map((entity) => ({ question: entity.name, answer: entity.acceptedAnswer.text })),
+  visibleFaqs,
+  "FAQ schema should match the visible community FAQ word for word"
+);
+assert.match(server, /"\/robots\.txt"[\s\S]*"\/sitemap\.xml"/, "Dev server should serve robots.txt and sitemap.xml");
+
 console.log("UI static test passed.");
