@@ -52,6 +52,11 @@
               "postalCode": "11598",
               "addressCountry": "US"
             },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 40.6417579,
+              "longitude": -73.7129272
+            },
             "hasMap": "https://www.google.com/maps/search/?api=1&query=22%20Andover%20Lane%20Woodmere%20NY",
             "areaServed": [
               { "@type": "Place", "name": "Five Towns, NY" },
@@ -77,6 +82,89 @@
             "url": "https://ksswoodmere.org/",
             "isPartOf": { "@id": "https://ksswoodmere.org/#website" },
             "about": { "@id": "https://ksswoodmere.org/#synagogue" }
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json" id="minyan-schedule-schema">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Event",
+            "name": "Shacharit minyan in Woodmere, NY",
+            "description": "Monday-Friday Shacharit minyan at Kehilat Shaare Shalom, a Sephardic shul at 22 Andover Lane in Woodmere, in the Five Towns.",
+            "eventSchedule": {
+              "@type": "Schedule",
+              "repeatFrequency": "P1W",
+              "byDay": [
+                "https://schema.org/Monday",
+                "https://schema.org/Tuesday",
+                "https://schema.org/Wednesday",
+                "https://schema.org/Thursday",
+                "https://schema.org/Friday"
+              ],
+              "startTime": "06:00",
+              "scheduleTimezone": "America/New_York"
+            },
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "isAccessibleForFree": true,
+            "location": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            },
+            "organizer": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            }
+          },
+          {
+            "@type": "Event",
+            "name": "Shacharit minyan in Woodmere, NY",
+            "description": "Sunday Shacharit minyan at Kehilat Shaare Shalom, a Sephardic shul at 22 Andover Lane in Woodmere, in the Five Towns.",
+            "eventSchedule": {
+              "@type": "Schedule",
+              "repeatFrequency": "P1W",
+              "byDay": [
+                "https://schema.org/Sunday"
+              ],
+              "startTime": "07:45",
+              "scheduleTimezone": "America/New_York"
+            },
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "isAccessibleForFree": true,
+            "location": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            },
+            "organizer": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            }
+          },
+          {
+            "@type": "Event",
+            "name": "Mincha & Arvit minyan in Woodmere, NY",
+            "description": "Daily Mincha & Arvit minyan at Kehilat Shaare Shalom, a Sephardic shul at 22 Andover Lane in Woodmere, in the Five Towns.",
+            "eventSchedule": {
+              "@type": "Schedule",
+              "repeatFrequency": "P1W",
+              "byDay": [
+                "https://schema.org/Sunday",
+                "https://schema.org/Monday",
+                "https://schema.org/Tuesday",
+                "https://schema.org/Wednesday",
+                "https://schema.org/Thursday",
+                "https://schema.org/Friday",
+                "https://schema.org/Saturday"
+              ],
+              "startTime": "19:15",
+              "scheduleTimezone": "America/New_York"
+            },
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "isAccessibleForFree": true,
+            "location": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            },
+            "organizer": {
+              "@id": "https://ksswoodmere.org/#synagogue"
+            }
           }
         ]
       }

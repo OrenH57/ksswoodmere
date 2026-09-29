@@ -353,15 +353,49 @@ assert.match(adminHtml, /<meta name="robots" content="noindex, nofollow">/, "Sta
 assert.doesNotMatch(robotsTxt, /Disallow: \/staff/, "robots.txt should let crawlers see the staff page noindex tag");
 assert.match(robotsTxt, /Sitemap: https:\/\/ksswoodmere\.org\/sitemap\.xml/, "robots.txt should point crawlers at the sitemap");
 
-const faqSchema = jsonLdGraph(resourcesHtml).find((node) => node["@type"] === "FAQPage");
-const visibleFaqs = [...resourcesHtml.match(/<div class="faq-list">[\s\S]*?\n\s{8}<\/div>/)[0]
-  .matchAll(/class="faq-question">([\s\S]*?)<\/button>[\s\S]*?class="faq-answer">([\s\S]*?)<\/div>/g)]
-  .map(([, question, answer]) => ({ question: decodeText(question), answer: decodeText(answer) }));
-assert.deepEqual(
-  faqSchema.mainEntity.map((entity) => ({ question: entity.name, answer: entity.acceptedAnswer.text })),
-  visibleFaqs,
-  "FAQ schema should match the visible community FAQ word for word"
-);
+for (const { route, pageHtml } of [{ route: "/community-info", pageHtml: resourcesHtml }, { route: "/minyanim", pageHtml: scheduleHtml }]) {
+  const faqSchema = jsonLdGraph(pageHtml).find((node) => node["@type"] === "FAQPage");
+  const visibleFaqs = [...pageHtml.match(/<div class="faq-list">[\s\S]*?\n\s{8}<\/div>/)[0]
+    .matchAll(/class="faq-question">([\s\S]*?)<\/button>[\s\S]*?class="faq-answer">([\s\S]*?)<\/div>/g)]
+    .map(([, question, answer]) => ({ question: decodeText(question), answer: decodeText(answer) }));
+  assert.deepEqual(
+    faqSchema.mainEntity.map((entity) => ({ question: entity.name, answer: entity.acceptedAnswer.text })),
+    visibleFaqs,
+    `${route} FAQ schema should match the visible FAQ word for word`
+  );
+}
 assert.match(server, /"\/robots\.txt"[\s\S]*"\/sitemap\.xml"/, "Dev server should serve robots.txt and sitemap.xml");
+
+// "minyan near me" searches want today's times, so the published minyan schema tracks the bulletin.
+const minyanTimeLabels = { "weekday-shacharit": "06:00", "sunday-shacharit": "07:45", "daily-mincha-arvit": "19:15" };
+for (const { route, pageHtml } of [{ route: "/", pageHtml: html }, { route: "/minyanim", pageHtml: scheduleHtml }]) {
+  const minyanSchema = JSON.parse(pageHtml.match(/<script type="application\/ld\+json" id="minyan-schedule-schema">([\s\S]*?)<\/script>/)[1]);
+  const events = minyanSchema["@graph"];
+  assert.equal(events.length, 3, `${route} should publish every regular minyan as an event`);
+  assert.deepEqual(
+    events.map((event) => event.eventSchedule.startTime).sort(),
+    Object.values(minyanTimeLabels).sort(),
+    `${route} minyan events should start at the times the page shows`
+  );
+  for (const event of events) {
+    assert.match(event.name, /minyan in Woodmere, NY$/, `${route} minyan events should name the minyan and the town`);
+    assert.equal(event.location["@id"], "https://ksswoodmere.org/#synagogue", `${route} minyan events should happen at the shul`);
+    assert.equal(event.eventSchedule.scheduleTimezone, "America/New_York", `${route} minyan events should use local time`);
+    assert.ok(event.eventSchedule.byDay.length > 0, `${route} minyan events should say which days they run`);
+  }
+}
+for (const [key, startTime] of Object.entries(minyanTimeLabels)) {
+  const displayed = html.match(new RegExp(`data-schedule-key="${key}">([^<]+)<`))[1];
+  const [, hour, minute, period] = displayed.match(/^(\d{1,2}):(\d{2})\s(AM|PM)$/);
+  const hour24 = (Number(hour) % 12) + (period === "PM" ? 12 : 0);
+  assert.equal(`${String(hour24).padStart(2, "0")}:${minute}`, startTime, `${key} schema time should match the time on the page`);
+}
+assert.match(script, /function publishMinyanSchema/, "Public script should publish minyan times as structured data");
+assert.match(script, /minyanSchedule = buildMinyanSchedule\(data\);[\s\S]{0,120}publishMinyanSchema\(\)/, "Published minyan times should follow bulletin and board updates");
+assert.match(script, /document\.querySelector\("#minyan-schedule-schema"\)/, "Published minyan times should replace the page's minyan schema node");
+
+const synagogueSchema = jsonLdGraph(html).find((node) => node["@type"] === "Synagogue");
+assert.ok(Math.abs(synagogueSchema.geo.latitude - 40.6418) < 0.01 && Math.abs(synagogueSchema.geo.longitude + 73.7129) < 0.01, "Synagogue schema should carry the Andover Lane coordinates");
+assert.match(scheduleHtml, /Is there a minyan near me in Woodmere today\?/, "Minyan page should answer the question people actually search");
 
 console.log("UI static test passed.");
