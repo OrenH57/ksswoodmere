@@ -758,15 +758,20 @@ function renderAnnouncements(items) {
   }
 
   announcementList.innerHTML = announcements
-    .map(
-      (item) => `
+    .map((item) => {
+      const title = item.title ? `<strong>${escapeHtml(item.title)}</strong>` : "";
+      const body = item.body ? escapeHtml(item.body) : "";
+      const link = /^https?:\/\//i.test(item.link || "")
+        ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener">${escapeHtml(item.linkText || "Learn more")}</a>`
+        : "";
+      const text = [title, body].filter(Boolean).join(" &middot; ");
+      return `
         <article>
           ${item.date ? `<span>${escapeHtml(item.date)}</span>` : ""}
-          ${item.title ? `<h3>${escapeHtml(item.title)}</h3>` : ""}
-          ${item.body ? `<p>${escapeHtml(item.body)}</p>` : ""}
+          <p>${text}${link ? ` ${link}` : ""}</p>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
 }
 

@@ -141,7 +141,7 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=(?:mobile-4|shabbat-counter-3)"/, "Public pages should use a cache-busted script URL");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=(?:mobile-4|shabbat-counter-3|announcement-link-1)"/, "Public pages should use a cache-busted script URL");
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
@@ -207,7 +207,7 @@ assert.ok(
     adminHtml.indexOf("View Site") < adminHtml.indexOf("Log Out"),
   "Mobile admin save button should sit at the bottom of the edit form before utility actions"
 );
-assert.match(adminHtml, /src="\/admin\.js\?v=admin-4"/, "Admin page should use a cache-busted admin script URL");
+assert.match(adminHtml, /src="\/admin\.js\?v=admin-5"/, "Admin page should use a cache-busted admin script URL");
 assert.match(adminHtml, /class="admin-secondary-actions"/, "Admin utility buttons should be grouped separately");
 assert.match(styles, /\.admin-secondary-actions \.button[\s\S]*width: 100%/, "Admin utility buttons should be full-width on phone");
 assert.match(styles, /@media \(max-width: 720px\)[\s\S]*\.admin-actions[\s\S]*position: sticky[\s\S]*bottom: max\(0\.75rem, env\(safe-area-inset-bottom\)\)/, "Mobile admin save button should stay reachable at the bottom");

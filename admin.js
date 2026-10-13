@@ -147,6 +147,14 @@ function announcementRow(item = {}, index = 0) {
       <span>Message</span>
       <textarea data-field="body" maxlength="500" rows="3">${escapeHtml(item.body || "")}</textarea>
     </label>
+    <label class="admin-link-url">
+      <span>Link URL (optional)</span>
+      <input data-field="link" inputmode="url" autocomplete="url" value="${escapeAttribute(item.link || "")}" maxlength="500" placeholder="https://...">
+    </label>
+    <label class="admin-link-text">
+      <span>Link Text</span>
+      <input data-field="linkText" value="${escapeAttribute(item.linkText || "")}" maxlength="40" placeholder="Learn more">
+    </label>
     <button class="admin-remove" type="button" aria-label="Remove announcement ${index + 1}">Remove</button>
   `;
   wrapper.querySelector(".admin-remove").addEventListener("click", () => wrapper.remove());
@@ -281,6 +289,8 @@ function collectAnnouncements() {
       title: row.querySelector('[data-field="title"]')?.value.trim() || "",
       date: row.querySelector('[data-field="date"]')?.value.trim() || "",
       body: row.querySelector('[data-field="body"]')?.value.trim() || "",
+      link: row.querySelector('[data-field="link"]')?.value.trim() || "",
+      linkText: row.querySelector('[data-field="linkText"]')?.value.trim() || "",
     }))
     .filter((item) => item.title || item.body);
 }
