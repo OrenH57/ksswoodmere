@@ -310,8 +310,7 @@ h3 {
 .announcement-banner {
   display: grid;
   justify-items: center;
-  gap: 0.35rem;
-  padding: 0.82rem 1.35rem;
+  padding: 0.6rem 1.35rem;
   border-bottom: 1px solid rgba(185, 150, 85, 0.45);
   background: #f3ecdd;
   text-align: center;
@@ -319,15 +318,6 @@ h3 {
 
 .announcement-banner[hidden] {
   display: none;
-}
-
-.announcement-banner-label span {
-  display: inline-flex;
-  color: var(--gold-dark);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .announcement-banner .announcement-list {
@@ -379,10 +369,10 @@ h3 {
   color: var(--blue);
 }
 
-.announcement-banner .announcement-list span {
-  display: block;
-  color: var(--muted);
-  font-size: 0.78rem;
+.announcement-banner .announcement-list .announcement-tag {
+  margin-right: 0.4rem;
+  color: var(--gold-dark);
+  font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;

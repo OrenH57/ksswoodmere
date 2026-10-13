@@ -765,10 +765,10 @@ function renderAnnouncements(items) {
         ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener">${escapeHtml(item.linkText || "Learn more")}</a>`
         : "";
       const text = [title, body].filter(Boolean).join(" &middot; ");
+      const tag = item.date ? `<span class="announcement-tag">${escapeHtml(item.date)}</span> ` : "";
       return `
         <article>
-          ${item.date ? `<span>${escapeHtml(item.date)}</span>` : ""}
-          <p>${text}${link ? ` ${link}` : ""}</p>
+          <p>${tag}${text}${link ? ` ${link}` : ""}</p>
         </article>
       `;
     })

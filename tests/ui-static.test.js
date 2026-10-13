@@ -90,11 +90,10 @@ assert.match(styles, /\.masthead-sub em[\s\S]*max-width: min\(100%, 520px\)[\s\S
 assert.doesNotMatch(styles, /\.masthead-sub em[\s\S]*white-space: nowrap/, "Masthead subtitle should not clip off-screen on mobile");
 assert.match(html, /id="announcements"[^>]*hidden/, "Announcements section should start hidden");
 assert.match(html, /class="announcement-banner"/, "Announcements should render as a top banner");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, />Announcement<\/span>/, "Announcement bar should use simple public copy");
+assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /announcement-banner-label/, "Announcement bar should be a single strip without a label row");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /Board Announcement/, "Announcement bar should not mention board");
 assert.match(styles, /\.announcement-banner[\s\S]*text-align: center/, "Announcement banner should center its text");
 assert.match(styles, /\.announcement-banner \.announcement-list article[\s\S]*text-align: center/, "Announcement message text should be centered");
-assert.match(styles, /\.announcement-banner[\s\S]*gap: 0\.35rem/, "Announcement banner should avoid a large label/title gap");
 assert.match(html, /id="announcement-list"/, "Announcement list should be present");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /class="site-loader"/, "Pages should include the delayed loader");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /document\.readyState === "loading"/, "Loader should only appear while the page is not rendering");
@@ -141,7 +140,7 @@ assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="[^"]*#/, "Public links should avoid hash URLs");
 assert.doesNotMatch(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}\n${adminHtml}`, /(href|src)="(?:styles|script|admin|assets)\//, "Pages should use absolute asset paths so static route folders work");
 assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /href="\/styles\.css/, "Public pages should use absolute stylesheet URLs");
-assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=(?:mobile-4|shabbat-counter-3|announcement-link-1)"/, "Public pages should use a cache-busted script URL");
+assert.match(`${html}\n${giveHtml}\n${resourcesHtml}\n${scheduleHtml}`, /src="\/script\.js\?v=(?:mobile-4|shabbat-counter-3|announcement-strip-1)"/, "Public pages should use a cache-busted script URL");
 assert.doesNotMatch(styles, /transition\s*:\s*all\b/, "CSS should not use transition: all");
 assert.doesNotMatch(script, /offsetWidth|getBoundingClientRect|offsetTop|offsetHeight|scrollTop/, "Public script should avoid repeated layout reads that can hurt mobile scroll");
 assert.match(script, /window\.requestAnimationFrame\(renderScrollProgress\)/, "Scroll progress should be throttled through requestAnimationFrame");
