@@ -313,7 +313,7 @@ h3 {
   gap: 0.35rem;
   padding: 0.82rem 1.35rem;
   border-bottom: 1px solid rgba(185, 150, 85, 0.45);
-  background: linear-gradient(90deg, rgba(185, 150, 85, 0.22), rgba(11, 111, 164, 0.08));
+  background: #f3ecdd;
   text-align: center;
 }
 
