@@ -640,6 +640,39 @@ function buildMinyanSchedule(data) {
 
 let minyanSchedule = buildMinyanSchedule(defaultRegularSchedule);
 
+const minyanSchemaDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function minyanScheduleSchema(entries) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": entries.map((entry) => ({
+      "@type": "Event",
+      name: `${entry.label} minyan in Woodmere, NY`,
+      description: `${entry.detail} ${entry.label} minyan at Kehilat Shaare Shalom, a Sephardic shul at 22 Andover Lane in Woodmere, in the Five Towns.`,
+      eventSchedule: {
+        "@type": "Schedule",
+        repeatFrequency: "P1W",
+        byDay: entry.day.map((day) => `https://schema.org/${minyanSchemaDays[day]}`),
+        startTime: `${String(entry.hour).padStart(2, "0")}:${String(entry.minute).padStart(2, "0")}`,
+        scheduleTimezone: "America/New_York",
+      },
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      isAccessibleForFree: true,
+      location: { "@id": "https://ksswoodmere.org/#synagogue" },
+      organizer: { "@id": "https://ksswoodmere.org/#synagogue" },
+    })),
+  };
+}
+
+// Someone searching "minyan near me" is asking about today's times, so the published times follow the
+// bulletin and board updates instead of the defaults baked into the page.
+function publishMinyanSchema() {
+  const schemaNode = document.querySelector("#minyan-schedule-schema");
+  if (!schemaNode) return;
+
+  schemaNode.textContent = JSON.stringify(minyanScheduleSchema(minyanSchedule), null, 2);
+}
+
 function refreshNextMinyan() {
   const nextMinyan = document.querySelector("#next-minyan");
   if (nextMinyan) nextMinyan.textContent = nextMinyanText();
@@ -779,6 +812,7 @@ function updateFastInfoFromBulletin(data) {
   updateScheduleValues(data?.weekday);
   minyanSchedule = buildMinyanSchedule(data);
   refreshNextMinyan();
+  publishMinyanSchema();
 }
 
 function describeBulletinSource(data) {
